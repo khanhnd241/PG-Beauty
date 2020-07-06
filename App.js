@@ -1,115 +1,61 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import React, { Component, useEffect } from 'react';
+import { Text, View, SafeAreaView, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { IMAGE } from './constants/images';
+import HomeScreen from './components/tabs/HomeScreen';
+import FeedScreen from './components/tabs/FeedScreen';
+import CategoryScreen from './components/tabs/CategoryScreen';
+import Notification from './components/tabs/NotificationScreen';
+import AccountScreen from './components/tabs/AccountScreen'
+import SvgUri from 'react-native-svg-uri';
+const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
-
-const App = () => React$Node = () => {
+function TabNavigator(props) {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <Tab.Navigator initialRouteName="Trang chủ"
+
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let iconName;
+          if (route.name === 'Trang chủ') {
+            iconName = focused ? IMAGE.ICON_HOME_ACTIVE : IMAGE.ICON_HOME;
+          } else if (route.name === 'Feed') {
+            iconName = focused ? IMAGE.ICON_FEED_ACTIVE : IMAGE.ICON_FEED;
+          } else if (route.name === 'Danh mục') {
+            iconName = focused ? IMAGE.ICON_CATEGORY_ACTIVE : IMAGE.ICON_CATEGORY;
+          } 
+          else if (route.name === 'Thông báo') {
+            iconName = focused ? IMAGE.ICON_NOTIFICATION_ACTIVE : IMAGE.ICON_NOTIFICATION;
+          } else if (route.name === 'Tôi') {
+            iconName = focused ? IMAGE.ICON_ACCOUNT_ACTIVE : IMAGE.ICON_ACCOUNT;
+          }
+          // You can return any component that you like here!
+          return <SvgUri source={iconName} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#BE1E2D',
+        inactiveTintColor: 'black',
+      }}
+    >
+      <Tab.Screen name="Trang chủ" component={HomeScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Danh mục" component={CategoryScreen} />
+      <Tab.Screen name="Thông báo" component={Notification} />
+      <Tab.Screen name="Tôi" component={AccountScreen} />
+    </Tab.Navigator>
   );
-};
+}
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+  }
+ 
+  render() {
+    return(
+      <TabNavigator />
 
-export default App;
+    )
+  }
+}

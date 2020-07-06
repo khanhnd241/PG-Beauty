@@ -3,7 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from './SplashScreen';
 import App from '../App';
-import LoginScreen from './login/LoginScreen'
+import LoginScreen from './login/LoginScreen';
+import ForgotPassScreen from './login/ForgotPassScreen';
+import RegisterScreen from './login/RegisterScreen'
 const navOptionHandler = () => ({
     headerShown: false
 })
@@ -20,6 +22,8 @@ class StackNavigator extends Component {
                     <Stack.Screen name="SplashScreen" component={SplashScreen} options={navOptionHandler} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} options={navOptionHandler} />
                     <Stack.Screen name="App" component={App} options={navOptionHandler} />
+                    <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen} options={navOptionHandler} />
+                    <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={navOptionHandler} />
                 </Stack.Navigator>
             </NavigationContainer>
         );

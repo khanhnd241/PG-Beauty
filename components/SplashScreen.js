@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Button, SafeAreaView, StyleSheet } from "react-native";
+import { View, Button, SafeAreaView, StyleSheet, StatusBar } from "react-native";
 import { IMAGE } from '../constants/images';
 import SvgUri from 'react-native-svg-uri';
 class SplashScreen extends Component {
@@ -8,7 +8,7 @@ class SplashScreen extends Component {
         this.state = {  };
     }
     componentDidMount = () =>{
-        setTimeout(() => {this.props.navigation.navigate('LoginScreen')}, 2000);
+        setTimeout(() => {this.props.navigation.replace('LoginScreen')}, 2000);
     }
     render() {
         return (
