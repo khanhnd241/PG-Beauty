@@ -17,12 +17,18 @@ const STRING = {
     ENTER_DATE_OF_BIRTH: 'Năm sinh',
     ENTER_ADDRESS: 'Địa chỉ',
     EMAIL: 'Email',
-    ENTER_PHONE: 'Số điện thoại *',
+    ENTER_PHONE_INPUT: 'Số điện thoại *',
     ENTER_PASSWORD: 'Mật khẩu *',
     CONFIRM_PASSWORD: 'Xác nhận lại mật khẩu *',
     REGISTER: 'đăng kí',
     HAVE_ACCOUNT: 'Bạn đã có tài khoản? ',
-    LOGIN_NOW: 'Đăng nhập ngay!'
+    LOGIN_NOW: 'Đăng nhập ngay!',
+    DEAL_NOW: 'deal đang diễn ra',
+    SEE_ALL: 'Xem tất cả',
+    SELLING_PRODUCT: 'sản phẩm bán chạy',
+    SEARCH_INPUT: 'Tìm kiếm: son, máy rửa mặt...',
+    NEW_PRODUCT: 'sản phẩm mới',
+    PG_BEAUTY_FEED: 'PG Beauty Feed'
  
 }
 

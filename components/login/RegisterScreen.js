@@ -62,7 +62,7 @@ class RegisterScreen extends Component {
                         </View>
                         <TextInput style={styles.textInput} placeholder={STRING.ENTER_ADDRESS} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ address: value }) }}></TextInput>
                         <TextInput style={styles.textInput} placeholder={STRING.EMAIL} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
-                        <TextInput style={styles.textInput} placeholder={STRING.ENTER_PHONE} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
+                        <TextInput style={styles.textInput} placeholder={STRING.ENTER_PHONE_INPUT} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
                         <View style={styles.input_dob}>
                             <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
