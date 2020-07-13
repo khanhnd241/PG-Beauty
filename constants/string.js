@@ -28,7 +28,14 @@ const STRING = {
     SELLING_PRODUCT: 'sản phẩm bán chạy',
     SEARCH_INPUT: 'Tìm kiếm: son, máy rửa mặt...',
     NEW_PRODUCT: 'sản phẩm mới',
-    PG_BEAUTY_FEED: 'PG Beauty Feed'
+    PG_BEAUTY_FEED: 'PG Beauty Feed',
+    POSTS_LIKE: 'Bài viết nhiều người thích',
+    POSTS_REVIEW: 'Bài viết nhiều người đánh giá',
+    REVIEW: 'review',
+    SOLD: 'Đã bán',
+    PG_BEAUTY: 'PG Beauty',
+    PG_BEAUTY_TOOL: 'PG Beauty tool',
+    PG_FASHION: 'PG Fashion'
  
 }
 

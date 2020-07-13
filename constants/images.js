@@ -19,7 +19,7 @@ const IMAGE = {
     ICON_SEARCH: require('../images/search.svg'),
     ICON_SCAN: require('../images/scan.svg'),
     ICON_PG_BEAUTY: require('../images/pg_beauty.svg'),
-    ICON_PG_TOOL: require('../images/pg_tool.svg'),
+    ICON_PG_TOOL: require('../images/tool.svg'),
     ICON_PG_FASHION: require('../images/pg_fashion.svg'),
     ANH_DEMO_1: require('../images/demo1.png'),
     ANH_DEMO_2: require('../images/demo2.png'),

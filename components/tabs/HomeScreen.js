@@ -4,6 +4,15 @@ import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../constants/string';
 import { SliderBox } from "react-native-image-slider-box";
+import {RECTANGLE} from '../../constants/images/rectangle';
+import {SEARCH} from '../../constants/images/search';
+import {STAR} from '../../constants/images/star';
+import {SCAN} from '../../constants/images/scan';
+import {BASKET} from '../../constants/images/basket';
+import {PG_BEAUTY} from '../../constants/images/pg_beauty';
+import {PG_FASHION} from '../../constants/images/pg_fashion';
+import {PG_TOOL} from '../../constants/images/pg_tool';
+// import {SVG} from 'react-native-svg'
 let deviceWidth = Dimensions.get('window').width - 10;
 function Item({ image, name, price, point, review, sell, sale }) {
     return (
@@ -11,7 +20,7 @@ function Item({ image, name, price, point, review, sell, sale }) {
             <View style={{ flex: 1 }}>
                 <ImageBackground source={image} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                     <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri source={IMAGE.ICON_RECTANGLE} />
+                        <SvgUri svgXmlData={RECTANGLE} />
                         <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
                     </View>
                 </ImageBackground>
@@ -19,10 +28,10 @@ function Item({ image, name, price, point, review, sell, sale }) {
                     <Text style={{ color: '#42515F', fontSize: 14, height: 71 }}>{name}</Text>
                     <Text style={{ color: '#2E3E4E', fontWeight: '600', fontSize: 16 }}>{price}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri source={IMAGE.ICON_STAR} />
+                        <SvgUri svgXmlData={STAR} />
                         <Text style={{ color: '#BE1E2D', fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} review)</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>Đã bán {sell}</Text>
+                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
+                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
                     </View>
                 </View>
             </View>
@@ -38,7 +47,7 @@ function ItemNewProduct({ image, name, price, point, review, sell, sale }) {
             <View style={{ flex: 1 }}>
                 <ImageBackground source={image} style={{ width: 164, height: 110, marginLeft: 12, marginTop: 7 }}>
                     <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri source={IMAGE.ICON_RECTANGLE} />
+                        <SvgUri svgXmlData={RECTANGLE} />
                         <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
                     </View>
                 </ImageBackground>
@@ -46,10 +55,10 @@ function ItemNewProduct({ image, name, price, point, review, sell, sale }) {
                     <Text style={{ color: '#42515F', fontSize: 14, height: 71 }}>{name}</Text>
                     <Text style={{ color: '#2E3E4E', fontWeight: '600', fontSize: 16 }}>{price}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri source={IMAGE.ICON_STAR} />
+                        <SvgUri svgXmlData={STAR} />
                         <Text style={{ color: '#BE1E2D', fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} review)</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>Đã bán {sell}</Text>
+                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
+                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
                     </View>
                 </View>
             </View>
@@ -149,20 +158,20 @@ class HomeScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{flex:1}}>
                 <ScrollView>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri source={IMAGE.ICON_SEARCH} />
+                                <SvgUri svgXmlData={SEARCH} />
                             </View>
-                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize:15 }}></TextInput>
+                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri source={IMAGE.ICON_SCAN} />
+                                <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity>
-                            <SvgUri source={IMAGE.ICON_BASKET} />
+                            <SvgUri svgXmlData={BASKET} />
                         </TouchableOpacity>
                     </View>
                     {/* banner và tool */}
@@ -172,13 +181,16 @@ class HomeScreen extends Component {
                         />
                         <View style={styles.tools}>
                             <TouchableOpacity style={styles.icon_tool}>
-                                <SvgUri source={IMAGE.ICON_PG_BEAUTY} />
+                                <SvgUri svgXmlData={PG_BEAUTY} />
+                                <Text>{STRING.PG_BEAUTY}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.icon_tool}>
-                                <SvgUri source={IMAGE.ICON_PG_TOOL} />
+                                <SvgUri svgXmlData={PG_TOOL} />
+                                <Text>{STRING.PG_BEAUTY_TOOL}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.icon_tool}>
-                                <SvgUri source={IMAGE.ICON_PG_FASHION} />
+                                <SvgUri svgXmlData={PG_FASHION} />
+                                <Text>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{ backgroundColor: '#F2F2F2', height: 5 }} />
@@ -207,7 +219,7 @@ class HomeScreen extends Component {
                             }
                         />
                     </View>
-                    <View style={{backgroundColor:'#F2F2F2', width:8}} />
+                    <View style={{ backgroundColor: '#F2F2F2', width: 8 }} />
                     {/* Sản phẩm bán chạy */}
                     <View style={styles.background}>
                         <View style={styles.flex_direction_row}>
@@ -232,12 +244,12 @@ class HomeScreen extends Component {
                             }
                         />
                     </View>
-                    <View style={{backgroundColor:'#F2F2F2', width:8}} />
+                    <View style={{ backgroundColor: '#F2F2F2', width: 8 }} />
                     {/* Sản phẩm mới */}
                     <View style={styles.background}>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.NEW_PRODUCT}</Text>
-                            
+
                         </View>
                         <FlatList
                             numColumns={2}
@@ -302,7 +314,7 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         fontSize: 14,
         margin: 10,
-        marginBottom:16
+        marginBottom: 16
     },
     see_all: {
         color: '#111D5E',
@@ -318,11 +330,14 @@ const styles = StyleSheet.create({
         width: 180
     },
     items_new_product: {
-        width:deviceWidth/2,
-        height:255,
-         flex: 1,
-         margin:3
-    
+        width: deviceWidth / 2,
+        height: 255,
+        flex: 1,
+        margin: 3
+    },
+    tool_text: {
+        color: '#2E3E4E',
+        fontSize: 14
     }
 
 

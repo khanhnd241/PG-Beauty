@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Button, SafeAreaView, StyleSheet, StatusBar } from "react-native";
 import { IMAGE } from '../constants/images';
+import {LOGO} from '../constants/images/logo'
 import SvgUri from 'react-native-svg-uri';
 class SplashScreen extends Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class SplashScreen extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <SvgUri
-                source={IMAGE.ICON_LOGO}
+                svgXmlData={LOGO}
                  />
             </SafeAreaView>
         );

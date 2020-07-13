@@ -2,8 +2,11 @@ import React, { Component } from "react";
 import { View, Button, SafeAreaView, Text, StyleSheet, TextInput, TouchableOpacity, StatusBar, Alert } from "react-native";
 import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import { STRING } from '../../constants/string'
-class SplashScreen extends Component {
+import { STRING } from '../../constants/string';
+import {LOGO} from '../../constants/images/logo';
+import {EYE} from '../../constants/images/eye'
+import {EYE_ACTIVE} from '../../constants/images/eye_active'
+class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,7 +46,7 @@ class SplashScreen extends Component {
                 <StatusBar backgroundColor='#BE1E2D' />
                 <View style={styles.logo}>
                     <SvgUri
-                        source={IMAGE.ICON_LOGO}
+                    svgXmlData={LOGO}
                     />
 
                 </View>
@@ -55,7 +58,7 @@ class SplashScreen extends Component {
                         <TextInput style={{ flex: 5 }} secureTextEntry={this.state.showPassword} value={this.state.password} name="password" onChangeText={(value) => this.setState({ password: value })}
                             placeholder={STRING.PH_PASSWORD} placeholderTextColor="#6C7783" onBlur={this.blurInput}></TextInput>
                         <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
-                            {this.state.showPassword ? (<SvgUri source={IMAGE.ICON_EYE} />) : (<SvgUri source={IMAGE.ICON_EYE_ACTIVE} fill="#6C7783" />)}
+                            {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE_ACTIVE} fill="#6C7783" />)}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -95,7 +98,6 @@ const styles = StyleSheet.create({
         marginTop: 63,
     },
     text: {
-        fontFamily: 'Nunito',
         marginTop: 14,
         fontSize: 14,
         color: 'white'
@@ -127,4 +129,4 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
-export default SplashScreen;
+export default LoginScreen;

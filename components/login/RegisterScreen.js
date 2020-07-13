@@ -3,7 +3,12 @@ import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, TextInput, Aler
 import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../constants/string';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {LOGO} from '../../constants/images/logo';
+import {EYE} from '../../constants/images/eye'
+import {EYE_ACTIVE} from '../../constants/images/eye_active';
+import {DROPDOWN} from '../../constants/images/dropdown';
+import {CLOSE} from '../../constants/images/close'
 class RegisterScreen extends Component {
     constructor(props) {
         super(props);
@@ -44,12 +49,12 @@ class RegisterScreen extends Component {
             <SafeAreaView style={styles.background}>
                 <StatusBar backgroundColor='#BE1E2D' />
                 <TouchableOpacity style={styles.btn_close} onPress={() => this.props.navigation.goBack()}>
-                    <SvgUri source={IMAGE.ICON_CLOSE} />
+                    <SvgUri svgXmlData={CLOSE} />
                 </TouchableOpacity>
                 <KeyboardAwareScrollView>
                     <View style={styles.container}>
                         <View style={styles.logo}>
-                            <SvgUri source={IMAGE.ICON_LOGO} />
+                            <SvgUri svgXmlData={LOGO} />
                         </View>
                         <Text style={styles.title}>{STRING.ENTER_INFO}</Text>
 
@@ -57,7 +62,7 @@ class RegisterScreen extends Component {
                         <View style={styles.input_dob}>
                             <Text style={{ flex: 7, color: '#6C7783' }}>{STRING.ENTER_DATE_OF_BIRTH}</Text>
                             <TouchableOpacity style={{ flex: 1 }}>
-                                <SvgUri source={IMAGE.ICON_DROPDOWN} />
+                                <SvgUri svgXmlData={DROPDOWN} />
                             </TouchableOpacity>
                         </View>
                         <TextInput style={styles.textInput} placeholder={STRING.ENTER_ADDRESS} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ address: value }) }}></TextInput>
@@ -66,13 +71,13 @@ class RegisterScreen extends Component {
                         <View style={styles.input_dob}>
                             <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor='#6C7783' onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
-                                {this.state.showPassword ? (<SvgUri source={IMAGE.ICON_EYE} />) : (<SvgUri source={IMAGE.ICON_EYE_ACTIVE} fill="#6C7783" />)}
+                                {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE_ACTIVE} fill="#6C7783" />)}
                             </TouchableOpacity>
                         </View>
                         <View style={styles.input_dob}>
                             <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showConfirmPassword} placeholderTextColor='#6C7783' placeholder={STRING.CONFIRM_PASSWORD} onChangeText={(value) => { this.setState({ confirmPassword: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showConfirmPassword}>
-                                {this.state.showConfirmPassword ? (<SvgUri source={IMAGE.ICON_EYE} />) : (<SvgUri source={IMAGE.ICON_EYE_ACTIVE} fill="#6C7783" />)}
+                                {this.state.showConfirmPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE_ACTIVE} fill="#6C7783" />)}
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.btn_register} onPress={this.register}>

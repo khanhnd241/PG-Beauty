@@ -8,6 +8,16 @@ import CategoryScreen from './components/tabs/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/AccountScreen'
 import SvgUri from 'react-native-svg-uri';
+import {HOME} from './constants/images/home';
+import {HOME_ACTIVE} from './constants/images/home_active';
+import {FEED} from './constants/images/feed';
+import {FEED_ACTIVE} from './constants/images/feed_active';
+import {CATEGORY} from './constants/images/category';
+import {CATEGORY_ACTIVE} from './constants/images/category_active';
+import {NOTIFICATION} from './constants/images/notification';
+import {NOTIFICATION_ACTIVE} from './constants/images/notification_active';
+import {ACCOUNT} from './constants/images/account';
+import {ACCOUNT_ACTIVE} from './constants/images/account_active'
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -18,19 +28,19 @@ function TabNavigator(props) {
         tabBarIcon: ({ focused }) => {
           let iconName;
           if (route.name === 'Trang chủ') {
-            iconName = focused ? IMAGE.ICON_HOME_ACTIVE : IMAGE.ICON_HOME;
+            iconName = focused ? HOME_ACTIVE : HOME;
           } else if (route.name === 'Feed') {
-            iconName = focused ? IMAGE.ICON_FEED_ACTIVE : IMAGE.ICON_FEED;
+            iconName = focused ? FEED_ACTIVE : FEED;
           } else if (route.name === 'Danh mục') {
-            iconName = focused ? IMAGE.ICON_CATEGORY_ACTIVE : IMAGE.ICON_CATEGORY;
+            iconName = focused ? CATEGORY_ACTIVE : CATEGORY;
           } 
           else if (route.name === 'Thông báo') {
-            iconName = focused ? IMAGE.ICON_NOTIFICATION_ACTIVE : IMAGE.ICON_NOTIFICATION;
+            iconName = focused ? NOTIFICATION_ACTIVE : NOTIFICATION;
           } else if (route.name === 'Tôi') {
-            iconName = focused ? IMAGE.ICON_ACCOUNT_ACTIVE : IMAGE.ICON_ACCOUNT;
+            iconName = focused ? ACCOUNT_ACTIVE : ACCOUNT;
           }
           // You can return any component that you like here!
-          return <SvgUri source={iconName} />;
+          return <SvgUri svgXmlData={iconName} />;
         },
       })}
       tabBarOptions={{
