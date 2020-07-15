@@ -6,7 +6,7 @@ import HomeScreen from './components/tabs/HomeScreen';
 import FeedScreen from './components/tabs/FeedScreen';
 import CategoryScreen from './components/tabs/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
-import AccountScreen from './components/tabs/AccountScreen'
+import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
 import {HOME} from './constants/images/home';
 import {HOME_ACTIVE} from './constants/images/home_active';

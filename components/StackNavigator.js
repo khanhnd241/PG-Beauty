@@ -6,6 +6,8 @@ import App from '../App';
 import LoginScreen from './login/LoginScreen';
 import ForgotPassScreen from './login/ForgotPassScreen';
 import RegisterScreen from './login/RegisterScreen'
+import InfoScreen from '../components/tabs/account/InfoScreen'
+
 const navOptionHandler = () => ({
     headerShown: false
 })
@@ -24,6 +26,7 @@ class StackNavigator extends Component {
                     <Stack.Screen name="App" component={App} options={navOptionHandler} />
                     <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen} options={navOptionHandler} />
                     <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={navOptionHandler} />
+                    <Stack.Screen name="InfoScreen" component={InfoScreen} options={navOptionHandler} />
                 </Stack.Navigator>
             </NavigationContainer>
         );

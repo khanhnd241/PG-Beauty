@@ -35,8 +35,33 @@ const STRING = {
     SOLD: 'Đã bán',
     PG_BEAUTY: 'PG Beauty',
     PG_BEAUTY_TOOL: 'PG Beauty tool',
-    PG_FASHION: 'PG Fashion'
- 
+    PG_FASHION: 'PG Fashion',
+    LIKE: 'Thích',
+    COMMENT_1: 'Bình luận',
+    COMMENT_2: 'bình luận',
+    SHARE: 'Chia sẻ',
+    CLEANSING: 'Tẩy trang',
+    CLEANSER: 'Sữa rửa mặt',
+    NOTIFICATION: 'Thông báo',
+    PROMOTION: 'Khuyến mãi',
+    FOR_YOU: 'Của bạn',
+    NO_NOTI: 'Hiện chưa có thông báo nào của bạn',
+    PRODUCTS_PURCHASED: 'sản phẩm đã mua',
+    REWARD_POINT: 'Điểm thưởng',
+    D: 'đ',
+    PURCHASED_HISTORY: 'Lịch sử mua hàng',
+    MY_RATE: 'Đánh giá của tôi',
+    SETTING: 'Cài đặt',
+    INFO: 'Thông tin về PG Beauty',
+    USE_GUIDE: 'Hướng dẫn sử dụng app',
+    SHOPPING_GUIDE: 'Hướng dẫn mua hàng',
+    PAYMENT_POLICY: 'Chính sách thanh toán',
+    POLICY_DELIVERY: 'Chính sách giao nhận - vận chuyển',
+    RETURN_POLICY: 'Chính sách đổi hàng',
+    TERM_OF_USE_POLICY: 'Chính sách điều khoản sử dụng',
+    SHOPS: 'Hệ thống cửa hàng',
+    INTRODUCE_PG_BEAUTY: 'Giới thiệu PG Beauty',
+    VERSION: 'Verson cập nhật mới nhất'
 }
 
 export  {STRING}

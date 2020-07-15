@@ -27,7 +27,9 @@ const IMAGE = {
     ICON_RECTANGLE: require('../images/Rectangle.svg'),
     ANH_DEMO_3: require('../images/anh_demo4.png'),
     TAB_BG: require('../images/tab.png'),
-    TAB_ACTIVE_BG: require('../images/tab_active.png')
+    TAB_ACTIVE_BG: require('../images/tab_active.png'),
+    NO_NOTI: require('../images/no_noti.png'),
+    BG_AVATAR: require('../images/bg_avatar.png')
 
 }
 

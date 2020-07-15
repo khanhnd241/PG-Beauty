@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar } from "react-native";
 import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../constants/string';
@@ -159,13 +159,17 @@ class HomeScreen extends Component {
     render() {
         return (
             <SafeAreaView style={{flex:1}}>
+                 <StatusBar backgroundColor='#BE1E2D' />
                 <ScrollView>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
+                            <View style={{justifyContent:'center', alignItems:'center'}}>
                             <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
+
+                            </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
