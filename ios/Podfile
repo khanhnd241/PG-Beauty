@@ -97,12 +97,3 @@ target 'PG_Beauty' do
     flipper_post_install(installer)
   end
 end
-
-target 'PG_Beauty-tvOS' do
-  # Pods for PG_Beauty-tvOS
-
-  target 'PG_Beauty-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
