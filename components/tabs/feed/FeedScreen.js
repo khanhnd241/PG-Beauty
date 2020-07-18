@@ -1,13 +1,13 @@
 import React, { Component, useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet, ImageBackground, TouchableOpacity, Image, Dimensions, ScrollView, FlatList, StatusBar } from "react-native";
-import { IMAGE } from '../../constants/images';
+import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import { STRING } from '../../constants/string';
-import { BASKET } from '../../constants/images/basket';
-import { LIKE } from '../../constants/images/like';
-import { LIKE_ACTIVE } from '../../constants/images/like_active';
-import { COMMENT } from '../../constants/images/comment';
-import { SHARE } from '../../constants/images/share';
+import { STRING } from '../../../constants/string';
+import { BASKET } from '../../../constants/images/basket';
+import { LIKE } from '../../../constants/images/like';
+import { LIKE_ACTIVE } from '../../../constants/images/like_active';
+import { COMMENT } from '../../../constants/images/comment';
+import { SHARE } from '../../../constants/images/share';
 
 import { Rating, AirbnbRating } from 'react-native-ratings';
 let deviceWidth = Dimensions.get('window').width - 32;

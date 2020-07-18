@@ -3,7 +3,7 @@ import { Text, View, SafeAreaView, Image, TouchableOpacity, Button, StyleSheet }
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IMAGE } from './constants/images';
 import HomeScreen from './components/tabs/HomeScreen';
-import FeedScreen from './components/tabs/FeedScreen';
+import FeedScreen from './components/tabs/feed/FeedScreen';
 import CategoryScreen from './components/tabs/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/account/AccountScreen';
