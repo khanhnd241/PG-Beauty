@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar } from "react-native";
-import { IMAGE } from '../../constants/images';
+import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import { STRING } from '../../constants/string';
+import { STRING } from '../../../constants/string';
+import { COLOR } from '../../../constants/colors'
 import { SliderBox } from "react-native-image-slider-box";
-import {RECTANGLE} from '../../constants/images/rectangle';
-import {SEARCH} from '../../constants/images/search';
-import {STAR} from '../../constants/images/star';
-import {SCAN} from '../../constants/images/scan';
-import {BASKET} from '../../constants/images/basket';
-import {PG_BEAUTY} from '../../constants/images/pg_beauty';
-import {PG_FASHION} from '../../constants/images/pg_fashion';
-import {PG_TOOL} from '../../constants/images/pg_tool';
-// import {SVG} from 'react-native-svg'
+import { RECTANGLE } from '../../../constants/images/rectangle';
+import { SEARCH } from '../../../constants/images/search';
+import { STAR } from '../../../constants/images/star';
+import { SCAN } from '../../../constants/images/scan';
+import { BASKET } from '../../../constants/images/basket';
+import { PG_BEAUTY } from '../../../constants/images/pg_beauty';
+import { PG_FASHION } from '../../../constants/images/pg_fashion';
+import { PG_TOOL } from '../../../constants/images/pg_tool';
+
 let deviceWidth = Dimensions.get('window').width - 10;
 function Item({ image, name, price, point, review, sell, sale }) {
     return (
@@ -25,13 +26,13 @@ function Item({ image, name, price, point, review, sell, sale }) {
                     </View>
                 </ImageBackground>
                 <View style={{ marginLeft: 16 }} >
-                    <Text style={{ color: '#42515F', fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: '#2E3E4E', fontWeight: '600', fontSize: 16 }}>{price}</Text>
+                    <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
+                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                         <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: '#BE1E2D', fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
+                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
+                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
+                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
                     </View>
                 </View>
             </View>
@@ -52,13 +53,13 @@ function ItemNewProduct({ image, name, price, point, review, sell, sale }) {
                     </View>
                 </ImageBackground>
                 <View style={{ marginLeft: 16 }} >
-                    <Text style={{ color: '#42515F', fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: '#2E3E4E', fontWeight: '600', fontSize: 16 }}>{price}</Text>
+                    <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
+                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                         <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: '#BE1E2D', fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: '#6C7783', fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
+                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
+                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
+                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
                     </View>
                 </View>
             </View>
@@ -158,16 +159,16 @@ class HomeScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={{flex:1}}>
-                 <StatusBar backgroundColor='#BE1E2D' />
+            <SafeAreaView style={{ flex: 1 }}>
+                <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <ScrollView>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
-                            <View style={{justifyContent:'center', alignItems:'center'}}>
-                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
 
                             </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
@@ -181,6 +182,7 @@ class HomeScreen extends Component {
                     {/* banner và tool */}
                     <View>
                         <SliderBox
+                            autoplay={true}
                             images={this.state.images}
                         />
                         <View style={styles.tools}>
@@ -197,7 +199,7 @@ class HomeScreen extends Component {
                                 <Text>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ backgroundColor: '#F2F2F2', height: 5 }} />
+                        <View style={{ backgroundColor:COLOR.GRAY, height: 5 }} />
                     </View>
                     {/* Deal đang diễn ra */}
                     <View style={styles.background}>
@@ -211,7 +213,7 @@ class HomeScreen extends Component {
                             horizontal={true}
                             data={this.state.listDeal}
                             renderItem={({ item }) =>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
                                     <Item image={item.image}
                                         name={item.name}
                                         price={item.price}
@@ -223,7 +225,7 @@ class HomeScreen extends Component {
                             }
                         />
                     </View>
-                    <View style={{ backgroundColor: '#F2F2F2', width: 8 }} />
+                    <View style={{ backgroundColor: COLOR.GRAY, width: 8 }} />
                     {/* Sản phẩm bán chạy */}
                     <View style={styles.background}>
                         <View style={styles.flex_direction_row}>
@@ -248,7 +250,7 @@ class HomeScreen extends Component {
                             }
                         />
                     </View>
-                    <View style={{ backgroundColor: '#F2F2F2', width: 8 }} />
+                    <View style={{ backgroundColor: COLOR.GRAY, width: 8 }} />
                     {/* Sản phẩm mới */}
                     <View style={styles.background}>
                         <View style={styles.flex_direction_row}>
@@ -278,16 +280,16 @@ class HomeScreen extends Component {
 }
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: '#FFFFFF'
+        backgroundColor: COLOR.WHITE
     },
     header: {
-        backgroundColor: '#BE1E2D',
+        backgroundColor: COLOR.PRIMARY,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
     },
     inputHeader: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
         width: 310,
@@ -302,7 +304,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: COLOR.WHITE
     },
     icon_tool: {
         flex: 1,
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     title_list: {
-        color: '#2E3E4E',
+        color: COLOR.TEXTBODY,
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
@@ -321,7 +323,7 @@ const styles = StyleSheet.create({
         marginBottom: 16
     },
     see_all: {
-        color: '#111D5E',
+        color: COLOR.LINK,
         flex: 1,
         textDecorationLine: "underline",
         textDecorationStyle: "solid",
@@ -340,7 +342,7 @@ const styles = StyleSheet.create({
         margin: 3
     },
     tool_text: {
-        color: '#2E3E4E',
+        color: COLOR.TEXTBODY,
         fontSize: 14
     }
 

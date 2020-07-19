@@ -6,6 +6,7 @@ import { STRING } from '../../constants/string';
 import { GIFT_ORANGE } from '../../constants/images/gift_orange';
 import { GIFT_BLUE } from '../../constants/images/gift_blue';
 import { FOR_YOU } from '../../constants/images/for_you';
+import { COLOR } from '../../constants/colors';
 function ItemPromotion({ title, content, timeLine, index }) {
     const [even, setEven] = useState(true);
     useEffect(() => {
@@ -33,7 +34,7 @@ function ItemPromotion({ title, content, timeLine, index }) {
                 <Text style={styles.item_content}>{content}</Text>
                 <Text style={styles.item_timeline}>{timeLine}</Text>
             </View>
-            <View style={{ borderTopWidth: 0.5, borderColor:'#E5E5E5', marginBottom:5 }} />
+            <View style={{ borderTopWidth: 0.5, borderColor:COLOR.LINE, marginBottom:5 }} />
         </View>
     )
 }
@@ -49,7 +50,7 @@ function ItemForYou({ title, content, timeLine }) {
                 <Text style={styles.item_content}>{content}</Text>
                 <Text style={styles.item_timeline}>{timeLine}</Text>
             </View>
-            <View style={{ borderTopWidth: 0.5, borderColor:'#E5E5E5', marginBottom:5 }} />
+            <View style={{ borderTopWidth: 0.5, borderColor:COLOR.LINE, marginBottom:5 }} />
         </View>
     )
 }
@@ -57,10 +58,10 @@ class NotificationScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            promotionBG: '#F2F2F2',
-            promotionText: '#BE1E2D',
-            forYouBG: '#FFFFFF',
-            forYouText: '#2E3E4E',
+            promotionBG: COLOR.GRAY,
+            promotionText: COLOR.PRIMARY,
+            forYouBG: COLOR.WHITE,
+            forYouText: COLOR.TEXTBODY,
             promotion: true,
             noNotiPromotion: false,
             noNotiForYou: false,
@@ -104,10 +105,10 @@ class NotificationScreen extends Component {
     }
     openPromotion = () => {
         this.setState({
-            promotionBG: '#F2F2F2',
-            promotionText: '#BE1E2D',
-            forYouBG: '#FFFFFF',
-            forYouText: '#2E3E4E',
+            promotionBG: COLOR.GRAY,
+            promotionText: COLOR.PRIMARY,
+            forYouBG: COLOR.WHITE,
+            forYouText: COLOR.TEXTBODY,
             promotion: true
         });
         if (this.state.listPromotion.length == 0) {
@@ -118,10 +119,10 @@ class NotificationScreen extends Component {
     }
     openForYou = () => {
         this.setState({
-            promotionBG: '#FFFFFF',
-            forYouBG: '#F2F2F2',
-            promotionText: '#2E3E4E',
-            forYouText: '#BE1E2D',
+            promotionBG: COLOR.WHITE,
+            forYouBG: COLOR.GRAY,
+            promotionText: COLOR.TEXTBODY,
+            forYouText: COLOR.PRIMARY,
             promotion: false
         });
         if (this.state.listForYou.length == 0) {
@@ -132,8 +133,8 @@ class NotificationScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                <StatusBar backgroundColor='#BE1E2D' />
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
+                <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.header}>
                     <Text style={styles.title_text}>{STRING.NOTIFICATION}</Text>
                 </View>
@@ -199,7 +200,7 @@ class NotificationScreen extends Component {
 }
 const styles = StyleSheet.create({
     header: {
-        backgroundColor: '#BE1E2D',
+        backgroundColor: COLOR.PRIMARY,
         height: 46,
         alignItems: 'center',
         justifyContent: 'center',
@@ -212,13 +213,13 @@ const styles = StyleSheet.create({
     },
     title_text: {
         fontSize: 16,
-        color: '#FFFFFF'
+        color: COLOR.WHITE
     },
     option: {
         flexDirection: 'row',
         margin: 16,
         borderWidth: 0.5,
-        borderColor: '#E0E0E0'
+        borderColor: COLOR.LINE
     },
     tab: {
         flex: 1,
@@ -227,34 +228,34 @@ const styles = StyleSheet.create({
         paddingVertical: 6
     },
     text: {
-        color: '#42515F',
+        color: COLOR.DESCRIPTION,
         fontSize: 12,
         textAlign: 'center'
     },
     text_no_noti: {
        marginTop:24,
        fontSize:13,
-       color:'#42515F'
+       color:COLOR.DESCRIPTION
     },
     item_container: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         paddingTop: 8,
         paddingLeft: 17,
         paddingRight: 17
 
     },
     item_content: {
-        color: '#42515F',
+        color: COLOR.DESCRIPTION,
         fontSize: 13
     },
     item_title: {
-        color: '#2E3E4E',
+        color: COLOR.TEXTBODY,
         fontSize: 14,
         marginLeft: 8,
         fontWeight: 'bold'
     },
     item_timeline: {
-        color: '#6C7783',
+        color: COLOR.PLACEHODER,
         fontSize: 12,
         marginVertical: 5
     },

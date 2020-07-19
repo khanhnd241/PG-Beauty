@@ -8,10 +8,11 @@ import { EDIT } from '../../../constants/images/edit';
 import { WOMEN } from '../../../constants/images/women';
 import { MAN } from '../../../constants/images/man';
 import { CART } from '../../../constants/images/cart';
-import { STAR } from '../../../constants/images/star';
+import { ICON_STAR } from '../../../constants/images/icon_star';
 import { SETTING } from '../../../constants/images/setting';
 import { INFO } from '../../../constants/images/info';
 import { NEXT } from '../../../constants/images/next';
+import { COLOR } from '../../../constants/colors';
 let deviceWidth = Dimensions.get('window').width - 30;
 let deviceHeight = Dimensions.get('window').height - 160
 class AccountScreen extends Component {
@@ -40,9 +41,9 @@ class AccountScreen extends Component {
         const { user } = this.state
         return (
             <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
-                <StatusBar backgroundColor='#BE1E2D' />
-                <View style={{ flex: 2, backgroundColor: '#BE1E2D' }} />
-                <View style={{ flex: 8, backgroundColor: '#FFFFFF' }} />
+                <StatusBar backgroundColor={COLOR.PRIMARY} />
+                <View style={{ flex: 2, backgroundColor: COLOR.PRIMARY }} />
+                <View style={{ flex: 8, backgroundColor: COLOR.WHITE }} />
                 <View style={styles.container}>
                     <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
@@ -63,8 +64,8 @@ class AccountScreen extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={{ alignItems: 'center', marginTop: 10 }}>
-                        <Text style={{ color: '#2E3E4E', fontSize: 14, padding: 5 }}>{user.name}</Text>
-                        <Text style={{ color: '#42515F', fontSize: 14, padding: 5 }}>{user.phone}</Text>
+                        <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, padding: 5 }}>{user.name}</Text>
+                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, padding: 5 }}>{user.phone}</Text>
                     </View>
                     <View style={{ borderTopWidth: 0.5, marginTop: 5 }} />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
@@ -87,7 +88,7 @@ class AccountScreen extends Component {
                             <Text style={styles.text_description}>{STRING.REWARD_POINT}</Text>
                         </View>
                     </View>
-                    <View style={{ height: 10, backgroundColor: '#F2F2F2' }} />
+                    <View style={{ height: 10, backgroundColor: COLOR.GRAY }} />
                     {/* cart */}
                     <TouchableOpacity style={styles.item}>
                         <View style={styles.item_icon}>
@@ -97,17 +98,17 @@ class AccountScreen extends Component {
                             <Text style={styles.item_title_text}>{STRING.PURCHASED_HISTORY}</Text>
                         </View>
                         <View style={styles.item_description}>
-                            <Text style={styles.item_description_text}>chua co</Text>
+                            <Text style={styles.item_description_text}>chưa có</Text>
                         </View>
                         <View style={styles.next}>
                             <SvgUri svgXmlData={NEXT} />
                         </View>
                     </TouchableOpacity>
-                    <View style={{ borderTopWidth: 0.5, borderColor: '#E5E5E5' }} />
+                    <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                     {/* Đánh giá của tôi */}
                     <TouchableOpacity style={styles.item}>
                         <View style={styles.item_icon}>
-                            <SvgUri svgXmlData={STAR} />
+                            <SvgUri svgXmlData={ICON_STAR} />
                         </View>
                         <View style={styles.item_title}>
                             <Text style={styles.item_title_text}>{STRING.MY_RATE}</Text>
@@ -118,7 +119,7 @@ class AccountScreen extends Component {
                             <SvgUri svgXmlData={NEXT} />
                         </View>
                     </TouchableOpacity>
-                    <View style={{ borderTopWidth: 0.5, borderColor: '#E5E5E5' }} />
+                    <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                     {/* Cài đặt */}
                     <TouchableOpacity style={styles.item}>
                         <View style={styles.item_icon}>
@@ -133,7 +134,7 @@ class AccountScreen extends Component {
                             <SvgUri svgXmlData={NEXT} />
                         </View>
                     </TouchableOpacity>
-                    <View style={{ borderTopWidth: 0.5, borderColor: '#E5E5E5' }} />
+                    <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                     {/* Thông tin */}
                     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('InfoScreen')}}>
                         <View style={styles.item_icon}>
@@ -148,7 +149,7 @@ class AccountScreen extends Component {
                             <SvgUri svgXmlData={NEXT} />
                         </View>
                     </TouchableOpacity>
-                    <View style={{ borderTopWidth: 0.5, borderColor: '#E5E5E5' }} />
+                    <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                 </View>
             </SafeAreaView>
         );
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         borderRadius: 8,
         elevation: 3,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         position: 'absolute',
         top: 87,
         height: deviceHeight,
@@ -183,13 +184,13 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 25,
-        borderColor: '#FF8A00',
+        borderColor: COLOR.ORANGE,
         borderWidth: 0.5,
         alignItems: 'center',
         justifyContent: 'center'
     },
     text_point: {
-        color: '#FF8C04',
+        color: COLOR.YELLOW,
         fontWeight: 'bold',
         fontSize: 16
     },
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     },
     item_title_text: {
         fontSize: 14,
-        color: '#2E3E4E'
+        color: COLOR.TEXTBODY
     },
     item_description: {
         flex: 2,

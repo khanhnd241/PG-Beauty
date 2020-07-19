@@ -13,6 +13,7 @@ import { PG_FASHION } from '../../constants/images/pg_fashion';
 import { PG_TOOL } from '../../constants/images/pg_tool';
 import { PLUS } from '../../constants/images/plus';
 import { SUB } from '../../constants/images/sub';
+import { COLOR } from '../../constants/colors';
 class CategoryScreen extends Component {
     constructor(props) {
         super(props);
@@ -38,14 +39,14 @@ class CategoryScreen extends Component {
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                 <StatusBar backgroundColor='#BE1E2D' />
+                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.header}>
                     <View style={styles.inputHeader}>
                         <View style={{ flex: 1, alignItems: 'center' }}>
                             <SvgUri svgXmlData={SEARCH} />
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
+                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
 
                         </View>
                         <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
@@ -73,7 +74,7 @@ class CategoryScreen extends Component {
                                 )}
                         </TouchableOpacity>
                     </View>
-                    <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                     {this.state.beauty ? (
                         <View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
@@ -89,7 +90,7 @@ class CategoryScreen extends Component {
                                         )}
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                            <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                             {this.state.cleansing ? (
                                 <View>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
@@ -98,14 +99,14 @@ class CategoryScreen extends Component {
                                             <Text style={styles.text}>{STRING.CLEANSER}</Text>
                                         </View>
                                     </View>
-                                    <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
                                         <View style={{ flex: 1.5 }} />
                                         <View style={{ flex: 5 }}>
                                             <Text style={styles.text}>{STRING.CLEANSING}</Text>
                                         </View>
                                     </View>
-                                    <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                                 </View>
                             ) : null}
                         </View>
@@ -128,7 +129,7 @@ class CategoryScreen extends Component {
                         </TouchableOpacity>
                     </View>
                     {/* PG Beauty Fashion */}
-                    <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
                         <View style={{ flex: 1, alignItems: 'center' }}>
                             <SvgUri svgXmlData={PG_FASHION} />
@@ -144,7 +145,7 @@ class CategoryScreen extends Component {
                                 )}
                         </TouchableOpacity>
                     </View>
-                    <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                 </View>
             </SafeAreaView>
         );
@@ -152,13 +153,13 @@ class CategoryScreen extends Component {
 }
 const styles = StyleSheet.create({
     header: {
-        backgroundColor: '#BE1E2D',
+        backgroundColor: COLOR.PRIMARY,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
     },
     inputHeader: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
         width: 310,
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-        color: '#2E3E4E',
+        color: COLOR.TEXTBODY,
     }
 })
 export default CategoryScreen;

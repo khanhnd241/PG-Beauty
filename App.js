@@ -2,7 +2,7 @@ import React, { Component, useEffect } from 'react';
 import { Text, View, SafeAreaView, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IMAGE } from './constants/images';
-import HomeScreen from './components/tabs/HomeScreen';
+import HomeScreen from './components/tabs/home/HomeScreen';
 import FeedScreen from './components/tabs/feed/FeedScreen';
 import CategoryScreen from './components/tabs/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';

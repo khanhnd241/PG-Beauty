@@ -61,7 +61,22 @@ const STRING = {
     TERM_OF_USE_POLICY: 'Chính sách điều khoản sử dụng',
     SHOPS: 'Hệ thống cửa hàng',
     INTRODUCE_PG_BEAUTY: 'Giới thiệu PG Beauty',
-    VERSION: 'Verson cập nhật mới nhất'
+    VERSION: 'Verson cập nhật mới nhất',
+    SEND: 'Gửi',
+    WRITE_COMMENT: 'Viết bình luận',
+    COLOR: 'Màu sắc:',
+    AVAILABLE: 'còn hàng',
+    OUT_OF_STOCK: 'hết hàng',
+    AMOUNT: 'Số lượng',
+    STILL: 'còn',
+    DELIVERY: 'Giao hàng',
+    DESCRIPTION: 'Mô tả sản phẩm',
+    PRODUCT_SPECIFICATION: 'Thông số sản phẩm',
+    TRADE_MARK: 'Thương hiệu',
+    MADE_IN: 'Xuất xứ',
+    SPECIES: 'Loại',
+    SAME_PRODUCT: 'Sản phẩm cùng loại',
+    SAME_TRADE_MARK: 'Sản phẩm cùng thương hiệu'
 }
 
 export  {STRING}
