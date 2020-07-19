@@ -74,7 +74,9 @@ const STRING = {
     PRODUCT_SPECIFICATION: 'Thông số sản phẩm',
     TRADE_MARK: 'Thương hiệu',
     MADE_IN: 'Xuất xứ',
-    SPECIES: 'Loại'
+    SPECIES: 'Loại',
+    SAME_PRODUCT: 'Sản phẩm cùng loại',
+    SAME_TRADE_MARK: 'Sản phẩm cùng thương hiệu'
 }
 
 export  {STRING}

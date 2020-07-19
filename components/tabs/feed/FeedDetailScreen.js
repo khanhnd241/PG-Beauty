@@ -9,20 +9,21 @@ import { COMMENT } from '../../../constants/images/comment';
 import { SHARE } from '../../../constants/images/share';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import PhotoGrid from 'react-native-thumbnail-grid';
-let deviceWidth = Dimensions.get('window').width - 32;
+import { COLOR } from '../../../constants/colors';
+let deviceWidth = Dimensions.get('window').width;
 function ItemComment({ avatar, name, comment }) {
     useEffect(() => {
         console.log('refresh');
     })
     return (
         <View>
-            <View style={styles.item_container}>
+            <View style={styles.item_comment_container}>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={avatar} style={styles.avatar_comment} />
 
                     </View>
-                    <View style={{ flex: 6, backgroundColor: '#F2F2F2', borderWidth: 0.5, padding: 14 }}>
+                    <View style={{ flex: 6, backgroundColor: COLOR.GRAY, borderWidth: 0.5, padding: 14 }}>
                         <Text><Text style={{ fontWeight: 'bold' }}>{name} </Text>{comment}</Text>
 
                     </View>
@@ -114,7 +115,7 @@ class FeedDetailScreen extends Component {
     render() {
         const { image, title, rate, time, content, postComment, avatar, like, user } = this.state
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
                 <ScrollView>
                     <View style={styles.item_container}>
                         <View style={{ flexDirection: 'row' }}>
@@ -128,9 +129,9 @@ class FeedDetailScreen extends Component {
                                         startingValue={rate}
                                         ratingCount={5}
                                         imageSize={15}
-                                        tintColor='white'
-                                        ratingColor='#BE1E2D'
-                                        style={{ backgroundColor: 'white', marginLeft: 1 }}
+                                        tintColor={COLOR.WHITE}
+                                        ratingColor={COLOR.PRIMARY}
+                                        style={{ backgroundColor: COLOR.WHITE, marginLeft: 1 }}
                                     />
                                     <Text style={styles.item_timeline}>{time}</Text>
                                 </View>
@@ -141,7 +142,7 @@ class FeedDetailScreen extends Component {
                             <Text style={styles.text_content}>
                                 {content}
                             </Text>
-                            <PhotoGrid source={this.state.image} ratio={0.7} onPressImage={uri => {console.log(uri)}}  />
+                            <PhotoGrid width={deviceWidth - 20} source={this.state.image} ratio={0.5} onPressImage={uri => {console.log(uri)}}  />
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                     <SvgUri svgXmlData={LIKE_ACTIVE} />
@@ -152,12 +153,12 @@ class FeedDetailScreen extends Component {
                                     <Text style={styles.text_comment}>{postComment}</Text>
                                 </View>
                             </View>
-                            <View style={{ borderTopWidth: 0.5, borderTopColor: '#E0E0E0' }} />
+                            <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                             <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
                                 {this.state.isLike ? (
                                     <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', marginLeft:3 }}>
                                         <SvgUri svgXmlData={LIKE_ACTIVE} />
-                                        <Text style={{ marginLeft: 7, color: '#BE1E2D' }}>{STRING.LIKE}</Text>
+                                        <Text style={{ marginLeft: 7, color: COLOR.PRIMARY }}>{STRING.LIKE}</Text>
                                     </TouchableOpacity>
                                 ) : (
                                         <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', marginLeft:5 }}>
@@ -185,12 +186,11 @@ class FeedDetailScreen extends Component {
                                         name={item.name} />
                                 }
                             />
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical:10, height:40 }}>
                                 <View style={{ flex: 1, alignItems: 'center' }}>
                                     <Image source={user.avatar} style={styles.avatar_comment} />
                                 </View>
-                                <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholder="aaa" autoFocus={true} />
-
+                                <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholder={STRING.WRITE_COMMENT} autoFocus={true} />
                                 <TouchableOpacity onPress={this.sendComment} style={{ flex: 1, alignItems: 'center' }}>
                                     <Text>{STRING.SEND}</Text>
                                 </TouchableOpacity>
@@ -205,7 +205,7 @@ class FeedDetailScreen extends Component {
 }
 const styles = StyleSheet.create({
     header: {
-        backgroundColor: '#BE1E2D',
+        backgroundColor: COLOR.PRIMARY,
         height: 46,
         flexDirection: 'row'
     },
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     },
     title_text: {
         fontSize: 16,
-        color: '#FFFFFF'
+        color: COLOR.WHITE
     },
     tab_active: {
         width: 95,
@@ -234,12 +234,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     text_active: {
-        color: '#BE1E2D',
+        color: COLOR.PRIMARY,
         fontSize: 12,
         textAlign: 'center'
     },
     text: {
-        color: '#42515F',
+        color: COLOR.DESCRIPTION,
         fontSize: 12,
         textAlign: 'center'
     },
@@ -255,39 +255,41 @@ const styles = StyleSheet.create({
         borderRadius: 17.5,
     },
     item_container: {
-        backgroundColor: '#FFFFFF',
-        paddingTop: 8,
-        paddingRight: 17
+        backgroundColor: COLOR.WHITE,
+        marginHorizontal:10
+
+    },
+    item_comment_container: {
+        backgroundColor: COLOR.WHITE,
+        marginVertical:5
 
     },
     text_content: {
-        color: '#42515F',
+        color: COLOR.DESCRIPTION,
         fontSize: 13
     },
     item_title: {
-        color: '#000000',
+        color: COLOR.BLACK,
         fontSize: 14,
         fontWeight: 'normal'
     },
     item_timeline: {
         marginLeft: 5,
-        color: '#6C7783',
+        color: COLOR.PLACEHODER,
         fontSize: 12
     },
     text_comment: {
-        color: '#6C7783',
+        color: COLOR.PLACEHODER,
         fontSize: 12,
         padding: 2
     },
     input: {
-        padding:10,
         borderWidth: 0.5,
         borderRadius: 20,
         flex: 6,
-        height: 35,
+        height: 40,
         fontSize: 12,
-        borderColor: '#C0C5C9',
-        marginBottom:10
+        borderColor: COLOR.LINE,
     }
 
 })
