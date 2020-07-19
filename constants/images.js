@@ -29,7 +29,9 @@ const IMAGE = {
     TAB_BG: require('../images/tab.png'),
     TAB_ACTIVE_BG: require('../images/tab_active.png'),
     NO_NOTI: require('../images/no_noti.png'),
-    BG_AVATAR: require('../images/bg_avatar.png')
+    BG_AVATAR: require('../images/bg_avatar.png'),
+    ANH_DEMO_6: require('../images/anh_demo6.png'),
+    ICON_SALE_BG: require('../images/sale_bg.png')
 
 }
 

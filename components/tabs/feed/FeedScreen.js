@@ -8,10 +8,10 @@ import { LIKE } from '../../../constants/images/like';
 import { LIKE_ACTIVE } from '../../../constants/images/like_active';
 import { COMMENT } from '../../../constants/images/comment';
 import { SHARE } from '../../../constants/images/share';
-
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import PhotoGrid from 'react-native-thumbnail-grid';
 let deviceWidth = Dimensions.get('window').width - 32;
-function Item({ image, title, rate, time, content, avatar, like, comment }) {
+function Item({ feedId,image, title, rate, time, content, avatar, like, comment,  navigation }) {
     const likeNumber = parseInt(like);
     const [count, setCount] = useState(likeNumber);
     const [isLike, setIsLike] = useState(false);
@@ -52,7 +52,8 @@ function Item({ image, title, rate, time, content, avatar, like, comment }) {
                     <Text style={styles.text_content}>
                         {content}
                     </Text>
-                    <Image style={{ width: deviceWidth, height: 400 }} source={image} />
+                    {/* <Image style={{ width: deviceWidth, height: 400 }} source={image} /> */}
+                    <PhotoGrid source={image} ratio={0.7} onPressImage={uri => {console.log(uri)}}  />
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                             <SvgUri svgXmlData={LIKE_ACTIVE} />
@@ -77,7 +78,7 @@ function Item({ image, title, rate, time, content, avatar, like, comment }) {
                                 </TouchableOpacity>
                             )}
 
-                        <TouchableOpacity style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => navigation.navigate('FeedDetailScreen', { id: feedId })} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                             <SvgUri svgXmlData={COMMENT} />
                             <Text style={{ marginLeft: 8 }}>{STRING.COMMENT_1}</Text>
                         </TouchableOpacity>
@@ -101,8 +102,15 @@ class FeedScreen extends Component {
             likePost: true,
             isLike: false,
             listPostLike: [
-                {
-                    image: IMAGE.ANH_DEMO_3,
+                {   feedId:1,
+                    image : [
+                        IMAGE.ANH_DEMO_1,
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
+                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                      
+                      ],
                     title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
                     rate: '4',
                     time: '12 giờ trước',
@@ -112,7 +120,45 @@ class FeedScreen extends Component {
                     comment: '4'
                 },
                 {
-                    image: IMAGE.ANH_DEMO_3,
+                    feedId:2,
+                    image: [IMAGE.ANH_DEMO_3],
+                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
+                    rate: '4',
+                    time: '12 giờ trước',
+                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
+                    avatar: IMAGE.ANH_DEMO_1,
+                    like: '3',
+                    comment: '4'
+                }
+            ],
+            listPostReview: [
+                {   feedId:1,
+                    image : [
+                        IMAGE.ANH_DEMO_1,
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
+                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                      
+                      ],
+                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
+                    rate: '4',
+                    time: '12 giờ trước',
+                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
+                    avatar: IMAGE.ANH_DEMO_1,
+                    like: '3',
+                    comment: '4'
+                },
+                {
+                    feedId:2,
+                    image : [
+                        IMAGE.ANH_DEMO_1,
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
+                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
+                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
+                      
+                      ],
                     title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
                     rate: '4',
                     time: '12 giờ trước',
@@ -122,6 +168,7 @@ class FeedScreen extends Component {
                     comment: '4'
                 }
             ]
+
 
         };
     }
@@ -173,10 +220,13 @@ class FeedScreen extends Component {
                     <View style={{ flex: 1 }} />
                 </View>
                 <ScrollView style={styles.content}>
-                    <FlatList
+                    {this.state.likePost?(
+                        <FlatList
                         data={this.state.listPostLike}
                         renderItem={({ item }) =>
                             <Item
+                                navigation={this.props.navigation}
+                                feedId={item.feedId}
                                 image={item.image}
                                 avatar={item.avatar}
                                 title={item.title}
@@ -188,6 +238,26 @@ class FeedScreen extends Component {
                             </Item>
                         }
                     />
+                    ):(
+                        <FlatList
+                        data={this.state.listPostReview}
+                        renderItem={({ item }) =>
+                            <Item
+                                navigation={this.props.navigation}
+                                feedId={item.feedId}
+                                image={item.image}
+                                avatar={item.avatar}
+                                title={item.title}
+                                rate={item.rate}
+                                time={item.time}
+                                content={item.content}
+                                like={item.like}
+                                comment={item.comment} >
+                            </Item>
+                        }
+                    />
+                    )}
+                    
 
                 </ScrollView>
 

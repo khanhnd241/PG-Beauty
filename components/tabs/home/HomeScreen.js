@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar } from "react-native";
-import { IMAGE } from '../../constants/images';
+import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import { STRING } from '../../constants/string';
+import { STRING } from '../../../constants/string';
 import { SliderBox } from "react-native-image-slider-box";
-import {RECTANGLE} from '../../constants/images/rectangle';
-import {SEARCH} from '../../constants/images/search';
-import {STAR} from '../../constants/images/star';
-import {SCAN} from '../../constants/images/scan';
-import {BASKET} from '../../constants/images/basket';
-import {PG_BEAUTY} from '../../constants/images/pg_beauty';
-import {PG_FASHION} from '../../constants/images/pg_fashion';
-import {PG_TOOL} from '../../constants/images/pg_tool';
-// import {SVG} from 'react-native-svg'
+import { RECTANGLE } from '../../../constants/images/rectangle';
+import { SEARCH } from '../../../constants/images/search';
+import { STAR } from '../../../constants/images/star';
+import { SCAN } from '../../../constants/images/scan';
+import { BASKET } from '../../../constants/images/basket';
+import { PG_BEAUTY } from '../../../constants/images/pg_beauty';
+import { PG_FASHION } from '../../../constants/images/pg_fashion';
+import { PG_TOOL } from '../../../constants/images/pg_tool';
+
 let deviceWidth = Dimensions.get('window').width - 10;
 function Item({ image, name, price, point, review, sell, sale }) {
     return (
@@ -158,16 +158,16 @@ class HomeScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={{flex:1}}>
-                 <StatusBar backgroundColor='#BE1E2D' />
+            <SafeAreaView style={{ flex: 1 }}>
+                <StatusBar backgroundColor='#BE1E2D' />
                 <ScrollView>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
-                            <View style={{justifyContent:'center', alignItems:'center'}}>
-                            <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor='#6C7783' style={{ flex: 5, fontSize: 15 }}></TextInput>
 
                             </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
@@ -181,6 +181,7 @@ class HomeScreen extends Component {
                     {/* banner và tool */}
                     <View>
                         <SliderBox
+                            autoplay={true}
                             images={this.state.images}
                         />
                         <View style={styles.tools}>
@@ -211,7 +212,7 @@ class HomeScreen extends Component {
                             horizontal={true}
                             data={this.state.listDeal}
                             renderItem={({ item }) =>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
                                     <Item image={item.image}
                                         name={item.name}
                                         price={item.price}
