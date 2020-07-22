@@ -80,7 +80,8 @@ target 'PG_Beauty' do
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
+  # add the Firebase pod for Google Analytics
+  pod 'Firebase/Analytics'
   target 'PG_BeautyTests' do
     inherit! :complete
     # Pods for testing
@@ -96,4 +97,6 @@ target 'PG_Beauty' do
   post_install do |installer|
     flipper_post_install(installer)
   end
+
+
 end
