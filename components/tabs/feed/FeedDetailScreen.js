@@ -4,9 +4,9 @@ import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
 import { LIKE } from '../../../constants/images/like';
-import { LIKE_ACTIVE } from '../../../constants/images/like_active';
 import { COMMENT } from '../../../constants/images/comment';
 import { SHARE } from '../../../constants/images/share';
+import { BACK_BLACK } from '../../../constants/images/back_black';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import PhotoGrid from 'react-native-thumbnail-grid';
 import { COLOR } from '../../../constants/colors';
@@ -106,16 +106,30 @@ class FeedDetailScreen extends Component {
         let comment = {};
         comment.name = this.state.user.name;
         comment.comment = this.state.comment,
-            comment.avatar = this.state.user.avatar;
+        comment.avatar = this.state.user.avatar;
         this.state.listComment.push(comment);
         this.setState({ refesh: true });
         this.reload();
+        this.setState({comment:''})
     }
 
     render() {
         const { image, title, rate, time, content, postComment, avatar, like, user } = this.state
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
+                <View style={styles.header}>
+                    <View style={{ flex: 1,  alignItems: 'center', justifyContent: 'center', }} >
+                    <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}>
+                                <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
+                            </TouchableOpacity>
+                    </View>
+                    <View style={styles.title}>
+                        <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        
+                    </View>
+                </View>
                 <ScrollView>
                     <View style={styles.item_container}>
                         <View style={{ flexDirection: 'row' }}>
@@ -145,7 +159,7 @@ class FeedDetailScreen extends Component {
                             <PhotoGrid width={deviceWidth - 20} source={this.state.image} ratio={0.5} onPressImage={uri => {console.log(uri)}}  />
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                    <SvgUri svgXmlData={LIKE_ACTIVE} />
+                                    <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
                                     <Text style={styles.text_comment}>{like}</Text>
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'center' }}>
@@ -156,14 +170,14 @@ class FeedDetailScreen extends Component {
                             <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
                             <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
                                 {this.state.isLike ? (
-                                    <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', marginLeft:3 }}>
-                                        <SvgUri svgXmlData={LIKE_ACTIVE} />
+                                    <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', marginLeft:5 }}>
+                                        <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
                                         <Text style={{ marginLeft: 7, color: COLOR.PRIMARY }}>{STRING.LIKE}</Text>
                                     </TouchableOpacity>
                                 ) : (
                                         <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', marginLeft:5 }}>
                                             <SvgUri svgXmlData={LIKE} />
-                                            <Text style={{ marginLeft: 8 }}>{STRING.LIKE}</Text>
+                                            <Text style={{ marginLeft: 7 }}>{STRING.LIKE}</Text>
                                         </TouchableOpacity>
                                     )}
 
@@ -190,7 +204,13 @@ class FeedDetailScreen extends Component {
                                 <View style={{ flex: 1, alignItems: 'center' }}>
                                     <Image source={user.avatar} style={styles.avatar_comment} />
                                 </View>
-                                <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholder={STRING.WRITE_COMMENT} autoFocus={true} />
+                                <TextInput 
+                                onChangeText={(value) => this.setState({ comment: value })} 
+                                style={styles.input} 
+                                placeholder={STRING.WRITE_COMMENT} 
+                                autoFocus={true}
+                                value={this.state.comment}
+                                 />
                                 <TouchableOpacity onPress={this.sendComment} style={{ flex: 1, alignItems: 'center' }}>
                                     <Text>{STRING.SEND}</Text>
                                 </TouchableOpacity>
@@ -256,7 +276,8 @@ const styles = StyleSheet.create({
     },
     item_container: {
         backgroundColor: COLOR.WHITE,
-        marginHorizontal:10
+        marginHorizontal:10,
+        marginTop:10
 
     },
     item_comment_container: {
@@ -281,7 +302,8 @@ const styles = StyleSheet.create({
     text_comment: {
         color: COLOR.PLACEHODER,
         fontSize: 12,
-        padding: 2
+        padding: 2,
+        marginLeft:3
     },
     input: {
         borderWidth: 0.5,
@@ -290,6 +312,7 @@ const styles = StyleSheet.create({
         height: 40,
         fontSize: 12,
         borderColor: COLOR.LINE,
+        padding:10
     }
 
 })

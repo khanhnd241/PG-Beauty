@@ -1,14 +1,19 @@
 import React, { Component } from "react";
-import { View, Button, SafeAreaView, StyleSheet, StatusBar } from "react-native";
+import { View, Button, SafeAreaView, StyleSheet, StatusBar, AsyncStorage } from "react-native";
 import { IMAGE } from '../constants/images';
 import {LOGO} from '../constants/images/logo'
 import SvgUri from 'react-native-svg-uri';
+import {COLOR} from '../constants/colors'
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {  };
     }
     componentDidMount = () =>{
+        AsyncStorage.getItem('userId', (err, result) => {
+            console.log('user: ' + result);
+
+        })
         setTimeout(() => {this.props.navigation.replace('App')}, 2000);
     }
     render() {
@@ -24,7 +29,7 @@ class SplashScreen extends Component {
 const styles = StyleSheet.create({
     container:{
         flex:1, 
-        backgroundColor:'#BE1E2D', 
+        backgroundColor:COLOR.PRIMARY, 
         alignItems:'center', 
         justifyContent:'center'
     }

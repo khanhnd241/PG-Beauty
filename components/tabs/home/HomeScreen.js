@@ -154,7 +154,8 @@ class HomeScreen extends Component {
                     sell: '74',
                     sale: '-40%'
                 }
-            ]
+            ],
+            basketNumber: 3
         };
     }
     render() {
@@ -175,8 +176,11 @@ class HomeScreen extends Component {
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => {this.props.navigation.navigate('CartDetailScreen')}} style={styles.basket}>
                             <SvgUri svgXmlData={BASKET} />
+                            <View style={styles.basket_number}>
+                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
                     {/* banner và tool */}
@@ -199,7 +203,7 @@ class HomeScreen extends Component {
                                 <Text>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ backgroundColor:COLOR.GRAY, height: 5 }} />
+                        <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
                     </View>
                     {/* Deal đang diễn ra */}
                     <View style={styles.background}>
@@ -344,7 +348,23 @@ const styles = StyleSheet.create({
     tool_text: {
         color: COLOR.TEXTBODY,
         fontSize: 14
-    }
+    },
+    basket: {
+        position: 'absolute',
+        top: 18,
+        right: 20
+    },
+    basket_number: {
+        position: 'absolute',
+        top: 8,
+        right: -8,
+        height: 14,
+        width: 14,
+        borderRadius: 7,
+        backgroundColor: COLOR.WHITE,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 
 
 })

@@ -76,7 +76,36 @@ const STRING = {
     MADE_IN: 'Xuất xứ',
     SPECIES: 'Loại',
     SAME_PRODUCT: 'Sản phẩm cùng loại',
-    SAME_TRADE_MARK: 'Sản phẩm cùng thương hiệu'
+    SAME_TRADE_MARK: 'Sản phẩm cùng thương hiệu',
+    CART: 'Giỏ hàng',
+    CANCEL: 'Huỷ',
+    LOGIN_INFO: 'Để trải nghiệm những ưu đãi độc quyền của bạn tại PG Beauty',
+    ENTER_DISCOUNT_CODE: 'Nhập mã giảm giá (nếu có)',
+    LOGOUT: 'Đăng xuất',
+    APPLY: 'áp dụng',
+    DISCOUNT_LEVEL: 'Mức giảm',
+    MONEY: 'Tiền hàng',
+    DISCOUNT: 'Giảm giá',
+    TOTAL: 'Tổng thanh toán',
+    CONTINUE: 'tiếp tục',
+    ORDER_INFO: 'Thông tin đặt hàng',
+    NUMBER_1: '1',
+    NUMBER_2: '2',
+    NUMBER_3: '3',
+    PAY: 'Thanh toán',
+    DONE: 'Hoàn thành',
+    PHONE: 'Số điện thoại *',
+    CITY: 'Tỉnh/ thành phố *',
+    DISTRICT: 'Quận/Huyện *',
+    WARD: 'Phường/Xã *',
+    ADDRESS: 'Địa chỉ *',
+    NOTE_ORDER: 'Viết lưu ý cho người bán / giao hàng',
+    SHIPPING_ADDRESS: 'Địa chỉ nhận hàng',
+    NOTE: 'Ghi chú: ',
+    TRANSPORTATION: 'Hình thức vận chuyển',
+    PAYMENT_METHOD: 'Phương thức thanh toán',
+    ORDER: 'đặt hàng'
+    
 }
 
 export  {STRING}

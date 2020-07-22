@@ -24,8 +24,8 @@ function Item({ image, name, price, point, review, sell, sale }) {
                         <Text style={{ color: COLOR.WHITE, position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
                     </View>
                 </ImageBackground>
-                <View style={{ marginLeft: 16 }} >
-                    <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
+                <View >
+                    <Text numberOfLines={3} style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
                     <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                         <SvgUri svgXmlData={STAR} />
@@ -149,7 +149,7 @@ class ProductDetailScreen extends Component {
                         </View>
                         <View style={styles.title}>
                             <Text style={styles.price_text}>{this.state.newPrice}</Text>
-                            <Text style={{ color: '#C0C5C9', fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.state.oldPrice}</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.state.oldPrice}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 4, flexDirection: 'row' }}>
@@ -379,7 +379,8 @@ const styles = StyleSheet.create({
     },
     container_items: {
         height: 255,
-        width: 180
+        width: 180, 
+        marginRight:5
     },
     made_in_title: {
         color: COLOR.DESCRIPTION,

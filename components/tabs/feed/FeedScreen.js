@@ -54,7 +54,7 @@ function Item({ feedId, image, title, rate, time, content, avatar, like, comment
                         {content}
                     </Text>
                     {/* <Image style={{ width: deviceWidth, height: 400 }} source={image} /> */}
-                        <PhotoGrid width={deviceWidth -20 } source={image} ratio={0.7} onPressImage={uri => { console.log(uri) }} />
+                    <PhotoGrid width={deviceWidth - 20} source={image} ratio={0.7} onPressImage={uri => { console.log(uri) }} />
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                             <SvgUri svgXmlData={LIKE_ACTIVE} />
@@ -69,7 +69,7 @@ function Item({ feedId, image, title, rate, time, content, avatar, like, comment
                     <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
                         {isLike ? (
                             <TouchableOpacity onPress={likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
-                                <SvgUri svgXmlData={LIKE_ACTIVE} />
+                                <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
                                 <Text style={{ marginLeft: 8, color: COLOR.PRIMARY }}>{STRING.LIKE}</Text>
                             </TouchableOpacity>
                         ) : (
@@ -170,8 +170,8 @@ class FeedScreen extends Component {
                     like: '3',
                     comment: '4'
                 }
-            ]
-
+            ],
+            basketNumber: '4'
 
         };
     }
@@ -192,7 +192,12 @@ class FeedScreen extends Component {
                         <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
                     </View>
                     <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                        <SvgUri svgXmlData={BASKET} />
+                        <TouchableOpacity onPress={() => {this.props.navigation.navigate('CartDetailScreen')}} style={styles.basket}>
+                            <SvgUri svgXmlData={BASKET} />
+                            <View style={styles.basket_number}>
+                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', marginTop: 8, paddingBottom: 8 }}>
@@ -339,7 +344,23 @@ const styles = StyleSheet.create({
         color: COLOR.PLACEHODER,
         fontSize: 12,
         padding: 2
-    }
+    },
+    basket: {
+        position: 'absolute',
+        top: 10,
+        right: 20
+    },
+    basket_number: {
+        position: 'absolute',
+        top: 8,
+        right: -8,
+        height: 14,
+        width: 14,
+        borderRadius: 7,
+        backgroundColor: COLOR.WHITE,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 
 })
 export default FeedScreen;
