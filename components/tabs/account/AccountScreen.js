@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, Dimensions, StyleSheet, StatusBar, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, Dimensions, StyleSheet, StatusBar, ImageBackground, TouchableOpacity, AsyncStorage, ActivityIndicator } from 'react-native';
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -14,8 +14,15 @@ import { INFO } from '../../../constants/images/info';
 import { NEXT } from '../../../constants/images/next';
 import { LOGOUT } from '../../../constants/images/logout';
 import { COLOR } from '../../../constants/colors';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 let deviceWidth = Dimensions.get('window').width - 30;
-let deviceHeight = Dimensions.get('window').height - 160
+let deviceHeight = Dimensions.get('window').height - 160;
 class AccountScreen extends Component {
     constructor(props) {
         super(props);
@@ -29,15 +36,41 @@ class AccountScreen extends Component {
                 product: '20',
                 poin: '5',
             },
-            userId: '1'
+            token: '1',
+            isLogin: false,
+            loadingDialog: false
         };
     }
     componentDidMount = () => {
+        this.loadData();
+    }
+    loadData = () => {
+        AsyncStorage.getItem('token', (err, result) => {
+            console.log('token user: ', result);
+            if (result == null || result == '') {
+                this.setState({ isLogin: false });
+            } else {
+                this.setState({ isLogin: true, token: result });
+            }
+            this.setState({ id: result })
+
+        })
         if (this.state.user.sex == '1') {
             this.setState({ man: true })
         } else {
             this.setState({ man: false })
         }
+    }
+    logout = () => {
+        this.setState({ loadingDialog: true })
+        AsyncStorage.removeItem('token', (err) => {
+            if (err) {
+
+            } else {
+                this.loadData();
+                this.setState({loadingDialog:false})
+            }
+        })
     }
     render() {
         const { user } = this.state
@@ -46,137 +79,152 @@ class AccountScreen extends Component {
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={{ flex: 2, backgroundColor: COLOR.PRIMARY }} />
                 <View style={{ flex: 8, backgroundColor: COLOR.WHITE }} />
-                {this.state.userId == '' ? (
-                    <View style={styles.container}>
-                        <View style={{ alignItems: 'center', marginTop: 32 }} >
-                            <Text style={{ color: COLOR.PRIMARY, textTransform: 'uppercase', fontSize: 16 }}>{STRING.LOGIN}</Text>
-                            <Text style={{ marginHorizontal: 35, marginTop: 10, color: COLOR.DESCRIPTION, fontSize: 16, lineHeight: 25, textAlign: 'center' }}>
-                                {STRING.LOGIN_INFO}
-                            </Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:25 }}>
-                                <View style={{ flex: 1, alignItems:'center' }}>
-                                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('RegisterScreen') }} style={styles.btn_register}>
-                                        <Text style={styles.text_login}>{STRING.REGISTER}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{ flex: 1, alignItems:'center' }}>
-                                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginScreen') }} style={styles.btn_login}>
-                                        <Text style={styles.text_login}>{STRING.LOGIN}</Text>
-                                    </TouchableOpacity>
-                                </View>
 
+                {this.state.isLogin ? (
+                    <View style={styles.container}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
+                                <SvgUri svgXmlData={SCAN} />
+                            </TouchableOpacity>
+                            <View style={{ flex: 8, alignItems: 'center' }}>
+                                <ImageBackground style={styles.bg_avatar} source={IMAGE.BG_AVATAR}>
+                                    {this.state.man ? (
+                                        <SvgUri svgXmlData={MAN} />
+                                    ) : (
+                                            <SvgUri svgXmlData={WOMEN} />
+                                        )}
+
+                                </ImageBackground>
                             </View>
-                            
+                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
+                                <SvgUri svgXmlData={EDIT} />
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ height:5, backgroundColor: COLOR.GRAY, marginTop:30 }} />
-                            {/* Cài đặt */}
-                            <TouchableOpacity style={styles.item}>
-                                <View style={styles.item_icon}>
-                                    <SvgUri svgXmlData={SETTING} />
+                        <View style={{ alignItems: 'center', marginTop: 10 }}>
+                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, padding: 5 }}>{user.name}</Text>
+                            <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, padding: 5 }}>{user.phone}</Text>
+                        </View>
+                        <View style={{ borderTopWidth: 0.5, marginTop: 5 }} />
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <View style={styles.circle}>
+                                    <Text style={styles.text_point}>{user.product}</Text>
                                 </View>
-                                <View style={styles.item_title}>
-                                    <Text style={styles.item_title_text}>{STRING.SETTING}</Text>
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <View style={styles.circle}>
+                                    <Text style={styles.text_point}>{user.poin}{STRING.D}</Text>
                                 </View>
-                                <View style={styles.item_description}>
-                                </View>
-                                <View style={styles.next}>
-                                    <SvgUri svgXmlData={NEXT} />
-                                </View>
-                            </TouchableOpacity>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            {/* Thông tin */}
-                            <TouchableOpacity style={styles.item} onPress={() => { this.props.navigation.navigate('InfoScreen') }}>
-                                <View style={styles.item_icon}>
-                                    <SvgUri svgXmlData={INFO} />
-                                </View>
-                                <View style={styles.item_title}>
-                                    <Text style={styles.item_title_text}>{STRING.INFO}</Text>
-                                </View>
-                                <View style={styles.item_description}>
-                                </View>
-                                <View style={styles.next}>
-                                    <SvgUri svgXmlData={NEXT} />
-                                </View>
-                            </TouchableOpacity>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <Text style={styles.text_description}>{STRING.PRODUCTS_PURCHASED}</Text>
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <Text style={styles.text_description}>{STRING.REWARD_POINT}</Text>
+                            </View>
+                        </View>
+                        <View style={{ height: 10, backgroundColor: COLOR.GRAY }} />
+                        {/* lich su mua hang */}
+                        <TouchableOpacity style={styles.item}>
+                            <View style={styles.item_icon}>
+                                <SvgUri svgXmlData={CART} />
+                            </View>
+                            <View style={styles.item_title}>
+                                <Text style={styles.item_title_text}>{STRING.PURCHASED_HISTORY}</Text>
+                            </View>
+                            <View style={styles.item_description}>
+                                <Text style={styles.item_description_text}>chưa có</Text>
+                            </View>
+                            <View style={styles.next}>
+                                <SvgUri svgXmlData={NEXT} />
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        {/* Đánh giá của tôi */}
+                        <TouchableOpacity style={styles.item}>
+                            <View style={styles.item_icon}>
+                                <SvgUri svgXmlData={ICON_STAR} />
+                            </View>
+                            <View style={styles.item_title}>
+                                <Text style={styles.item_title_text}>{STRING.MY_RATE}</Text>
+                            </View>
+                            <View style={styles.item_description}>
+                            </View>
+                            <View style={styles.next}>
+                                <SvgUri svgXmlData={NEXT} />
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        {/* Cài đặt */}
+                        <TouchableOpacity style={styles.item}>
+                            <View style={styles.item_icon}>
+                                <SvgUri svgXmlData={SETTING} />
+                            </View>
+                            <View style={styles.item_title}>
+                                <Text style={styles.item_title_text}>{STRING.SETTING}</Text>
+                            </View>
+                            <View style={styles.item_description}>
+                            </View>
+                            <View style={styles.next}>
+                                <SvgUri svgXmlData={NEXT} />
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        {/* Thông tin */}
+                        <TouchableOpacity style={styles.item} onPress={() => { this.props.navigation.navigate('InfoScreen') }}>
+                            <View style={styles.item_icon}>
+                                <SvgUri svgXmlData={INFO} />
+                            </View>
+                            <View style={styles.item_title}>
+                                <Text style={styles.item_title_text}>{STRING.INFO}</Text>
+                            </View>
+                            <View style={styles.item_description}>
+                            </View>
+                            <View style={styles.next}>
+                                <SvgUri svgXmlData={NEXT} />
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        {/* dang xuat */}
+                        <TouchableOpacity style={styles.item} onPress={() => { this.logout() }}>
+                            <View style={styles.item_icon}>
+                                <SvgUri svgXmlData={LOGOUT} />
+                            </View>
+                            <View style={styles.item_title}>
+                                <Text style={styles.item_title_text}>{STRING.LOGOUT}</Text>
+                            </View>
+                            <View style={styles.item_description}>
+                            </View>
+                            <View style={styles.next}>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 ) : (
-                        <View style={styles.container}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
-                                    <SvgUri svgXmlData={SCAN} />
-                                </TouchableOpacity>
-                                <View style={{ flex: 8, alignItems: 'center' }}>
-                                    <ImageBackground style={styles.bg_avatar} source={IMAGE.BG_AVATAR}>
-                                        {this.state.man ? (
-                                            <SvgUri svgXmlData={MAN} />
-                                        ) : (
-                                                <SvgUri svgXmlData={WOMEN} />
-                                            )}
 
-                                    </ImageBackground>
-                                </View>
-                                <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
-                                    <SvgUri svgXmlData={EDIT} />
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ alignItems: 'center', marginTop: 10 }}>
-                                <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, padding: 5 }}>{user.name}</Text>
-                                <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, padding: 5 }}>{user.phone}</Text>
-                            </View>
-                            <View style={{ borderTopWidth: 0.5, marginTop: 5 }} />
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ flex: 1, alignItems: 'center' }}>
-                                    <View style={styles.circle}>
-                                        <Text style={styles.text_point}>{user.product}</Text>
+                        <View style={styles.container}>
+                            <View style={{ alignItems: 'center', marginTop: 32 }} >
+                                <Text style={{ color: COLOR.PRIMARY, textTransform: 'uppercase', fontSize: 16 }}>{STRING.LOGIN}</Text>
+                                <Text style={{ marginHorizontal: 35, marginTop: 10, color: COLOR.DESCRIPTION, fontSize: 16, lineHeight: 25, textAlign: 'center' }}>
+                                    {STRING.LOGIN_INFO}
+                                </Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 25 }}>
+                                    <View style={{ flex: 1, alignItems: 'center' }}>
+                                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('RegisterScreen') }} style={styles.btn_register}>
+                                            <Text style={styles.text_login}>{STRING.REGISTER}</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </View>
-                                <View style={{ flex: 1, alignItems: 'center' }}>
-                                    <View style={styles.circle}>
-                                        <Text style={styles.text_point}>{user.poin}{STRING.D}</Text>
+                                    <View style={{ flex: 1, alignItems: 'center' }}>
+                                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginScreen') }} style={styles.btn_login}>
+                                            <Text style={styles.text_login}>{STRING.LOGIN}</Text>
+                                        </TouchableOpacity>
                                     </View>
+
                                 </View>
+
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ flex: 1, alignItems: 'center' }}>
-                                    <Text style={styles.text_description}>{STRING.PRODUCTS_PURCHASED}</Text>
-                                </View>
-                                <View style={{ flex: 1, alignItems: 'center' }}>
-                                    <Text style={styles.text_description}>{STRING.REWARD_POINT}</Text>
-                                </View>
-                            </View>
-                            <View style={{ height: 10, backgroundColor: COLOR.GRAY }} />
-                            {/* lich su mua hang */}
-                            <TouchableOpacity style={styles.item}>
-                                <View style={styles.item_icon}>
-                                    <SvgUri svgXmlData={CART} />
-                                </View>
-                                <View style={styles.item_title}>
-                                    <Text style={styles.item_title_text}>{STRING.PURCHASED_HISTORY}</Text>
-                                </View>
-                                <View style={styles.item_description}>
-                                    <Text style={styles.item_description_text}>chưa có</Text>
-                                </View>
-                                <View style={styles.next}>
-                                    <SvgUri svgXmlData={NEXT} />
-                                </View>
-                            </TouchableOpacity>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            {/* Đánh giá của tôi */}
-                            <TouchableOpacity style={styles.item}>
-                                <View style={styles.item_icon}>
-                                    <SvgUri svgXmlData={ICON_STAR} />
-                                </View>
-                                <View style={styles.item_title}>
-                                    <Text style={styles.item_title_text}>{STRING.MY_RATE}</Text>
-                                </View>
-                                <View style={styles.item_description}>
-                                </View>
-                                <View style={styles.next}>
-                                    <SvgUri svgXmlData={NEXT} />
-                                </View>
-                            </TouchableOpacity>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                            <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginTop: 30 }} />
                             {/* Cài đặt */}
                             <TouchableOpacity style={styles.item}>
                                 <View style={styles.item_icon}>
@@ -207,22 +255,21 @@ class AccountScreen extends Component {
                                 </View>
                             </TouchableOpacity>
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            {/* dang xuat */}
-                            <TouchableOpacity style={styles.item} onPress={() => { this.props.navigation.navigate('SplashScreen') }}>
-                                <View style={styles.item_icon}>
-                                    <SvgUri svgXmlData={LOGOUT} />
-                                </View>
-                                <View style={styles.item_title}>
-                                    <Text style={styles.item_title_text}>{STRING.LOGOUT}</Text>
-                                </View>
-                                <View style={styles.item_description}>
-                                </View>
-                                <View style={styles.next}>
-                                </View>
-                            </TouchableOpacity>
                         </View>
                     )}
-
+                <Dialog
+                    dialogStyle={{backgroundColor:'transparent'}}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+                            <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }
@@ -301,26 +348,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    btn_login:{
-        alignItems: 'center', 
-        height: 40, 
-        width: 150, 
-        backgroundColor: COLOR.PRIMARY, 
-        justifyContent: 'center', 
-        borderRadius:4 
+    btn_login: {
+        alignItems: 'center',
+        height: 40,
+        width: 150,
+        backgroundColor: COLOR.PRIMARY,
+        justifyContent: 'center',
+        borderRadius: 4
     },
-    btn_register: { 
-        alignItems: 'center', 
-        height: 40, 
-        width: 150, 
-        backgroundColor: COLOR.DESCRIPTION, 
-        justifyContent: 'center', 
-        borderRadius:4 
+    btn_register: {
+        alignItems: 'center',
+        height: 40,
+        width: 150,
+        backgroundColor: COLOR.DESCRIPTION,
+        justifyContent: 'center',
+        borderRadius: 4
     },
-    text_login:{ 
-        textTransform: 'uppercase', 
-        color:COLOR.WHITE, 
-        fontSize:16 
+    text_login: {
+        textTransform: 'uppercase',
+        color: COLOR.WHITE,
+        fontSize: 16
     }
 })
 export default AccountScreen;

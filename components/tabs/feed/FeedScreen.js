@@ -42,7 +42,7 @@ function Item({ feedId, image, title, rate, time, content, avatar, like, comment
                                 imageSize={15}
                                 tintColor={COLOR.WHITE}
                                 ratingColor={COLOR.PRIMARY}
-                                style={{ backgroundColor: COLOR.WHITE, marginLeft: 1 }}
+                                style={{ backgroundColor: COLOR.WHITE }}
                             />
                             <Text style={styles.item_timeline}>{time}</Text>
                         </View>
