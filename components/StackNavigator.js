@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from './SplashScreen';
 import App from '../App';
+import HomeScreen from '../components/tabs/home/HomeScreen'
 import LoginScreen from './login/LoginScreen';
 import ForgotPassScreen from './login/ForgotPassScreen';
 import RegisterScreen from './login/RegisterScreen'
@@ -29,6 +30,7 @@ class StackNavigator extends Component {
                     <Stack.Screen name="SplashScreen" component={SplashScreen} options={navOptionHandler} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} options={navOptionHandler} />
                     <Stack.Screen name="App" component={App} options={navOptionHandler} />
+                    <Stack.Screen name="HomeScreen" component={HomeScreen} options={navOptionHandler} />
                     <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen} options={navOptionHandler} />
                     <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={navOptionHandler} />
                     <Stack.Screen name="InfoScreen" component={InfoScreen} options={navOptionHandler} />

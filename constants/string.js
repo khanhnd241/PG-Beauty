@@ -104,8 +104,15 @@ const STRING = {
     NOTE: 'Ghi chú: ',
     TRANSPORTATION: 'Hình thức vận chuyển',
     PAYMENT_METHOD: 'Phương thức thanh toán',
-    ORDER: 'đặt hàng'
-    
+    ORDER: 'đặt hàng',
+    NOTIFI: 'Thông báo',
+    ACCEPT: 'Đồng ý',
+    SIGN_UP_SUCCESS: 'Đăng kí thành công!',
+    ERROR: 'Lỗi',
+    REQUIRED_FIELD: 'Các trường có dấu (*) không được bỏ trống!',
+    ERR_CONFIRM_PASS: 'Xác nhận mật khẩu không chính xác, kiểm tra lại!',
+    LESS_THAN_8: 'Mật khẩu không được nhỏ hơn 8 kí tự, kiểm tra lại!',
+    ERR_NULL_PHONE_PASS: 'Số điện thoại và mật khẩu không được bỏ trống!'
 }
 
 export  {STRING}

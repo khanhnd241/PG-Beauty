@@ -161,7 +161,7 @@ class HomeScreen extends Component {
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <StatusBar backgroundColor={COLOR.PRIMARY} />
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <ScrollView>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
@@ -242,7 +242,7 @@ class HomeScreen extends Component {
                             horizontal={true}
                             data={this.state.listSellingProduct}
                             renderItem={({ item }) =>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
                                     <Item image={item.image}
                                         name={item.name}
                                         price={item.price}
@@ -265,7 +265,7 @@ class HomeScreen extends Component {
                             numColumns={2}
                             data={this.state.listDeal}
                             renderItem={({ item }) =>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
                                     <ItemNewProduct image={item.image}
                                         name={item.name}
                                         price={item.price}
@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
     },
     title_list: {
         color: COLOR.TEXTBODY,
+        fontWeight:'600',
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,

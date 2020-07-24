@@ -17,7 +17,8 @@ import {CATEGORY_ACTIVE} from './constants/images/category_active';
 import {NOTIFICATION} from './constants/images/notification';
 import {NOTIFICATION_ACTIVE} from './constants/images/notification_active';
 import {ACCOUNT} from './constants/images/account';
-import {ACCOUNT_ACTIVE} from './constants/images/account_active'
+import {ACCOUNT_ACTIVE} from './constants/images/account_active';
+import {COLOR} from './constants/colors'
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -44,8 +45,8 @@ function TabNavigator(props) {
         },
       })}
       tabBarOptions={{
-        activeTintColor: '#BE1E2D',
-        inactiveTintColor: 'black',
+        activeTintColor: COLOR.PRIMARY,
+        inactiveTintColor: COLOR.PLACEHODER,
       }}
     >
       <Tab.Screen name="Trang chủ" component={HomeScreen} />

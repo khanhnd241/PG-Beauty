@@ -19,6 +19,7 @@ class SplashScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
+                <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <SvgUri
                 svgXmlData={LOGO}
                  />
