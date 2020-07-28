@@ -34,7 +34,7 @@ function ItemPromotion({ title, content, timeLine, index }) {
                 <Text style={styles.item_content}>{content}</Text>
                 <Text style={styles.item_timeline}>{timeLine}</Text>
             </View>
-            <View style={{ borderTopWidth: 0.5, borderColor:COLOR.LINE, marginBottom:5 }} />
+            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE, marginBottom: 5 }} />
         </View>
     )
 }
@@ -50,7 +50,7 @@ function ItemForYou({ title, content, timeLine }) {
                 <Text style={styles.item_content}>{content}</Text>
                 <Text style={styles.item_timeline}>{timeLine}</Text>
             </View>
-            <View style={{ borderTopWidth: 0.5, borderColor:COLOR.LINE, marginBottom:5 }} />
+            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE, marginBottom: 5 }} />
         </View>
     )
 }
@@ -133,54 +133,33 @@ class NotificationScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
+            <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
-                <View style={styles.header}>
-                    <Text style={styles.title_text}>{STRING.NOTIFICATION}</Text>
-                </View>
-                <View style={styles.option}>
-                    <TouchableOpacity onPress={this.openPromotion} style={[styles.tab, { backgroundColor: this.state.promotionBG }]}>
-                        <Text style={{ fontSize: 14, color: this.state.promotionText }}>{STRING.PROMOTION}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.openForYou} style={[styles.tab, { backgroundColor: this.state.forYouBG }]}>
-                        <Text style={{ fontSize: 14, color: this.state.forYouText }}>{STRING.FOR_YOU}</Text>
-                    </TouchableOpacity>
-                </View>
-                <View>
-                    {this.state.promotion ? (
-                        <View>
-                            {this.state.noNotiPromotion ? (
-                                <View style={styles.no_noti}>
-                                    <Image source={IMAGE.NO_NOTI} />
-                                    <Text style={styles.text_no_noti}>{STRING.NO_NOTI}</Text>
-                                </View>
-                            ) : (
-                                    <FlatList
-                                        data={this.state.listPromotion}
-                                        renderItem={({ item, index }) =>
-                                            <ItemPromotion
-                                                title={item.title}
-                                                timeLine={item.timeLine}
-                                                content={item.content}
-                                                index={index}
-                                            />
-                                        }
-                                    />
-                                )}
-                        </View>
-
-                    ) : (
+                <View style={styles.background}>
+                    <View style={styles.header}>
+                        <Text style={styles.title_text}>{STRING.NOTIFICATION}</Text>
+                    </View>
+                    <View style={styles.option}>
+                        <TouchableOpacity onPress={this.openPromotion} style={[styles.tab, { backgroundColor: this.state.promotionBG }]}>
+                            <Text style={{ fontSize: 14, color: this.state.promotionText }}>{STRING.PROMOTION}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={this.openForYou} style={[styles.tab, { backgroundColor: this.state.forYouBG }]}>
+                            <Text style={{ fontSize: 14, color: this.state.forYouText }}>{STRING.FOR_YOU}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        {this.state.promotion ? (
                             <View>
-                                {this.state.noNotiForYou ? (
+                                {this.state.noNotiPromotion ? (
                                     <View style={styles.no_noti}>
                                         <Image source={IMAGE.NO_NOTI} />
                                         <Text style={styles.text_no_noti}>{STRING.NO_NOTI}</Text>
                                     </View>
                                 ) : (
                                         <FlatList
-                                            data={this.state.listForYou}
+                                            data={this.state.listPromotion}
                                             renderItem={({ item, index }) =>
-                                                <ItemForYou
+                                                <ItemPromotion
                                                     title={item.title}
                                                     timeLine={item.timeLine}
                                                     content={item.content}
@@ -191,14 +170,43 @@ class NotificationScreen extends Component {
                                     )}
                             </View>
 
-                        )}
-
+                        ) : (
+                                <View>
+                                    {this.state.noNotiForYou ? (
+                                        <View style={styles.no_noti}>
+                                            <Image source={IMAGE.NO_NOTI} />
+                                            <Text style={styles.text_no_noti}>{STRING.NO_NOTI}</Text>
+                                        </View>
+                                    ) : (
+                                            <FlatList
+                                                data={this.state.listForYou}
+                                                renderItem={({ item, index }) =>
+                                                    <ItemForYou
+                                                        title={item.title}
+                                                        timeLine={item.timeLine}
+                                                        content={item.content}
+                                                        index={index}
+                                                    />
+                                                }
+                                            />
+                                        )}
+                                </View>
+                            )}
+                    </View>
                 </View>
             </SafeAreaView>
         );
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex:1
+    },
     header: {
         backgroundColor: COLOR.PRIMARY,
         height: 46,
@@ -233,9 +241,9 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     text_no_noti: {
-       marginTop:24,
-       fontSize:13,
-       color:COLOR.DESCRIPTION
+        marginTop: 24,
+        fontSize: 13,
+        color: COLOR.DESCRIPTION
     },
     item_container: {
         backgroundColor: COLOR.WHITE,
@@ -259,9 +267,9 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginVertical: 5
     },
-    no_noti:{ 
-        marginTop: 60, 
-        alignItems: 'center' 
+    no_noti: {
+        marginTop: 60,
+        alignItems: 'center'
     }
 
 })

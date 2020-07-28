@@ -206,9 +206,9 @@ class HomeScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView  style={styles.background}>
+            <SafeAreaView  style={styles.screen}>
                 <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
-                <ScrollView>
+                <ScrollView style={styles.background}>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
@@ -335,6 +335,10 @@ class HomeScreen extends Component {
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex:1, 
+        backgroundColor:COLOR.PRIMARY
+    },
     background: {
         backgroundColor: COLOR.WHITE,
         flex:1

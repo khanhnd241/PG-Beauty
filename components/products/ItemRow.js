@@ -14,12 +14,18 @@ class ItemRow extends Component {
         super(props);
         this.state = {};
     }
+    
+    format(n) {
+        // return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1.');
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
     render() {
         const { image, name, price, point, review, sell, sale } = this.props
+        const imageUri = image!=null ? image : ""
         return (
             <View style={styles.container_items}>
                 <View style={{ flex: 1 }}>
-                    <ImageBackground source={{ uri: image }} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
+                    <ImageBackground ssource={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
                             <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
@@ -27,7 +33,7 @@ class ItemRow extends Component {
                     </ImageBackground>
                     <View style={{ marginLeft: 16 }} >
                         <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{parseInt(price)}</Text>
+                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <SvgUri svgXmlData={STAR} />
                             <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>

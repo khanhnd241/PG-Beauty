@@ -14,7 +14,7 @@ class PaymentMethodsScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={styles.background}>
+            <SafeAreaView style={styles.screen}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
@@ -25,63 +25,70 @@ class PaymentMethodsScreen extends Component {
                     <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     </TouchableOpacity>
                 </View>
-                <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginBottom: 15 }} />
-                <View style={styles.form}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ flex: 1 }}>
-                            <RadioButton
-                                value="0"
-                                status={this.state.checked === '0' ? 'checked' : 'unchecked'}
-                                onPress={() => {
-                                    console.log('chon 1');
-                                    this.setState({ checked: '0' })
-                                }}
-                                color={COLOR.PRIMARY}
-                            />
-                        </View>
-                        <View style={{ flex: 7 }}>
-                            <Text style={styles.text_content}>Thanh toán tiền khi nhận hàng (COD)</Text>
-                        </View>
+                <View style={styles.background}>
+                    <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginBottom: 15 }} />
+                    <View style={styles.form}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flex: 1 }}>
+                                <RadioButton
+                                    value="0"
+                                    status={this.state.checked === '0' ? 'checked' : 'unchecked'}
+                                    onPress={() => {
+                                        console.log('chon 1');
+                                        this.setState({ checked: '0' })
+                                    }}
+                                    color={COLOR.PRIMARY}
+                                />
+                            </View>
+                            <View style={{ flex: 7 }}>
+                                <Text style={styles.text_content}>Thanh toán tiền khi nhận hàng (COD)</Text>
+                            </View>
 
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ flex: 1 }}>
-                            <RadioButton
-                                value="1"
-                                status={this.state.checked === '1' ? 'checked' : 'unchecked'}
-                                onPress={() => {
-                                    console.log('chon 2');
-                                    this.setState({ checked: '1' })
-                                }}
-                                color={COLOR.PRIMARY}
-                            />
                         </View>
-                        <View style={{ flex: 7 }}>
-                            <Text style={styles.text_content}>Thanh toán qua chuyển khoản ngân hàng</Text>
-                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flex: 1 }}>
+                                <RadioButton
+                                    value="1"
+                                    status={this.state.checked === '1' ? 'checked' : 'unchecked'}
+                                    onPress={() => {
+                                        console.log('chon 2');
+                                        this.setState({ checked: '1' })
+                                    }}
+                                    color={COLOR.PRIMARY}
+                                />
+                            </View>
+                            <View style={{ flex: 7 }}>
+                                <Text style={styles.text_content}>Thanh toán qua chuyển khoản ngân hàng</Text>
+                            </View>
 
-                    </View>
-                    {/* Thong tin chuyen khoan */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:15 }}>
-                        <View style={{ flex: 1 }}>
                         </View>
-                        <View style={{ flex: 7 }}>
-                            <Text style={styles.text_content}>Chuyển tiền tại quầy chi nhánh ngân hàng vào tài khoản theo thông tin dưới đây:</Text>
-                            <Text style={styles.text_content}>Họ và tên người hưởng: <Text style={styles.text_content, {fontWeight:'bold'}}>{STRING.PG_BEAUTY}</Text></Text>
-                            <Text style={styles.text_content}>Số tài khoản: <Text style={styles.text_content, {fontWeight:'bold'}}>0681000011361</Text></Text>
-                            <Text style={styles.text_content}>Tại: <Text style={styles.text_content, {fontWeight:'bold'}}>Vietcombank - Hội Sở</Text></Text>
-                            <Text style={styles.text_content}>Nội dung chuyển tiền: <Text style={styles.text_content}>Chuyển tiền vào tài khoản [Số tài khoản khách hàng]của [Họ và tên khách hàng].</Text></Text>
+                        {/* Thong tin chuyen khoan */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+                            <View style={{ flex: 1 }}>
+                            </View>
+                            <View style={{ flex: 7 }}>
+                                <Text style={styles.text_content}>Chuyển tiền tại quầy chi nhánh ngân hàng vào tài khoản theo thông tin dưới đây:</Text>
+                                <Text style={styles.text_content}>Họ và tên người hưởng: <Text style={styles.text_content, { fontWeight: 'bold' }}>{STRING.PG_BEAUTY}</Text></Text>
+                                <Text style={styles.text_content}>Số tài khoản: <Text style={styles.text_content, { fontWeight: 'bold' }}>0681000011361</Text></Text>
+                                <Text style={styles.text_content}>Tại: <Text style={styles.text_content, { fontWeight: 'bold' }}>Vietcombank - Hội Sở</Text></Text>
+                                <Text style={styles.text_content}>Nội dung chuyển tiền: <Text style={styles.text_content}>Chuyển tiền vào tài khoản [Số tài khoản khách hàng]của [Họ và tên khách hàng].</Text></Text>
+                            </View>
                         </View>
                     </View>
                 </View>
+
             </SafeAreaView>
         );
     }
 }
 const styles = StyleSheet.create({
-    background: {
+    screen: {
         flex: 1,
-        backgroundColor: COLOR.WHITE
+        backgroundColor: COLOR.PRIMARY
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex: 1
     },
     header: {
         backgroundColor: COLOR.PRIMARY,
@@ -98,7 +105,7 @@ const styles = StyleSheet.create({
     text_content: {
         fontSize: 14,
         color: COLOR.TEXTBODY,
-        lineHeight:30
+        lineHeight: 30
     }
 })
 export default PaymentMethodsScreen;

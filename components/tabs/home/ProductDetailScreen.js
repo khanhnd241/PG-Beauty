@@ -82,7 +82,7 @@ class ProductDetailScreen extends Component {
             listSameType: [],
             idProduct: id,
             categoryId: '',
-            amountOrder:0
+            amountOrder: 0
         };
     }
     componentDidMount = () => {
@@ -130,25 +130,26 @@ class ProductDetailScreen extends Component {
         })
     }
     plus = () => {
-        this.setState({amountOrder: this.state.amountOrder + 1});
+        this.setState({ amountOrder: this.state.amountOrder + 1 });
     }
     sub = () => {
-        if( this.state.amountOrder > 0) {
-            this.setState({amountOrder:  this.state.amountOrder - 1});
+        if (this.state.amountOrder > 0) {
+            this.setState({ amountOrder: this.state.amountOrder - 1 });
         }
     }
     render() {
         return (
-            <SafeAreaView style={styles.background}>
-                <ScrollView >
-                    <View style={{height:250}}>
-                    <SliderBox
-                        sliderBoxHeight={250}
-                        autoplay={true}
-                        images={this.state.images}
-                    />
+            <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
+                <ScrollView style={styles.background}>
+                    <View style={{ height: 250 }}>
+                        <SliderBox
+                            sliderBoxHeight={250}
+                            autoplay={true}
+                            images={this.state.images}
+                        />
                     </View>
-                   
+
                     <View style={{ position: 'absolute', top: 0 }}>
                         <View style={styles.header}>
                             <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ marginVertical: 10, marginLeft: 15 }}>
@@ -224,14 +225,16 @@ class ProductDetailScreen extends Component {
                         {this.state.ammount == '0' ? (
                             null
                         ) : (<View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 4 }}>
+                            <View style={{ flex: 3 }}>
                                 <Text style={{ fontSize: 14 }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
                                 <TouchableOpacity onPress={this.sub}>
                                     <SvgUri svgXmlData={BTN_SUB} />
                                 </TouchableOpacity>
-                                <Text style={{ paddingHorizontal: 10 }}>{this.state.amountOrder}</Text>
+                                <View style={{ width: 25, justifyContent: 'center', alignItems:'center', marginHorizontal:5 }}>
+                                    <Text style={{textAlign:'center'}}>{this.state.amountOrder}</Text>
+                                </View>
                                 <TouchableOpacity onPress={this.plus}>
                                     <Image source={IMAGE.BTN_ADD} />
                                 </TouchableOpacity>
@@ -351,6 +354,10 @@ class ProductDetailScreen extends Component {
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
     background: {
         flex: 1,
         backgroundColor: COLOR.WHITE

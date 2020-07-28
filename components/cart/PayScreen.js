@@ -44,7 +44,7 @@ class PayScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={styles.background}>
+            <SafeAreaView style={styles.screen}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
@@ -56,7 +56,7 @@ class PayScreen extends Component {
                         <Text style={styles.btn_cancel}>{STRING.CANCEL}</Text>
                     </TouchableOpacity>
                 </View>
-                <ScrollView>
+                <ScrollView style={styles.background}>
                     <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginBottom: 15 }} />
                     <View style={styles.form}>
                         <Text style={{ fontSize: 16, color: COLOR.TEXTBODY, fontWeight: 'bold', marginBottom: 5 }}>{STRING.SHIPPING_ADDRESS}</Text>
@@ -154,7 +154,7 @@ class PayScreen extends Component {
                             </View>
                         </View>
                     </View>
-                    
+                    <View style={{marginBottom:100}} />
                 </ScrollView>
 
                 <View style={styles.footer}>
@@ -175,9 +175,13 @@ class PayScreen extends Component {
     }
 }
 const styles = StyleSheet.create({
-    background: { 
-        flex: 1, 
-        backgroundColor: COLOR.WHITE 
+    screen: {
+        flex:1, 
+        backgroundColor:COLOR.PRIMARY
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex:1
     },
     header: {
         backgroundColor: COLOR.PRIMARY,

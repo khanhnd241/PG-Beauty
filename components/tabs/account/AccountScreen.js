@@ -75,7 +75,7 @@ class AccountScreen extends Component {
     render() {
         const { user } = this.state
         return (
-            <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
+            <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={{ flex: 2, backgroundColor: COLOR.PRIMARY }} />
                 <View style={{ flex: 8, backgroundColor: COLOR.WHITE }} />
@@ -275,6 +275,15 @@ class AccountScreen extends Component {
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex:1, 
+        backgroundColor:COLOR.PRIMARY,
+        justifyContent: 'center'
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex:1
+    },
     container: {
         marginHorizontal: 15, shadowColor: "#000",
         shadowOffset: {

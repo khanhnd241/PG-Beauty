@@ -17,13 +17,13 @@ class ListProductsScreen extends Component {
             title: title,
             listProduct: [],
             isLoading: false,
-            page: 1, 
+            page: 1,
             categoryId: category_id
         };
     }
     componentDidMount = () => {
         console.log(this.state.categoryId);
-        if( this.state.order_by == 'same_type') {
+        if (this.state.order_by == 'same_type') {
             console.log('load san pham cung loai');
             this.setState({ isLoading: true }, this.loadListSameType);
         } else {
@@ -66,7 +66,7 @@ class ListProductsScreen extends Component {
     loadMore = () => {
         console.log('goi api lan nua')
         this.setState({ page: this.state.page + 1, isLoading: true });
-        if( this.state.order_by == 'same_type') {
+        if (this.state.order_by == 'same_type') {
             console.log('load them san pham cung loai');
             this.loadListSameType();
         } else {
@@ -85,39 +85,46 @@ class ListProductsScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView style={styles.background}>
+            <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flex: 1, marginLeft:10 }}>
+                    <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flex: 1, marginLeft: 10 }}>
                         <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                     </TouchableOpacity>
                     <View style={{ flex: 5, alignItems: 'center' }}>
                         <Text style={styles.title}>{this.state.title}</Text>
                     </View>
-                    <View style={{flex:1}} />
+                    <View style={{ flex: 1 }} />
                 </View>
-                <FlatList
-                    numColumns={2}
-                    data={this.state.listProduct}
-                    renderItem={({ item }) =>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen'), {id: item.id} }}>
-                            <ItemColumn image={item.primary_image}
-                                name={item.full_name}
-                                price={item.base_price}
-                                point={5}
-                                review={10}
-                                sale={'10%'}
-                                sell={50} />
-                        </TouchableOpacity>
-                    }
-                    onEndReached={this.loadMore}
-                    onEndReachedThreshold={0.5}
-                    ListFooterComponent={this.handleFooter}
-                />
+                <View style={styles.background}>
+                    <FlatList
+                        numColumns={2}
+                        data={this.state.listProduct}
+                        renderItem={({ item }) =>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen'), { id: item.id } }}>
+                                <ItemColumn image={item.primary_image}
+                                    name={item.full_name}
+                                    price={item.base_price}
+                                    point={5}
+                                    review={10}
+                                    sale={'10%'}
+                                    sell={50} />
+                            </TouchableOpacity>
+                        }
+                        onEndReached={this.loadMore}
+                        onEndReachedThreshold={0.5}
+                        ListFooterComponent={this.handleFooter}
+                    />
+                </View>
             </SafeAreaView >
         );
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        backgroundColor: COLOR.PRIMARY,
+        flex: 1
+    },
     background: {
         backgroundColor: COLOR.WHITE,
         flex: 1
@@ -129,9 +136,9 @@ const styles = StyleSheet.create({
         height: 40,
     },
     title: {
-        color:COLOR.WHITE,
+        color: COLOR.WHITE,
         fontSize: 16,
-        fontFamily:STRING.FONT_NORMAL
+        fontFamily: STRING.FONT_NORMAL
     }
 
 })

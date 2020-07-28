@@ -66,136 +66,147 @@ class CartDetailScreen extends Component {
         this.reload();
         this.sumProduct();
     }
-    goToOrderInfo = () =>{
+    goToOrderInfo = () => {
         this.props.navigation.navigate('OrderInfomationScreen');
     }
     render() {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
-                <View style={styles.header}>
-                    <View style={{ flex: 1 }}></View>
-                    <View style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={styles.header_title}>{STRING.CART}</Text>
+            <SafeAreaView style={styles.screen}>
+                <ScrollView style={styles.background}>
+                    <View style={styles.header}>
+                        <View style={{ flex: 1 }}></View>
+                        <View style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={styles.header_title}>{STRING.CART}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={styles.btn_cancel}>{STRING.CANCEL}</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={styles.btn_cancel}>{STRING.CANCEL}</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.content}>
-                    <FlatList
-                        extraData={this.state.refresh}
-                        data={this.state.listProducts}
-                        renderItem={({ item, index }) =>
-                            <View>
-                                <View style={styles.item_container}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 2 }}>
-                                            <Image style={{ width: 90, height: 60 }} source={item.image}></Image>
+                    <View style={styles.content}>
+                        <FlatList
+                            extraData={this.state.refresh}
+                            data={this.state.listProducts}
+                            renderItem={({ item, index }) =>
+                                <View>
+                                    <View style={styles.item_container}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <View style={{ flex: 2 }}>
+                                                <Image style={{ width: 90, height: 60 }} source={item.image}></Image>
 
-                                        </View>
-                                        <View style={{ flex: 4 }}>
-                                            <Text>{item.name}</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{item.newPrice}</Text>
-                                                <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{item.oldPrice}</Text>
                                             </View>
+                                            <View style={{ flex: 4 }}>
+                                                <Text>{item.name}</Text>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{item.newPrice}</Text>
+                                                    <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{item.oldPrice}</Text>
+                                                </View>
 
-                                        </View>
-                                        <TouchableOpacity onPress={() => { this.deleteProduct(index) }} style={{ flex: 0.5, alignItems: 'center' }}>
-                                            <SvgUri svgXmlData={ICON_CLOSE} />
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                                        <View style={{ flex: 2 }}></View>
-                                        <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
-                                            <TouchableOpacity>
-                                                <SvgUri svgXmlData={SUB} />
-                                            </TouchableOpacity>
-                                            <Text style={{ marginHorizontal: 15 }}>{item.amount}</Text>
-                                            <TouchableOpacity>
-                                                <SvgUri svgXmlData={SUB} />
+                                            </View>
+                                            <TouchableOpacity onPress={() => { this.deleteProduct(index) }} style={{ flex: 0.5, alignItems: 'center' }}>
+                                                <SvgUri svgXmlData={ICON_CLOSE} />
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ flex: 0.5 }}></View>
+                                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                            <View style={{ flex: 2 }}></View>
+                                            <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
+                                                <TouchableOpacity>
+                                                    <SvgUri svgXmlData={SUB} />
+                                                </TouchableOpacity>
+                                                <Text style={{ marginHorizontal: 15 }}>{item.amount}</Text>
+                                                <TouchableOpacity>
+                                                    <SvgUri svgXmlData={SUB} />
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{ flex: 0.5 }}></View>
+                                        </View>
                                     </View>
+                                    <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
                                 </View>
-                                <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
+                            }
+                        />
+                        <View style={styles.item_container}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{ color: COLOR.TEXTBODY, fontSize: 16, marginRight: 5, fontWeight: '600' }}>{STRING.ENTER_DISCOUNT_CODE}</Text>
+                                <View style={{ alignItems: 'center', marginTop: 5 }}>
+                                    <SvgUri svgXmlData={INFO} fill={COLOR.BLACK} />
+                                </View>
                             </View>
-                        }
-                    />
-                    <View style={styles.item_container}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 16, marginRight: 5, fontWeight: '600' }}>{STRING.ENTER_DISCOUNT_CODE}</Text>
-                            <View style={{ alignItems: 'center', marginTop: 5 }}>
-                                <SvgUri svgXmlData={INFO} fill={COLOR.BLACK} />
+                            <View style={styles.input}>
+                                <TextInput value={this.state.codeInput} onChangeText={(value) => { this.setState({ codeInput: value }) }} style={styles.text_input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_DISCOUNT_CODE}></TextInput>
+                                <View style={styles.btn_apply}>
+                                    <Text style={{ color: COLOR.WHITE, textTransform: 'uppercase', fontSize: 14 }}>{STRING.APPLY}</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT_LEVEL}</Text>
+                                </View>
+                                <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                </View>
                             </View>
                         </View>
-                        <View style={styles.input}>
-                            <TextInput value={this.state.codeInput} onChangeText={(value) => { this.setState({ codeInput: value }) }} style={styles.text_input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_DISCOUNT_CODE}></TextInput>
-                            <View style={styles.btn_apply}>
-                                <Text style={{ color: COLOR.WHITE, textTransform: 'uppercase', fontSize: 14 }}>{STRING.APPLY}</Text>
+                        <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginTop: 14, marginBottom: 9 }} />
+                        <View style={styles.item_container}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.MONEY}</Text>
+                                </View>
+                                <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT_LEVEL}</Text>
+                            <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT}</Text>
+                                </View>
+                                <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                </View>
                             </View>
-                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.TOTAL}</Text>
+                                </View>
+                                <View style={{ flex: 1, flexDirection: 'row-reverse', marginBottom:100 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                </View>
                             </View>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginTop: 14, marginBottom: 9 }} />
-                    <View style={styles.item_container}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.MONEY}</Text>
-                            </View>
-                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT}</Text>
-                            </View>
-                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.TOTAL}</Text>
-                            </View>
-                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+                    
+                </ScrollView>
                 <View style={styles.footer}>
-                    <View style={{ flexDirection: 'row', marginTop:15 }}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
+                        <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                                <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>890.000 đ</Text>
+                            </View>
                         </View>
-                        <View style={{ flex: 1, flexDirection:'row-reverse' }}>
-                            <Text style={{color:COLOR.PRIMARY, fontSize:16}}>890.000 đ</Text>
-                        </View>
+                        <TouchableOpacity onPress={this.goToOrderInfo} style={{ backgroundColor: COLOR.PRIMARY, height: 40, borderRadius: 40, marginTop: 10, alignItems: 'center', justifyContent: 'center', marginHorizontal: 5 }}>
+                            <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.CONTINUE}</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={this.goToOrderInfo} style={{backgroundColor:COLOR.PRIMARY, height:40, borderRadius:40, marginTop:10, alignItems:'center', justifyContent:'center', marginHorizontal:5}}>
-                    <Text style={{color:COLOR.WHITE, fontSize:16, textTransform:'uppercase'}}>{STRING.CONTINUE}</Text>
-                    </TouchableOpacity>
-                </View>
             </SafeAreaView>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex: 1
+    },
     header: {
         backgroundColor: COLOR.PRIMARY,
         height: 45,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     header_title: {
         fontSize: 16,
