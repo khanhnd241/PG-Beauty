@@ -1,7 +1,8 @@
 const API = {
     URL: 'https://pgbeauty.etstech.vn/api',
     REGISTER: '/register',
-    LOGIN: '/login'
+    LOGIN: '/login',
+    PRODUCTS: '/products'
 
 }
 export {API}

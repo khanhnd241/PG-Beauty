@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.PRIMARY,
     },
     btn_close: {
-        marginLeft: 10,
+        marginLeft: 16,
         marginTop: 20
     },
     container: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     logo: {
-        marginTop: 63,
+        marginTop: 5,
     },
     title: {
         color: COLOR.WHITE,
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
         width: 320,
         height: 45,
         borderRadius: 30,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         marginBottom: 10
     },
     input_dob: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
         width: 320,
         height: 45,
         borderRadius: 30,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10
