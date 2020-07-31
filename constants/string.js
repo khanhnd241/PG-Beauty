@@ -112,7 +112,15 @@ const STRING = {
     REQUIRED_FIELD: 'Các trường có dấu (*) không được bỏ trống!',
     ERR_CONFIRM_PASS: 'Xác nhận mật khẩu không chính xác, kiểm tra lại!',
     LESS_THAN_8: 'Mật khẩu không được nhỏ hơn 8 kí tự, kiểm tra lại!',
-    ERR_NULL_PHONE_PASS: 'Số điện thoại và mật khẩu không được bỏ trống!'
+    ERR_NULL_PHONE_PASS: 'Số điện thoại và mật khẩu không được bỏ trống!',
+    CURRENCY: 'đ',
+    VIEW_MORE: 'Xem thêm',
+    FONT_NORMAL: 'Nunito-Regular',
+    TAG: '#',
+    WARNING: 'Cảnh báo',
+    LOGIN_BEFORE_ORDER: 'Bạn cần đăng nhập trước khi đặt hàng',
+    CHOOSE_QUANTITY: 'Vui lòng chọn số lượng',
+    ORDER_FAILED: 'Đặt hàng không thành công, hãy thử lại!'
 }
 
 export  {STRING}

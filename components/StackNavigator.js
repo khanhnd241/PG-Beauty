@@ -14,6 +14,7 @@ import CartDetailScreen from '../components/cart/CartDetailScreen';
 import OrderInfomationScreen from '../components/cart/OrderInfomationScreen';
 import PayScreen from '../components/cart/PayScreen';
 import PaymentMethodsScreen from '../components/cart/PaymentMethodsScreen';
+import ListProductsScreen from './products/ListProductsScreen';
 const navOptionHandler = () => ({
     headerShown: false
 })
@@ -40,6 +41,7 @@ class StackNavigator extends Component {
                     <Stack.Screen name="OrderInfomationScreen" component={OrderInfomationScreen} options={navOptionHandler} />
                     <Stack.Screen name="PayScreen" component={PayScreen} options={navOptionHandler} />
                     <Stack.Screen name="PaymentMethodsScreen" component={PaymentMethodsScreen} options={navOptionHandler} />
+                    <Stack.Screen name="ListProductsScreen" component={ListProductsScreen} options={navOptionHandler} />
                 </Stack.Navigator>
             </NavigationContainer>
         );

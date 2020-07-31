@@ -10,10 +10,6 @@ class SplashScreen extends Component {
         this.state = {  };
     }
     componentDidMount = () =>{
-        AsyncStorage.getItem('userId', (err, result) => {
-            console.log('user: ' + result);
-
-        })
         setTimeout(() => {this.props.navigation.replace('App')}, 2000);
     }
     render() {

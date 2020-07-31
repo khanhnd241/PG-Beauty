@@ -1,10 +1,10 @@
 import React, { Component, useEffect } from 'react';
-import { Text, View, SafeAreaView, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { StatusBar, View, SafeAreaView, Image, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IMAGE } from './constants/images';
 import HomeScreen from './components/tabs/home/HomeScreen';
 import FeedScreen from './components/tabs/feed/FeedScreen';
-import CategoryScreen from './components/tabs/CategoryScreen';
+import CategoryScreen from './components/tabs/categories/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
@@ -66,7 +66,6 @@ export default class App extends Component {
   render() {
     return(
       <TabNavigator />
-
     )
   }
 }

@@ -1,50 +1,37 @@
 import React, { Component, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, AsyncStorage, Image, ActivityIndicator } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
 import { COLOR } from '../../../constants/colors';
 import { BACK_BLACK } from '../../../constants/images/back_black';
 import { SliderBox } from "react-native-image-slider-box";
-import { BASKET } from '../../../constants/images/basket';
+import { BTN_SUB } from '../../../constants/images/btn_sub';
 import { RECTANGLE } from '../../../constants/images/rectangle';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { STAR } from '../../../constants/images/star';
-import { SUB } from '../../../constants/images/sub';
-import { ADD } from '../../../constants/images/add';
+import { BASKET } from '../../../constants/images/basket';
+import { BTN_ADD } from '../../../constants/images/btn_add';
 import { CAR } from '../../../constants/images/car';
+import axios from 'axios';
+import { API } from '../../../constants/api';
+import { ORDER } from '../../../constants/images/order';
+import HTMLView from 'react-native-htmlview';
+import ItemRow from '../../products/ItemRow';
+import { PLUS } from '../../../constants/images/plus';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 const deviceWidth = Dimensions.get('window').width;
-function Item({ image, name, price, point, review, sell, sale }) {
-    return (
-        <View style={styles.container_items}>
-            <View style={{ flex: 1 }}>
-                <ImageBackground source={image} style={{ width: 160, height: 111, marginTop: 7 }}>
-                    <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri svgXmlData={RECTANGLE} />
-                        <Text style={{ color: COLOR.WHITE, position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
-                    </View>
-                </ImageBackground>
-                <View >
-                    <Text numberOfLines={3} style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
-                    </View>
-                </View>
-            </View>
-
-
-        </View>
-
-    );
-}
 
 class ProductDetailScreen extends Component {
     constructor(props) {
         super(props);
+        let { id } = this.props.route.params;
         this.state = {
             images: [
                 IMAGE.ANH_DEMO_3,
@@ -52,11 +39,12 @@ class ProductDetailScreen extends Component {
                 IMAGE.ANH_DEMO_2,
                 IMAGE.ANH_DEMO_1
             ],
-            tag: '#Chanel',
-            title: 'Son Chanel mới nhất Intense Matte Lip Color',
+            product: {},
+            tag: '',
+            title: '',
             sale: '-30%',
-            newPrice: '890.000 đ',
-            oldPrice: '890.000 đ',
+            newPrice: '',
+            oldPrice: '',
             rate: '5',
             review: '26',
             sold: '74',
@@ -64,82 +52,162 @@ class ProductDetailScreen extends Component {
             status: '1',
             ammount: '5',
             delivery: 'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
-            description: 'Chanel intense Matte Lip Color là dòng son mới nhất của cuối năm 2018. Với chất son mượt lì mà mềm mại. Thiết kế sang trọng với sự tinh tế từ logo tới vỏ son bề mặt nám.  \nĐặc biệt là chất son được nâng cấp. Nếu dòng son cũ chất son lì, đối với ai khô còn có thể bị bột son, thì dòng son lì mới này hoàn toàn được chinh phục ngay cả những bạn có môi khô nhé',
-            tradeMark: 'Chanel',
+            description: '',
+            tradeMark: '',
             madeIn: 'Pháp',
             species: 'son lì',
             basketNumber: '3',
             index: null,
             colorSelect: '',
-            listDeal: [
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Kem nền đa năng chanel les beiges tinted Moisturize',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '471',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_2,
-                    name: 'Máy Rửa Mặt Foreo Luna Mini 2',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '7411',
-                    sale: '-40%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Kem nền đa năng chanel les beiges tinted Moisturize',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_2,
-                    name: 'Máy Rửa Mặt Foreo Luna Mini 2',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-40%'
-                }
-            ],
-
+            listSameType: [],
+            idProduct: id,
+            categoryId: '',
+            amountOrder: 0,
+            product: {},
+            isHave: false,
+            warningLoginDialog: false,
+            warningAmountDialog: false,
+            category: {},
+            listUserOrder: [],
+            userId: '',
+            loadingDialog: false
         };
     }
+    componentDidMount = () => {
+        const { navigation } = this.props;
+        navigation.addListener('focus', async () => {
+            this.setState({ idProduct: this.props.route.params.id, loadingDialog: true })
+            console.log('load screen' + this.props.route.params.id);
+            this.loadDetail();
+            this.loadOrder();
+            this.getlistSameType();
+        })
 
+    }
+    loadDetail = () => {
+        let imagesProduct = []
+        axios.get(API.URL + API.PRODUCTS + '/' + this.props.route.params.id).then(response => {
+            console.log(response.data.success.category_id);
+            console.log(parseInt(response.data.success.base_price));
+            console.log(response.data.success.images.length);
+            for (let i = 0; i < response.data.success.images.length; i++) {
+                imagesProduct.push(response.data.success.images[i].url);
+            }
+            this.setState({
+                product: response.data.success,
+                category: response.data.success.category,
+                images: imagesProduct
+            });
+        }).catch(error => {
+            console.log(JSON.stringify(error.response.data.error));
+        })
+    }
+    getlistSameType = () => {
+        console.log('getlistSameType');
+        axios.get(API.URL + API.PRODUCTS, {
+            params: {
+                category_id: this.state.categoryId
+            }
+        }).then(response => {
+            // console.log(response.data.success);
+            this.setState({
+                listSameType: response.data.success.data,
+                loadingDialog: false
+            })
+        }).catch(error => {
+            console.log(JSON.stringify(error.response.data.error));
+        })
+    }
+    plus = () => {
+        this.setState({ amountOrder: this.state.amountOrder + 1 });
+    }
+    sub = () => {
+        if (this.state.amountOrder > 0) {
+            this.setState({ amountOrder: this.state.amountOrder - 1 });
+        }
+    }
+    checkOrder = () => {
+        console.log('check length' + this.state.listUserOrder.length);
+        if (this.state.listUserOrder.length >= 1) {
+            this.setState({ isHave: true, loadingDialog: false })
+        }else {
+            this.setState({ isHave: false })
+        }
+        this.setState({loadingDialog: false })
+    }
+    order = () => {
+        this.setState({ loadingDialog: true }, () => {
+            AsyncStorage.getItem('token', (err, result) => {
+                if (result == null || result == '') {
+                    this.setState({ warningLoginDialog: true, loadingDialog: false })
+                } else {
+                    if (this.state.amountOrder == 0) {
+                        this.setState({ warningAmountDialog: true, loadingDialog: false })
+                    } else {
+
+                        let productOrder = this.state.product;
+                        productOrder.quantity = this.state.amountOrder;
+                        this.state.listUserOrder.push(productOrder);
+                        console.log('length order sau do' + this.state.listUserOrder.length);
+                        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listUserOrder));
+                        this.loadOrder();
+                    }
+
+                }
+            })
+        })
+
+
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            this.setState({ userId: result });
+            AsyncStorage.getItem(result, (err, listOrder) => {
+                console.log('list order' + JSON.parse(listOrder));
+                this.setState({ listUserOrder: JSON.parse(listOrder) })
+                console.log('length order hien tai' + this.state.listUserOrder.length);
+                this.checkOrder();
+            })
+        });
+    }
+    format(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     render() {
         return (
-            <SafeAreaView style={styles.background}>
-                <ScrollView >
-                    <SliderBox
-                        sliderBoxHeight={250}
-                        autoplay={true}
-                        images={this.state.images}
-                    />
+            <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
+                <ScrollView style={styles.background}>
+                    <View style={{ height: 250 }}>
+                        <SliderBox
+                            sliderBoxHeight={250}
+                            autoplay={true}
+                            images={this.state.images}
+                        />
+                    </View>
+
                     <View style={{ position: 'absolute', top: 0 }}>
                         <View style={styles.header}>
                             <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ marginVertical: 10, marginLeft: 15 }}>
                                 <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.basket}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                             </TouchableOpacity>
-                            <View style={styles.basket_number}>
-                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
-                            </View>
+                            {this.state.isHave ? (
+                                <View style={styles.basket_number}>
+                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                </View>
+                            ) : null}
+
                         </View>
                     </View>
                     <View style={styles.content}>
-                        <Text style={styles.tag}>{this.state.tag}</Text>
+                        <Text style={styles.tag}>{STRING.TAG} {this.state.category.name}</Text>
                         <View style={styles.title}>
                             <View style={{ flex: 6 }}>
-                                <Text style={styles.title_text}>{this.state.title}</Text>
+                                <Text style={styles.title_text}>{this.state.product.full_name}</Text>
                             </View>
                             <View style={{ flex: 1 }}>
                                 <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
@@ -148,8 +216,8 @@ class ProductDetailScreen extends Component {
                             </View>
                         </View>
                         <View style={styles.title}>
-                            <Text style={styles.price_text}>{this.state.newPrice}</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.state.oldPrice}</Text>
+                            <Text style={styles.price_text}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 4, flexDirection: 'row' }}>
@@ -197,13 +265,19 @@ class ProductDetailScreen extends Component {
                         {this.state.ammount == '0' ? (
                             null
                         ) : (<View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 4 }}>
+                            <View style={{ flex: 3 }}>
                                 <Text style={{ fontSize: 14 }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
                             </View>
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SUB} />
-                                <Text style={{ paddingHorizontal: 10 }}>0</Text>
-                                <SvgUri svgXmlData={ADD} />
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
+                                <TouchableOpacity onPress={this.sub}>
+                                    <SvgUri svgXmlData={BTN_SUB} />
+                                </TouchableOpacity>
+                                <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
+                                    <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
+                                </View>
+                                <TouchableOpacity onPress={this.plus}>
+                                    <Image source={IMAGE.BTN_ADD} />
+                                </TouchableOpacity>
                             </View>
                         </View>)}
 
@@ -219,9 +293,9 @@ class ProductDetailScreen extends Component {
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     <View style={styles.content}>
                         <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600' }}>{STRING.DESCRIPTION}</Text>
-                        <Text style={{ fontSize: 13, lineHeight: 25, color: COLOR.DESCRIPTION }}>
-                            {this.state.description}
-                        </Text>
+                        <HTMLView
+                            value={this.state.product.description}
+                        />
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     {/* Thông số */}
@@ -232,7 +306,7 @@ class ProductDetailScreen extends Component {
                                 <Text style={styles.made_in_title}>{STRING.TRADE_MARK}</Text>
                             </View>
                             <View style={{ flex: 2 }}>
-                                <Text style={styles.made_in_text}>{this.state.tradeMark}</Text>
+                                <Text style={styles.made_in_text}>{this.state.category.name}</Text>
                             </View>
                         </View>
                         <View style={styles.made_in}>
@@ -253,26 +327,27 @@ class ProductDetailScreen extends Component {
                         </View>
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
-                        {/* Danh sach cac san pham khac */}
+                    {/* Danh sach cac san pham khac */}
                     <View style={styles.content}>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.SAME_PRODUCT}</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.categoryId })}>
                                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>
                             </TouchableOpacity>
                         </View>
                         <FlatList
                             horizontal={true}
-                            data={this.state.listDeal}
+                            data={this.state.listSameType}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <Item image={item.image}
-                                        name={item.name}
-                                        price={item.price}
-                                        point={item.point}
-                                        review={item.review}
-                                        sale={item.sale}
-                                        sell={item.sell} />
+                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen', { id: item.id }) }}>
+                                    <ItemRow image={item.primary_image}
+                                        name={item.full_name}
+                                        price={item.base_price}
+                                        point={5}
+                                        review={10}
+                                        sale={'-10%'}
+                                        sell={50}
+                                    />
                                 </TouchableOpacity>
                             }
                         />
@@ -281,42 +356,123 @@ class ProductDetailScreen extends Component {
                     <View style={styles.content_footer}>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.SAME_TRADE_MARK}</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_trade_mark', title: 'Sản phẩm cùng thương hiệu' })}>
                                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>
                             </TouchableOpacity>
                         </View>
                         <FlatList
                             horizontal={true}
-                            data={this.state.listDeal}
+                            data={this.state.listSameType}
                             renderItem={({ item }) =>
                                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <Item image={item.image}
-                                        name={item.name}
-                                        price={item.price}
-                                        point={item.point}
-                                        review={item.review}
-                                        sale={item.sale}
-                                        sell={item.sell} />
+                                    <ItemRow image={item.primary_image}
+                                        name={item.full_name}
+                                        price={item.base_price}
+                                        point={5}
+                                        review={10}
+                                        sale={'-10%'}
+                                        sell={50}
+                                    />
                                 </TouchableOpacity>
                             }
                         />
                     </View>
+
                 </ScrollView>
                 <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.state.newPrice}</Text>
+                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
-                            <SvgUri svgXmlData={BASKET} />
-                        </View>
+                        <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
+                            {/* <SvgUri svgXmlData={PLUS}/> */}
+                            <Image source={IMAGE.ORDER} />
+                        </TouchableOpacity>
                     </View>
                 </View>
+                <Dialog
+                    // dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ warningLoginDialog: false });
+                    }}
+                    width={0.9}
+                    visible={this.state.warningLoginDialog}
+                    dialogTitle={
+                        <DialogTitle
+                            title={STRING.WARNING}
+                            hasTitleBar={false}
+                            align="center"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ warningLoginDialog: false });
+                                }}
+                                key="button-1"
+                            />
+                        </DialogFooter>
+                    }
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>{STRING.LOGIN_BEFORE_ORDER}</Text>
+                    </DialogContent>
+                </Dialog>
+                <Dialog
+                    onDismiss={() => {
+                        this.setState({ warningAmountDialog: false });
+                    }}
+                    width={0.9}
+                    visible={this.state.warningAmountDialog}
+                    dialogTitle={
+                        <DialogTitle
+                            title={STRING.WARNING}
+                            hasTitleBar={false}
+                            align="center"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ warningAmountDialog: false });
+                                }}
+                                key="button-1"
+                            />
+                        </DialogFooter>
+                    }
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>{STRING.CHOOSE_QUANTITY}</Text>
+                    </DialogContent>
+                </Dialog>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
     background: {
         flex: 1,
         backgroundColor: COLOR.WHITE
@@ -352,7 +508,7 @@ const styles = StyleSheet.create({
     content_footer: {
         marginLeft: 17,
         marginTop: 10,
-        marginBottom:56
+        marginBottom: 56
     },
     tag: {
         fontSize: 14,
@@ -379,8 +535,8 @@ const styles = StyleSheet.create({
     },
     container_items: {
         height: 255,
-        width: 180, 
-        marginRight:5
+        width: 180,
+        marginRight: 5
     },
     made_in_title: {
         color: COLOR.DESCRIPTION,

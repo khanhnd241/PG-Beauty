@@ -31,7 +31,9 @@ const IMAGE = {
     NO_NOTI: require('../images/no_noti.png'),
     BG_AVATAR: require('../images/bg_avatar.png'),
     ANH_DEMO_6: require('../images/anh_demo6.png'),
-    ICON_SALE_BG: require('../images/sale_bg.png')
+    ICON_SALE_BG: require('../images/sale_bg.png'),
+    ORDER: require('../images/order.png'),
+    BTN_ADD: require ('../images/btn_add.png')
 
 }
 

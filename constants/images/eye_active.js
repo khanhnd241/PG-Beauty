@@ -7,5 +7,6 @@ const EYE_ACTIVE = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" 
 <path d="M18.3779 18.3779H15.9901V19.5218H19.5218V16.033H18.3779V18.3779Z" fill="#6C7783"/>
 <rect x="18.3017" y="0.353486" width="1.94022" height="24.8999" transform="rotate(46.1219 18.3017 0.353486)" fill="#6C7783" stroke="white" stroke-width="0.5"/>
 </svg>
+
 `
 export {EYE_ACTIVE}

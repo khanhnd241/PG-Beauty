@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -13,13 +13,24 @@ import { BASKET } from '../../../constants/images/basket';
 import { PG_BEAUTY } from '../../../constants/images/pg_beauty';
 import { PG_FASHION } from '../../../constants/images/pg_fashion';
 import { PG_TOOL } from '../../../constants/images/pg_tool';
-
+import axios from 'axios';
+import { API } from '../../../constants/api';
+import ItemColumn from '../../products/ItemColumn';
+import ItemRow from '../../products/ItemRow';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 let deviceWidth = Dimensions.get('window').width - 10;
+const height = Dimensions.get('window').height;
 function Item({ image, name, price, point, review, sell, sale }) {
     return (
         <View style={styles.container_items}>
             <View style={{ flex: 1 }}>
-                <ImageBackground source={image} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
+                <ImageBackground source={{ uri: image }} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                     <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                         <SvgUri svgXmlData={RECTANGLE} />
                         <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
@@ -27,7 +38,7 @@ function Item({ image, name, price, point, review, sell, sale }) {
                 </ImageBackground>
                 <View style={{ marginLeft: 16 }} >
                     <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
+                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{parseInt(price)}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                         <SvgUri svgXmlData={STAR} />
                         <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
@@ -42,36 +53,15 @@ function Item({ image, name, price, point, review, sell, sale }) {
 
     );
 }
-function ItemNewProduct({ image, name, price, point, review, sell, sale }) {
-    return (
-        <View style={styles.items_new_product}>
-            <View style={{ flex: 1 }}>
-                <ImageBackground source={image} style={{ width: 164, height: 110, marginLeft: 12, marginTop: 7 }}>
-                    <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri svgXmlData={RECTANGLE} />
-                        <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
-                    </View>
-                </ImageBackground>
-                <View style={{ marginLeft: 16 }} >
-                    <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
-                    </View>
-                </View>
-            </View>
 
-
-        </View>
-
-    );
-}
 class HomeScreen extends Component {
     constructor(props) {
         super(props);
+        const { navigation } = this.props;
+        navigation.addListener('focus', async () => {
+            this.setState({ loadingDialog: true }, this.loadOrder());
+
+        })
         this.state = {
             images: [
                 "https://source.unsplash.com/1024x768/?nature",
@@ -155,14 +145,85 @@ class HomeScreen extends Component {
                     sale: '-40%'
                 }
             ],
-            basketNumber: 3
+            listNewProducts: [],
+            basketNumber: 3,
+            page: 1,
+            isLoading: false,
+            listUserOrder: [],
+            isHave: false,
+            loadingDialog: false
         };
+    }
+    loadListNewProduct = () => {
+        axios.get(API.URL + API.PRODUCTS, {
+            params: {
+                order_by: 'id',
+                page: this.state.page,
+                orientation: 'DESC'
+            }
+        }).then(response => {
+            this.setState({
+                listNewProducts: this.state.listNewProducts.concat(response.data.success.data),
+                isLoading: false
+            });
+            console.log(this.state.listNewProducts.length);
+        }).catch(error => {
+        })
+    }
+    componentDidMount = () => {
+        this.setState({ isLoading: true }, this.loadListNewProduct);
+        
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            if (result != null) {
+                this.setState({ userId: result });
+                AsyncStorage.getItem(result, (err, listOrder) => {
+                    console.log('list order' + JSON.parse(listOrder));
+                    this.setState({ listUserOrder: JSON.parse(listOrder) })
+                    console.log('length order hien tai' + this.state.listUserOrder.length);
+                    this.checkOrder();
+                })
+            } else {
+                this.checkOrder();
+            }
+        });
+    }
+    checkOrder = () => {
+        console.log('check length' + this.state.listUserOrder.length);
+        if (this.state.listUserOrder.length > 0) {
+            console.log('co data')
+            this.setState({ isHave: true })
+        } else {
+            this.setState({ isHave: false })
+        }
+        this.setState({ loadingDialog: false })
+    }
+    loadMore = () => {
+        console.log('goi api lan nua')
+        this.setState({ page: this.state.page + 1, isLoading: true });
+        this.loadListNewProduct();
+    }
+    handleFooter = () => {
+        console.log('footer day');
+        return (
+            this.state.isLoading ?
+                <View style={styles.loader}>
+                    <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                </View> :
+                <View style={styles.loader}>
+                    <TouchableOpacity onPress={this.loadMore} style={{ flex: 1, alignItems: 'center', backgroundColor: COLOR.PRIMARY, padding: 5, borderRadius: 3 }}>
+                        <Text style={{ color: COLOR.WHITE }}>{STRING.VIEW_MORE}</Text>
+                    </TouchableOpacity>
+                </View>
+        )
     }
     render() {
         return (
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
-                <ScrollView>
+                <ScrollView style={styles.background}>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
@@ -170,17 +231,18 @@ class HomeScreen extends Component {
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
-
                             </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => {this.props.navigation.navigate('CartDetailScreen')}} style={styles.basket}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                             <SvgUri svgXmlData={BASKET} />
-                            <View style={styles.basket_number}>
-                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
-                            </View>
+                            {this.state.isHave ? (
+                                <View style={styles.basket_number}>
+                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                </View>
+                            ) : null}
                         </TouchableOpacity>
                     </View>
                     {/* banner và tool */}
@@ -203,88 +265,112 @@ class HomeScreen extends Component {
                                 <Text>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
+
                     </View>
+                    <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
                     {/* Deal đang diễn ra */}
-                    <View style={styles.background}>
+                    <View>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.DEAL_NOW}</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'deal_now', title: 'Deal đang diễn ra' })}>
                                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>
                             </TouchableOpacity>
                         </View>
                         <FlatList
                             horizontal={true}
-                            data={this.state.listDeal}
+                            data={this.state.listNewProducts}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <Item image={item.image}
-                                        name={item.name}
-                                        price={item.price}
-                                        point={item.point}
-                                        review={item.review}
-                                        sale={item.sale}
-                                        sell={item.sell} />
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })}>
+                                    <ItemRow image={item.primary_image}
+                                        name={item.full_name}
+                                        price={item.base_price}
+                                        point={5}
+                                        review={10}
+                                        sale={'-10%'}
+                                        sell={50}
+                                    />
                                 </TouchableOpacity>
                             }
                         />
                     </View>
-                    <View style={{ backgroundColor: COLOR.GRAY, width: 8 }} />
+                    <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} >
+                    </View>
                     {/* Sản phẩm bán chạy */}
-                    <View style={styles.background}>
+                    <View>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.SELLING_PRODUCT}</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Sản phẩm bán chạy' })}>
                                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>
                             </TouchableOpacity>
                         </View>
                         <FlatList
                             horizontal={true}
-                            data={this.state.listSellingProduct}
+                            data={this.state.listNewProducts}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <Item image={item.image}
-                                        name={item.name}
-                                        price={item.price}
-                                        point={item.point}
-                                        review={item.review}
-                                        sale={item.sale}
-                                        sell={item.sell} />
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })}>
+                                    <ItemRow image={item.primary_image}
+                                        name={item.full_name}
+                                        price={item.base_price}
+                                        point={5}
+                                        review={10}
+                                        sale={'-10%'}
+                                        sell={50}
+                                    />
                                 </TouchableOpacity>
                             }
                         />
                     </View>
-                    <View style={{ backgroundColor: COLOR.GRAY, width: 8 }} />
+                    <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
                     {/* Sản phẩm mới */}
-                    <View style={styles.background}>
+                    <View>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.NEW_PRODUCT}</Text>
-
                         </View>
                         <FlatList
                             numColumns={2}
-                            data={this.state.listDeal}
+                            data={this.state.listNewProducts}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <ItemNewProduct image={item.image}
-                                        name={item.name}
-                                        price={item.price}
-                                        point={item.point}
-                                        review={item.review}
-                                        sale={item.sale}
-                                        sell={item.sell} />
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })}>
+                                    <ItemColumn image={item.primary_image}
+                                        name={item.full_name}
+                                        price={item.base_price}
+                                        point={5}
+                                        review={10}
+                                        sale={'-10%'}
+                                        sell={50} />
                                 </TouchableOpacity>
                             }
+                            // onEndReached={() => this.loadMore}
+                            // onEndReachedThreshold={0}
+                            ListFooterComponent={this.handleFooter}
                         />
                     </View>
+                    <Dialog
+                        dialogStyle={{ backgroundColor: 'transparent' }}
+                        onDismiss={() => {
+                            this.setState({ loadingDialog: false });
+                        }}
+                        height={400}
+                        width={0.9}
+                        visible={this.state.loadingDialog}
+                    >
+                        <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                        </DialogContent>
+                    </Dialog>
                 </ScrollView>
             </SafeAreaView>
         );
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
     background: {
-        backgroundColor: COLOR.WHITE
+        backgroundColor: COLOR.WHITE,
+        flex: 1
     },
     header: {
         backgroundColor: COLOR.PRIMARY,
@@ -299,7 +385,7 @@ const styles = StyleSheet.create({
         width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 20,
+        marginRight: 30,
         alignItems: 'center',
         marginTop: 10
     },
@@ -320,7 +406,7 @@ const styles = StyleSheet.create({
     },
     title_list: {
         color: COLOR.TEXTBODY,
-        fontWeight:'600',
+        fontWeight: '600',
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
@@ -366,7 +452,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-
+    loader: {
+        marginTop: 10,
+        alignItems: 'center',
+        marginBottom: 10
+    }
 
 })
 export default HomeScreen;
