@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, ImageBackground, ScrollView, Dimensions, StatusBar, Image } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, ImageBackground, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -12,9 +12,22 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 class OrderInfomationScreen extends Component {
     constructor(props) {
         super(props);
+        const { total, discount } = this.props.route.params
         this.state = {
-            selectedCity: ' Hà Nội'
+            selectedCity: ' Hà Nội',
+            total: total,
+            discount: discount,
+            name: '',
+            phone: '',
+            district: '',
+            ward: '',
+            address: '',
+            comment: ''
+
         };
+    }
+    componentDidMount = () => {
+        console.log(this.state.total + 'discount' + this.state.discount);
     }
     render() {
         return (
@@ -56,11 +69,11 @@ class OrderInfomationScreen extends Component {
                     <View style={{ height: 40, backgroundColor: COLOR.GRAY, marginTop: 15 }}></View>
                     <ScrollView style={styles.background}>
                         <KeyboardAwareScrollView style={styles.form}>
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
+                            <TextInput onChangeText={(value) => this.setState({ name: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
+                            <TextInput onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.CITY} />
+                            <Text style={styles.city}>{STRING.CITY}</Text>
                             <Picker
                                 selectedValue={this.state.selectedCity}
                                 style={{ marginBottom: 10 }}
@@ -81,24 +94,41 @@ class OrderInfomationScreen extends Component {
                             </Picker>
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.DISTRICT} />
+                            <TextInput onChangeText={(value) => this.setState({ district: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.DISTRICT} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.WARD} />
+                            <TextInput onChangeText={(value) => this.setState({ ward: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.WARD} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ADDRESS} />
+                            <TextInput onChangeText={(value) => this.setState({ address: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ADDRESS} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={EDIT} />
                                 <Text style={{ color: COLOR.LINK, marginLeft: 5 }}>{STRING.NOTE_ORDER}</Text>
                             </View>
-                            <TextInput style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.NOTE_ORDER} />
-                            <View style={{ marginBottom: 70 }} />
+                            <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.NOTE_ORDER} />
+                            <View style={{ marginBottom: 250 }} />
                         </KeyboardAwareScrollView>
                     </ScrollView>
                 </View>
 
                 <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('PayScreen') }} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => {
+                        if (this.state.selectedCity.trim() == '' || this.state.name.trim() == '' || this.state.phone.trim() == '' || this.state.district.trim() == '' || this.state.ward.trim() == '' || this.state.address.trim() == '') {
+                            Alert.alert(STRING.NOTIFICATION, STRING.REQUIRED_FIELD, [{ text: STRING.ACCEPT }])
+                        } else {
+                            this.props.navigation.navigate('PayScreen', {
+                                selectedCity: this.state.selectedCity,
+                                total: this.state.total,
+                                discount: this.state.discount,
+                                name: this.state.name,
+                                phone: this.state.phone,
+                                district: this.state.district,
+                                ward: this.state.ward,
+                                address: this.state.address,
+                                comment: this.state.comment
+                            })
+                        }
+
+                    }} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.CONTINUE}</Text>
                     </TouchableOpacity>
                 </View>
@@ -170,6 +200,11 @@ const styles = StyleSheet.create({
     input: {
         fontSize: 14,
         marginTop: 20
+    },
+    city: {
+        fontSize: 14,
+        marginTop: 20,
+        color: COLOR.PLACEHODER
     }
 })
 export default OrderInfomationScreen;

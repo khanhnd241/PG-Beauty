@@ -27,7 +27,8 @@ class CategoryScreen extends Component {
             cleansing: false,
             page: 1,
             isLoading: false,
-            listCategories: []
+            listCategories: [],
+            listChildCategories: []
         };
     }
     openBeauty = () => {
@@ -43,33 +44,38 @@ class CategoryScreen extends Component {
         this.setState({ cleansing: !this.state.cleansing })
     }
     componentDidMount = () => {
-        this.setState({ isLoading: true }, this.loadCategories);
+        this.setState({ isLoading: true }, this.loadCategories());
     }
-    loadCategories = () => {
+    loadCategories =  () => {
+        console.log('gọi api' + this.state.page)
         axios.get(API.URL + API.CATEGORIES, {
             params: {
                 page: this.state.page,
             }
         }).then(response => {
-            console.log('alo' + response.data.success.data[1].parent_id);
             for(let i = 0; i < response.data.success.data.length; i++) {
                 if(response.data.success.data[i].parent_id == null) {
-                    this.state.listCategories.push(response.data.success.data[i])   
+                    this.state.listCategories.push(response.data.success.data[i]);
+                } else {
+                    this.state.listChildCategories.push(response.data.success.data[i]);
                 }
             }
             this.setState({
                 isLoading: false
             });
+            // console.log('mang con' +this.state.listChildCategories);
         }).catch(error => {
         })
     }
     loadMore = () => {
+        let page = this.state.page + 1
         console.log('goi api lan nua')
-        this.setState({ page: this.state.page + 1, isLoading: true });
-        this.loadCategories();
+                this.setState({
+                    isLoading: true,
+                    page: page },this.loadCategories);
     }
     handleFooter = () => {
-        console.log('footer day');
+        // console.log('footer day');
         return (
             this.state.isLoading ?
                 <View style={styles.loader}>
@@ -105,13 +111,14 @@ class CategoryScreen extends Component {
                             data={this.state.listCategories}
                             renderItem={({ item }) =>
                                 <ItemCategory
+                                    listChild={this.state.listCategories} //danh sach cac muc con (dang fake data muc cha)
                                     id={item.id}
                                     name={item.name}
                                     parent_id={item.parent_id}
                                 />
                             }
                             onEndReached={this.loadMore}
-                            onEndReachedThreshold={0.5}
+                            onEndReachedThreshold={0.1}
                             ListFooterComponent={this.handleFooter}
                             keyExtractor={(item, index) => index.toString()}
                         />

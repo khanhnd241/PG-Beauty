@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, AsyncStorage, Image } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, AsyncStorage, Image, ActivityIndicator } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -19,34 +19,14 @@ import { ORDER } from '../../../constants/images/order';
 import HTMLView from 'react-native-htmlview';
 import ItemRow from '../../products/ItemRow';
 import { PLUS } from '../../../constants/images/plus';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 const deviceWidth = Dimensions.get('window').width;
-function Item({ image, name, price, point, review, sell, sale }) {
-    return (
-        <View style={styles.container_items}>
-            <View style={{ flex: 1 }}>
-                <ImageBackground source={image} style={{ width: 160, height: 111, marginTop: 7 }}>
-                    <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri svgXmlData={RECTANGLE} />
-                        <Text style={{ color: COLOR.WHITE, position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
-                    </View>
-                </ImageBackground>
-                <View >
-                    <Text numberOfLines={3} style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{price}{STRING.CURRENCY}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
-                    </View>
-                </View>
-            </View>
-
-
-        </View>
-
-    );
-}
 
 class ProductDetailScreen extends Component {
     constructor(props) {
@@ -72,7 +52,7 @@ class ProductDetailScreen extends Component {
             status: '1',
             ammount: '5',
             delivery: 'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
-            description: 'Chanel intense Matte Lip Color là dòng son mới nhất của cuối năm 2018. Với chất son mượt lì mà mềm mại. Thiết kế sang trọng với sự tinh tế từ logo tới vỏ son bề mặt nám.  \nĐặc biệt là chất son được nâng cấp. Nếu dòng son cũ chất son lì, đối với ai khô còn có thể bị bột son, thì dòng son lì mới này hoàn toàn được chinh phục ngay cả những bạn có môi khô nhé',
+            description: '',
             tradeMark: '',
             madeIn: 'Pháp',
             species: 'son lì',
@@ -82,37 +62,45 @@ class ProductDetailScreen extends Component {
             listSameType: [],
             idProduct: id,
             categoryId: '',
-            amountOrder: 0
+            amountOrder: 0,
+            product: {},
+            isHave: false,
+            warningLoginDialog: false,
+            warningAmountDialog: false,
+            category: {},
+            listUserOrder: [],
+            userId: '',
+            loadingDialog: false
         };
     }
     componentDidMount = () => {
+        const { navigation } = this.props;
+        navigation.addListener('focus', async () => {
+            this.setState({ idProduct: this.props.route.params.id, loadingDialog: true })
+            console.log('load screen' + this.props.route.params.id);
+            this.loadDetail();
+            this.loadOrder();
+            this.getlistSameType();
+        })
+
+    }
+    loadDetail = () => {
         let imagesProduct = []
-        AsyncStorage.getItem('token', (err, result) => {
-            if (err) {
-            } else {
-                axios.get(API.URL + API.PRODUCTS + '/' + this.state.idProduct).then(response => {
-                    console.log(response.data.success.category_id);
-                    console.log(parseInt(response.data.success.base_price));
-                    console.log(response.data.success.images.length);
-                    for (let i = 0; i < response.data.success.images.length; i++) {
-                        imagesProduct.push(response.data.success.images[i].url);
-                    }
-                    this.setState({
-                        title: response.data.success.full_name,
-                        description: response.data.success.description,
-                        oldPrice: parseInt(response.data.success.base_price),
-                        newPrice: parseInt(response.data.success.base_price),
-                        tradeMark: response.data.success.category.name,
-                        categoryId: response.data.success.category_id,
-                        tag: STRING.TAG + response.data.success.category.name,
-                        images: imagesProduct
-                    });
-                }).catch(error => {
-                    console.log(JSON.stringify(error.response.data.error));
-                })
+        axios.get(API.URL + API.PRODUCTS + '/' + this.props.route.params.id).then(response => {
+            console.log(response.data.success.category_id);
+            console.log(parseInt(response.data.success.base_price));
+            console.log(response.data.success.images.length);
+            for (let i = 0; i < response.data.success.images.length; i++) {
+                imagesProduct.push(response.data.success.images[i].url);
             }
-        });
-        this.getlistSameType();
+            this.setState({
+                product: response.data.success,
+                category: response.data.success.category,
+                images: imagesProduct
+            });
+        }).catch(error => {
+            console.log(JSON.stringify(error.response.data.error));
+        })
     }
     getlistSameType = () => {
         console.log('getlistSameType');
@@ -123,7 +111,8 @@ class ProductDetailScreen extends Component {
         }).then(response => {
             // console.log(response.data.success);
             this.setState({
-                listSameType: response.data.success.data
+                listSameType: response.data.success.data,
+                loadingDialog: false
             })
         }).catch(error => {
             console.log(JSON.stringify(error.response.data.error));
@@ -136,6 +125,54 @@ class ProductDetailScreen extends Component {
         if (this.state.amountOrder > 0) {
             this.setState({ amountOrder: this.state.amountOrder - 1 });
         }
+    }
+    checkOrder = () => {
+        console.log('check length' + this.state.listUserOrder.length);
+        if (this.state.listUserOrder.length >= 1) {
+            this.setState({ isHave: true, loadingDialog: false })
+        }else {
+            this.setState({ isHave: false })
+        }
+        this.setState({loadingDialog: false })
+    }
+    order = () => {
+        this.setState({ loadingDialog: true }, () => {
+            AsyncStorage.getItem('token', (err, result) => {
+                if (result == null || result == '') {
+                    this.setState({ warningLoginDialog: true, loadingDialog: false })
+                } else {
+                    if (this.state.amountOrder == 0) {
+                        this.setState({ warningAmountDialog: true, loadingDialog: false })
+                    } else {
+
+                        let productOrder = this.state.product;
+                        productOrder.quantity = this.state.amountOrder;
+                        this.state.listUserOrder.push(productOrder);
+                        console.log('length order sau do' + this.state.listUserOrder.length);
+                        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listUserOrder));
+                        this.loadOrder();
+                    }
+
+                }
+            })
+        })
+
+
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            this.setState({ userId: result });
+            AsyncStorage.getItem(result, (err, listOrder) => {
+                console.log('list order' + JSON.parse(listOrder));
+                this.setState({ listUserOrder: JSON.parse(listOrder) })
+                console.log('length order hien tai' + this.state.listUserOrder.length);
+                this.checkOrder();
+            })
+        });
+    }
+    format(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
     render() {
         return (
@@ -155,19 +192,22 @@ class ProductDetailScreen extends Component {
                             <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ marginVertical: 10, marginLeft: 15 }}>
                                 <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.basket}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                             </TouchableOpacity>
-                            <View style={styles.basket_number}>
-                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
-                            </View>
+                            {this.state.isHave ? (
+                                <View style={styles.basket_number}>
+                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                </View>
+                            ) : null}
+
                         </View>
                     </View>
                     <View style={styles.content}>
-                        <Text style={styles.tag}>{this.state.tag}</Text>
+                        <Text style={styles.tag}>{STRING.TAG} {this.state.category.name}</Text>
                         <View style={styles.title}>
                             <View style={{ flex: 6 }}>
-                                <Text style={styles.title_text}>{this.state.title}</Text>
+                                <Text style={styles.title_text}>{this.state.product.full_name}</Text>
                             </View>
                             <View style={{ flex: 1 }}>
                                 <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
@@ -176,8 +216,8 @@ class ProductDetailScreen extends Component {
                             </View>
                         </View>
                         <View style={styles.title}>
-                            <Text style={styles.price_text}>{this.state.newPrice} {STRING.CURRENCY}</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.state.oldPrice} {STRING.CURRENCY}</Text>
+                            <Text style={styles.price_text}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 4, flexDirection: 'row' }}>
@@ -232,8 +272,8 @@ class ProductDetailScreen extends Component {
                                 <TouchableOpacity onPress={this.sub}>
                                     <SvgUri svgXmlData={BTN_SUB} />
                                 </TouchableOpacity>
-                                <View style={{ width: 25, justifyContent: 'center', alignItems:'center', marginHorizontal:5 }}>
-                                    <Text style={{textAlign:'center'}}>{this.state.amountOrder}</Text>
+                                <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
+                                    <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
                                 </View>
                                 <TouchableOpacity onPress={this.plus}>
                                     <Image source={IMAGE.BTN_ADD} />
@@ -254,7 +294,7 @@ class ProductDetailScreen extends Component {
                     <View style={styles.content}>
                         <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600' }}>{STRING.DESCRIPTION}</Text>
                         <HTMLView
-                            value={this.state.description}
+                            value={this.state.product.description}
                         />
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
@@ -266,7 +306,7 @@ class ProductDetailScreen extends Component {
                                 <Text style={styles.made_in_title}>{STRING.TRADE_MARK}</Text>
                             </View>
                             <View style={{ flex: 2 }}>
-                                <Text style={styles.made_in_text}>{this.state.tradeMark}</Text>
+                                <Text style={styles.made_in_text}>{this.state.category.name}</Text>
                             </View>
                         </View>
                         <View style={styles.made_in}>
@@ -325,13 +365,14 @@ class ProductDetailScreen extends Component {
                             data={this.state.listSameType}
                             renderItem={({ item }) =>
                                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
-                                    <Item image={item.primary_image}
+                                    <ItemRow image={item.primary_image}
                                         name={item.full_name}
                                         price={item.base_price}
                                         point={5}
                                         review={10}
                                         sale={'-10%'}
-                                        sell={50} />
+                                        sell={50}
+                                    />
                                 </TouchableOpacity>
                             }
                         />
@@ -340,15 +381,89 @@ class ProductDetailScreen extends Component {
                 </ScrollView>
                 <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.state.newPrice} {STRING.CURRENCY}</Text>
+                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
                             {/* <SvgUri svgXmlData={PLUS}/> */}
                             <Image source={IMAGE.ORDER} />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
+                <Dialog
+                    // dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ warningLoginDialog: false });
+                    }}
+                    width={0.9}
+                    visible={this.state.warningLoginDialog}
+                    dialogTitle={
+                        <DialogTitle
+                            title={STRING.WARNING}
+                            hasTitleBar={false}
+                            align="center"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ warningLoginDialog: false });
+                                }}
+                                key="button-1"
+                            />
+                        </DialogFooter>
+                    }
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>{STRING.LOGIN_BEFORE_ORDER}</Text>
+                    </DialogContent>
+                </Dialog>
+                <Dialog
+                    onDismiss={() => {
+                        this.setState({ warningAmountDialog: false });
+                    }}
+                    width={0.9}
+                    visible={this.state.warningAmountDialog}
+                    dialogTitle={
+                        <DialogTitle
+                            title={STRING.WARNING}
+                            hasTitleBar={false}
+                            align="center"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ warningAmountDialog: false });
+                                }}
+                                key="button-1"
+                            />
+                        </DialogFooter>
+                    }
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>{STRING.CHOOSE_QUANTITY}</Text>
+                    </DialogContent>
+                </Dialog>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }

@@ -66,6 +66,7 @@ class LoginScreen extends Component {
                 console.log(response.data);
                 if (response.data.success.token != null || response.data.success.token != '') {
                     AsyncStorage.setItem('token', response.data.success.token);
+                    this.getInfo(response.data.success.token);
                     this.props.navigation.replace('App')
                     this.setState({ loadingDialog: false })
                 }
@@ -75,6 +76,20 @@ class LoginScreen extends Component {
             }
             );
         }
+    }
+    getInfo = (token) => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        axios.get(API.URL + API.USER, config).then(response => {
+            console.log(response.data);
+            AsyncStorage.setItem('id',JSON.stringify(response.data.success.id));
+            AsyncStorage.setItem('name', response.data.success.name);
+            AsyncStorage.setItem('phone', response.data.success.phone);
+        }).catch(error => {
+        });
     }
     blurInput = () => {
 
@@ -188,8 +203,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     btn_close: {
-        marginLeft:16, 
-        marginTop:20
+        marginLeft: 16,
+        marginTop: 20
     }
 
 })

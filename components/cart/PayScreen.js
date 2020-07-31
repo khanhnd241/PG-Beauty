@@ -1,46 +1,68 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, Dimensions, StatusBar, Image } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
+import { API } from '../../constants/api';
 import { BACK_BLACK } from '../../constants/images/back_black';
 import { NEXT } from '../../constants/images/next';
 import { INFO } from '../../constants/images/info';
 import SvgUri from 'react-native-svg-uri';
+import axios from 'axios';
 class PayScreen extends Component {
     constructor(props) {
         super(props);
+        const { selectedCity, total, discount, name, phone, district, ward, address, comment } = this.props.route.params;
         this.state = {
             listProducts: [
-                {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '1'
-                },
-                {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '2'
-                }, {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '3'
-                }
             ],
-            discount: '0'
+            total: total,
+            discount: discount,
+            name: name,
+            phone: phone,
+            comment: comment,
+            userAddress: address + ' ' + ward + ' ' + district + ' ' + selectedCity
         };
     }
     componentDidMount = () => {
-        
+        this.loadOrder();
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            this.setState({ userId: result });
+            AsyncStorage.getItem(result, (err, listOrder) => {
+                console.log('list order' + JSON.parse(listOrder));
+                this.setState({ listProducts: JSON.parse(listOrder) })
+                console.log('length order hien tai' + this.state.listProducts.length);
+            })
+        });
+    }
+    connect = () => {
+        var data = new FormData();
+        data.append(API.SCOPES, API.SCOPES_DATA);
+        data.append(API.GRANT_TYPE, API.GRANT_TYPE_DATA);
+        data.append(API.CLIENT_ID, API.CLIENT_ID_DATA);
+        data.append(API.CLIENT_SECRET, API.CLIENT_SECRET_DATA);
+
+        axios.post(API.URL_CONNECT_KIOT, data, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            console.log(response.data.access_token);
+            if (response.data.access_token == null || response.data.access_token == '') {
+                Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.APPLY }])
+            } else {
+                console.log('call api')
+            }
+        }).catch(err => {
+            console.log(JSON.stringify(err))
+        })
+        console.log('xong')
+    }
+    format(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
     render() {
         return (
@@ -60,34 +82,39 @@ class PayScreen extends Component {
                     <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginBottom: 15 }} />
                     <View style={styles.form}>
                         <Text style={{ fontSize: 16, color: COLOR.TEXTBODY, fontWeight: 'bold', marginBottom: 5 }}>{STRING.SHIPPING_ADDRESS}</Text>
-                        <Text style={styles.text_info}>Nguyễn Văn A - 0365004789</Text>
-                        <Text style={styles.text_info}>Hồ Chí Minh 16A Lê Hồng Phong, Phường 12, Quận 10.</Text>
-                        <Text style={styles.text_info}>{STRING.NOTE}Giao vào giờ hành chính, giao đúng màu</Text>
+                        <Text style={styles.text_info}>{this.state.name} - {this.state.phone}</Text>
+                        <Text style={styles.text_info}>{this.state.userAddress}</Text>
+                        <Text style={styles.text_info}>{STRING.NOTE}{this.state.comment}</Text>
                     </View>
                     <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginVertical: 20 }} />
 
                     <FlatList
                         data={this.state.listProducts}
-                        renderItem={({ item, index }) =>
-                            <View>
-                                <View style={styles.form}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 2 }}>
-                                            <Image style={{ width: 90, height: 60 }} source={item.image}></Image>
+                        renderItem={({ item, index }) => {
+                            const imageUri = item.primary_image != null ? item.primary_image : ""
+                            return (
+                                <View>
+                                    <View style={styles.form}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <View style={{ flex: 2 }}>
+                                                <Image style={{ width: 90, height: 60 }} source={imageUri.length != 0 ? { uri: imageUri } : null}></Image>
 
-                                        </View>
-                                        <View style={{ flex: 4 }}>
-                                            <Text>{item.name}</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{item.newPrice}</Text>
-                                                <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, marginLeft: 16 }}>x{item.amount}</Text>
                                             </View>
+                                            <View style={{ flex: 4 }}>
+                                                <Text>{item.full_name}</Text>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                    <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, marginLeft: 16 }}>x{item.quantity}</Text>
+                                                </View>
 
+                                            </View>
                                         </View>
                                     </View>
+                                    <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginVertical: 20 }} />
                                 </View>
-                                <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginVertical: 20 }} />
-                            </View>
+                            )
+                        }
+
                         }
                     />
                     <View style={styles.form}>
@@ -123,7 +150,7 @@ class PayScreen extends Component {
                             <Text style={styles.title}>{STRING.PAYMENT_METHOD}</Text>
                             <Text style={{ color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 5 }}>Thanh toán tiền khi nhận hàng (COD)</Text>
                         </View>
-                        <TouchableOpacity onPress={() => {this.props.navigation.navigate('PaymentMethodsScreen')}} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('PaymentMethodsScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <SvgUri svgXmlData={NEXT} fill={COLOR.PLACEHODER} width={20} height={20} />
                         </TouchableOpacity>
                     </View>
@@ -154,20 +181,20 @@ class PayScreen extends Component {
                             </View>
                         </View>
                     </View>
-                    <View style={{marginBottom:100}} />
+                    <View style={{ marginBottom: 100 }} />
                 </ScrollView>
 
                 <View style={styles.footer}>
-                    <View style={{ flexDirection: 'row', marginTop:15 }}>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
                         </View>
-                        <View style={{ flex: 1, flexDirection:'row-reverse' }}>
-                            <Text style={{color:COLOR.PRIMARY, fontSize:16}}>890.000 đ</Text>
+                        <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>890.000 đ</Text>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={this.goToOrderInfo} style={styles.btn_footer}>
-                    <Text style={{color:COLOR.WHITE, fontSize:16, textTransform:'uppercase'}}>{STRING.ORDER}</Text>
+                    <TouchableOpacity onPress={() => { this.connect() }} style={styles.btn_footer}>
+                        <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.ORDER}</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -176,12 +203,12 @@ class PayScreen extends Component {
 }
 const styles = StyleSheet.create({
     screen: {
-        flex:1, 
-        backgroundColor:COLOR.PRIMARY
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
     },
     background: {
         backgroundColor: COLOR.WHITE,
-        flex:1
+        flex: 1
     },
     header: {
         backgroundColor: COLOR.PRIMARY,
@@ -246,14 +273,14 @@ const styles = StyleSheet.create({
         marginRight: 5,
         fontWeight: '600'
     },
-    btn_footer:{
-        backgroundColor:COLOR.PRIMARY, 
-        height:40, 
-        borderRadius:40, 
-        marginTop:10, 
-        alignItems:'center', 
-        justifyContent:'center', 
-        marginHorizontal:5
+    btn_footer: {
+        backgroundColor: COLOR.PRIMARY,
+        height: 40,
+        borderRadius: 40,
+        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5
     }
 })
 export default PayScreen;

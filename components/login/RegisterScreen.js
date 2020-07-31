@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, TextInput, Alert, StatusBar, ActivityIndicator } from "react-native";
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, TextInput, Alert, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
 import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../constants/string';
@@ -12,6 +12,7 @@ import { DROPDOWN } from '../../constants/images/dropdown';
 import { CLOSE } from '../../constants/images/close';
 import axios from 'axios';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { DatePicker } from '@davidgovea/react-native-wheel-datepicker';
 import { COLOR } from '../../constants/colors'
 import moment from 'moment';
 import Dialog, {
@@ -21,6 +22,7 @@ import Dialog, {
     DialogButton,
     SlideAnimation,
 } from 'react-native-popup-dialog';
+// import DatePicker from 'react-native-datepicker'
 class RegisterScreen extends Component {
     constructor(props) {
         super(props);
@@ -36,7 +38,9 @@ class RegisterScreen extends Component {
             confirmPassword: '',
             datePicker: false,
             dateView: STRING.ENTER_DATE_OF_BIRTH,
-            loadingDialog: false
+            loadingDialog: false,
+            date: "2016-05-15",
+            calendarDialog: false
         };
     }
     handlerDate = (date) => {
@@ -99,6 +103,7 @@ class RegisterScreen extends Component {
             }
             if (this.state.dateView.trim() != '' && this.state.dateView != STRING.ENTER_DATE_OF_BIRTH) {
                 data.birthday = this.state.dateView;
+                console.log('ngay sinh' + data.birthday);
             }
             if (this.state.address.trim() != '') {
                 data.address = this.state.address;
@@ -106,10 +111,12 @@ class RegisterScreen extends Component {
             axios.post(API.URL + API.REGISTER, data).then(response => {
                 this.setState({ loadingDialog: false });
                 if (response.data.success.token != null || response.data.success.token != '') {
+                    AsyncStorage.setItem('token', response.data.success.token);
+                    this.getInfo(response.data.success.token);
                     this.setState({ loadingDialog: false });
                     Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
                         text: STRING.ACCEPT,
-                        onPress: () => { this.props.navigation.replace('LoginScreen') }
+                        onPress: () => { this.props.navigation.replace('App') }
                     }])
                 }
             }).catch(error => {
@@ -119,6 +126,23 @@ class RegisterScreen extends Component {
             );
         }
     }
+    getInfo = (token) => {
+        var listOrder = [];
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        axios.get(API.URL + API.USER, config).then(response => {
+            console.log(response.data);
+            AsyncStorage.setItem('id', JSON.stringify(response.data.success.id));
+            AsyncStorage.setItem(JSON.stringify(response.data.success.id), JSON.stringify(listOrder));
+            AsyncStorage.setItem('name', response.data.success.name);
+            AsyncStorage.setItem('phone', response.data.success.phone);
+        }).catch(error => {
+        });
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.background}>
@@ -134,12 +158,12 @@ class RegisterScreen extends Component {
                         <Text style={styles.title}>{STRING.ENTER_INFO}</Text>
 
                         <TextInput style={styles.textInput} placeholder={STRING.ENTER_NAME} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ name: value }) }}></TextInput>
-                        <View style={styles.input_dob}>
+                        <TouchableOpacity onPress={() => { this.setState({ calendarDialog: true }) }} style={styles.input_dob}>
                             <Text style={{ flex: 7, color: COLOR.PLACEHODER }}>{this.state.dateView}</Text>
-                            <TouchableOpacity onPress={() => { this.setState({ datePicker: true }) }} style={{ flex: 1 }}>
+                            <View  style={{ flex: 1 }}>
                                 <SvgUri svgXmlData={DROPDOWN} />
-                            </TouchableOpacity>
-                        </View>
+                            </View>
+                        </TouchableOpacity>
                         <TextInput style={styles.textInput} placeholder={STRING.ENTER_ADDRESS} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ address: value }) }}></TextInput>
                         <TextInput style={styles.textInput} placeholder={STRING.EMAIL} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
                         <TextInput style={styles.textInput} placeholder={STRING.ENTER_PHONE_INPUT} keyboardType='numeric' maxLength={10} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
@@ -169,6 +193,7 @@ class RegisterScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
+
                 <DateTimePickerModal
                     isVisible={this.state.datePicker}
                     mode="date"
@@ -178,6 +203,54 @@ class RegisterScreen extends Component {
                         this.setState({ datePicker: false })
                     }}
                 />
+                <Dialog
+                    // dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ calendarDialog: false });
+                    }}
+                    onTouchOutside={() => {
+                        this.setState({ calendarDialog: false });
+                    }}
+                    height={300}
+                    width={0.9}
+                    visible={this.state.calendarDialog}
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.CANCEL}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ calendarDialog: false });
+                                }}
+                                key="button-2"
+                            />
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ calendarDialog: false });
+                                }}
+                                key="button-1"
+                            />
+
+                        </DialogFooter>
+                    }
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <DatePicker
+                            textColor={COLOR.PLACEHODER}
+                            style={{ backgroundColor: COLOR.WHITE }}
+                            minimumDate={new Date('1900-01-01')}
+                            mode="date"
+                            onDateChange={(date) => {
+                                this.setState({
+                                    dateView: moment(date).format('DD/MM/YYYY')
+                                })
+                                console.log(date);
+                            }}
+                        />
+                    </DialogContent>
+                </Dialog>
                 <Dialog
                     dialogStyle={{ backgroundColor: 'transparent' }}
                     onDismiss={() => {

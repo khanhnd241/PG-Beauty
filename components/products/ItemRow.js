@@ -16,7 +16,6 @@ class ItemRow extends Component {
     }
     
     format(n) {
-        // return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1.');
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       }
     render() {
@@ -25,7 +24,7 @@ class ItemRow extends Component {
         return (
             <View style={styles.container_items}>
                 <View style={{ flex: 1 }}>
-                    <ImageBackground ssource={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
+                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
                             <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>

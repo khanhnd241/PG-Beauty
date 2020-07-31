@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, Image } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, ActivityIndicator, StatusBar, Image } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -7,67 +7,87 @@ import { ICON_CLOSE } from '../../constants/images/icon_close';
 import { PLUS } from '../../constants/images/plus';
 import { SUB } from '../../constants/images/sub';
 import { INFO } from '../../constants/images/info';
+import { BTN_SUB } from '../../constants/images/btn_sub';
 import SvgUri from 'react-native-svg-uri';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 class CartDetailScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listProducts: [
-                {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '1'
-                },
-                {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '2'
-                }, {
-                    name: 'Son Chanel mới nhất Intense Matte Lip Color',
-                    color: 'Màu 116',
-                    image: IMAGE.ANH_DEMO_6,
-                    newPrice: ' 100000 đ',
-                    oldPrice: '₫980.000',
-                    amount: '3'
-                }
-            ],
-            refresh: true,
+            listProducts: [],
+            refresh: false,
             codeInput: '',
-            discount: '0 đ'
+            discount: 0,
+            total: 0,
+            loadingDialog: false
         };
     }
     componentDidMount = () => {
-        this.sumProduct();
+        this.loadOrder();
+
     }
     sumProduct = () => {
         let tong = 0;
         for (let i = 0; i < this.state.listProducts.length; i++) {
-            let newPrice = parseInt(this.state.listProducts[i].newPrice);
-            let amount = parseInt(this.state.listProducts[i].amount);
-            console.log(newPrice, amount);
-            tong = tong + newPrice * amount;
+            tong = tong + this.state.listProducts[i].base_price * this.state.listProducts[i].quantity;
         }
-        console.log(tong);
+        this.setState({ total: tong - this.state.discount, loadingDialog: false });
+        console.log('tong' + tong);
     }
 
-    reload = () => {
-        this.setState({ refresh: false })
-    }
+    
     deleteProduct = (index) => {
-        this.state.listProducts.splice(index, 1);
-        this.setState({ listProducts: this.state.listProducts });
-        this.setState({ refresh: true });
+        this.setState({loadingDialog: true });
+        let listProducts = this.state.listProducts;
+        listProducts.splice(index, 1);
+        // this.reload();
+        this.setState({ listProducts: listProducts});
         this.reload();
         this.sumProduct();
     }
+    reloadFlatlist = () => {
+        this.setState({refresh: true})
+    }
+    reload = () => {
+        
+        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+
+    }
     goToOrderInfo = () => {
-        this.props.navigation.navigate('OrderInfomationScreen');
+        this.props.navigation.navigate('OrderInfomationScreen',{total: this.state.total, discount: this.state.discount});
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            this.setState({ userId: result });
+            AsyncStorage.getItem(result, (err, listOrder) => {
+                console.log('list order' + JSON.parse(listOrder));
+                this.setState({ listProducts: JSON.parse(listOrder) })
+                console.log('length order hien tai' + this.state.listProducts.length);
+                this.sumProduct();
+            })
+        });
+    }
+    format(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    sub = (index) => {
+        if(this.state.listProducts[index].quantity > 1) {
+            this.state.listProducts[index].quantity --;
+            AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+        };
+        this.sumProduct()
+    }
+    sum = (index) => {
+        this.state.listProducts[index].quantity ++;
+        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+        this.sumProduct()
     }
     render() {
         return (
@@ -86,42 +106,50 @@ class CartDetailScreen extends Component {
                         <FlatList
                             extraData={this.state.refresh}
                             data={this.state.listProducts}
-                            renderItem={({ item, index }) =>
-                                <View>
-                                    <View style={styles.item_container}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <View style={{ flex: 2 }}>
-                                                <Image style={{ width: 90, height: 60 }} source={item.image}></Image>
+                            renderItem={({ item, index }) => {
+                                console.log('load' + index)
+                                const imageUri = item.primary_image != null ? item.primary_image : ""
+                                return (
+                                    <View>
+                                        <View style={styles.item_container}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <View style={{ flex: 2 }}>
+                                                    <Image style={{ width: 90, height: 60 }} source={imageUri.length != 0 ? { uri: imageUri } : null}></Image>
 
-                                            </View>
-                                            <View style={{ flex: 4 }}>
-                                                <Text>{item.name}</Text>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{item.newPrice}</Text>
-                                                    <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{item.oldPrice}</Text>
                                                 </View>
+                                                <View style={{ flex: 4 }}>
+                                                    <Text>{item.full_name}</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                    </View>
 
-                                            </View>
-                                            <TouchableOpacity onPress={() => { this.deleteProduct(index) }} style={{ flex: 0.5, alignItems: 'center' }}>
-                                                <SvgUri svgXmlData={ICON_CLOSE} />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                                            <View style={{ flex: 2 }}></View>
-                                            <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
-                                                <TouchableOpacity>
-                                                    <SvgUri svgXmlData={SUB} />
-                                                </TouchableOpacity>
-                                                <Text style={{ marginHorizontal: 15 }}>{item.amount}</Text>
-                                                <TouchableOpacity>
-                                                    <SvgUri svgXmlData={SUB} />
+                                                </View>
+                                                <TouchableOpacity onPress={() => { this.deleteProduct(index) }} style={{ flex: 0.5, alignItems: 'center' }}>
+                                                    <SvgUri svgXmlData={ICON_CLOSE} />
                                                 </TouchableOpacity>
                                             </View>
-                                            <View style={{ flex: 0.5 }}></View>
+                                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                                <View style={{ flex: 2 }}></View>
+                                                <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
+                                                    <TouchableOpacity onPress={() => {this.sub(index)}}>
+                                                        <SvgUri svgXmlData={BTN_SUB} />
+                                                    </TouchableOpacity>
+                                                    <Text style={{ marginHorizontal: 15 }}>{item.quantity}</Text>
+                                                    <TouchableOpacity onPress={() => {this.sum(index)}} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
+                                                        <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
+                                                        {/* <Image style={{borderWidth:0.5, borderColor:COLOR.PRIMARY}} source={IMAGE.BTN_ADD} /> */}
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <View style={{ flex: 0.5 }}></View>
+                                            </View>
                                         </View>
+                                        <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginVertical: 10 }} />
                                     </View>
-                                    <View style={{ backgroundColor: COLOR.GRAY, height: 5 }} />
-                                </View>
+                                )
+                            }
+
                             }
                         />
                         <View style={styles.item_container}>
@@ -142,7 +170,7 @@ class CartDetailScreen extends Component {
                                     <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT_LEVEL}</Text>
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount} {STRING.CURRENCY}</Text>
                                 </View>
                             </View>
                         </View>
@@ -153,7 +181,7 @@ class CartDetailScreen extends Component {
                                     <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.MONEY}</Text>
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', marginVertical: 10 }}>
@@ -161,34 +189,47 @@ class CartDetailScreen extends Component {
                                     <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT}</Text>
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                    <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount} {STRING.CURRENCY}</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.TOTAL}</Text>
                                 </View>
-                                <View style={{ flex: 1, flexDirection: 'row-reverse', marginBottom:100 }}>
-                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                <View style={{ flex: 1, flexDirection: 'row-reverse', marginBottom: 100 }}>
+                                    <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                                 </View>
                             </View>
                         </View>
                     </View>
-                    
+
                 </ScrollView>
                 <View style={styles.footer}>
-                        <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
-                            </View>
-                            <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>890.000 đ</Text>
-                            </View>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
                         </View>
-                        <TouchableOpacity onPress={this.goToOrderInfo} style={{ backgroundColor: COLOR.PRIMARY, height: 40, borderRadius: 40, marginTop: 10, alignItems: 'center', justifyContent: 'center', marginHorizontal: 5 }}>
-                            <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.CONTINUE}</Text>
-                        </TouchableOpacity>
+                        <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
+                        </View>
                     </View>
+                    <TouchableOpacity onPress={this.goToOrderInfo} style={{ backgroundColor: COLOR.PRIMARY, height: 40, borderRadius: 40, marginTop: 10, alignItems: 'center', justifyContent: 'center', marginHorizontal: 5 }}>
+                        <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.CONTINUE}</Text>
+                    </TouchableOpacity>
+                </View>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }
@@ -226,8 +267,9 @@ const styles = StyleSheet.create({
     },
     text_input: {
         flex: 3,
-        fontSize: 16,
-        color: COLOR.TEXTBODY
+        fontSize: 15,
+        color: COLOR.TEXTBODY,
+        paddingLeft: 5
     },
     input: {
         height: 40,

@@ -101,7 +101,7 @@ class ListProductsScreen extends Component {
                         numColumns={2}
                         data={this.state.listProduct}
                         renderItem={({ item }) =>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen'), { id: item.id } }}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen',{ id: item.id }) }}>
                                 <ItemColumn image={item.primary_image}
                                     name={item.full_name}
                                     price={item.base_price}

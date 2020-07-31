@@ -116,7 +116,11 @@ const STRING = {
     CURRENCY: 'đ',
     VIEW_MORE: 'Xem thêm',
     FONT_NORMAL: 'Nunito-Regular',
-    TAG: '#'
+    TAG: '#',
+    WARNING: 'Cảnh báo',
+    LOGIN_BEFORE_ORDER: 'Bạn cần đăng nhập trước khi đặt hàng',
+    CHOOSE_QUANTITY: 'Vui lòng chọn số lượng',
+    ORDER_FAILED: 'Đặt hàng không thành công, hãy thử lại!'
 }
 
 export  {STRING}

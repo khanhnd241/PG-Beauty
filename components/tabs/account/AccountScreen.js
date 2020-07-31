@@ -38,7 +38,10 @@ class AccountScreen extends Component {
             },
             token: '1',
             isLogin: false,
-            loadingDialog: false
+            loadingDialog: false,
+            name: '',
+            phone: '',
+            id:''
         };
     }
     componentDidMount = () => {
@@ -50,6 +53,15 @@ class AccountScreen extends Component {
             if (result == null || result == '') {
                 this.setState({ isLogin: false });
             } else {
+                AsyncStorage.getItem('name', (err, result) => {
+                    this.setState({name: result});
+                });
+                AsyncStorage.getItem('phone', (err, result) => {
+                    this.setState({phone: result});
+                });
+                AsyncStorage.getItem('id', (err, result) => {
+                    console.log('id cua user' + result);
+                });
                 this.setState({ isLogin: true, token: result });
             }
             this.setState({ id: result })
@@ -63,9 +75,8 @@ class AccountScreen extends Component {
     }
     logout = () => {
         this.setState({ loadingDialog: true })
-        AsyncStorage.removeItem('token', (err) => {
+        AsyncStorage.multiRemove(['token', 'id', 'name','phone'], (err) => {
             if (err) {
-
             } else {
                 this.loadData();
                 this.setState({loadingDialog:false})
@@ -101,8 +112,8 @@ class AccountScreen extends Component {
                             </TouchableOpacity>
                         </View>
                         <View style={{ alignItems: 'center', marginTop: 10 }}>
-                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, padding: 5 }}>{user.name}</Text>
-                            <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, padding: 5 }}>{user.phone}</Text>
+                            <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, padding: 5 }}>{this.state.name}</Text>
+                            <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, padding: 5 }}>{this.state.phone}</Text>
                         </View>
                         <View style={{ borderTopWidth: 0.5, marginTop: 5 }} />
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
