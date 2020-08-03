@@ -172,12 +172,19 @@ class HomeScreen extends Component {
     }
     componentDidMount = () => {
         this.setState({ isLoading: true }, this.loadListNewProduct);
-        
+
     }
     loadOrder = () => {
         AsyncStorage.getItem('id', (err, result) => {
             console.log('id day' + result);
-            if (result != null) {
+            if (result == null || result == '') {
+                AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    AsyncStorage.getItem(deviceId, (err, listOrder) => {
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        this.checkOrder();
+                    })
+                })
+            } else {
                 this.setState({ userId: result });
                 AsyncStorage.getItem(result, (err, listOrder) => {
                     console.log('list order' + JSON.parse(listOrder));
@@ -185,8 +192,6 @@ class HomeScreen extends Component {
                     console.log('length order hien tai' + this.state.listUserOrder.length);
                     this.checkOrder();
                 })
-            } else {
-                this.checkOrder();
             }
         });
     }

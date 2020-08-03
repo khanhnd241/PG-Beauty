@@ -75,7 +75,7 @@ class AccountScreen extends Component {
     }
     logout = () => {
         this.setState({ loadingDialog: true })
-        AsyncStorage.multiRemove(['token', 'id', 'name','phone'], (err) => {
+        AsyncStorage.multiRemove(['token', 'id', 'name','phone', 'code', 'password'], (err) => {
             if (err) {
             } else {
                 this.loadData();
@@ -138,7 +138,7 @@ class AccountScreen extends Component {
                         </View>
                         <View style={{ height: 10, backgroundColor: COLOR.GRAY }} />
                         {/* lich su mua hang */}
-                        <TouchableOpacity style={styles.item}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('HistoryScreen')} style={styles.item}>
                             <View style={styles.item_icon}>
                                 <SvgUri svgXmlData={CART} />
                             </View>

@@ -13,6 +13,7 @@ import { CLOSE } from '../../constants/images/close';
 import axios from 'axios';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { DatePicker } from '@davidgovea/react-native-wheel-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLOR } from '../../constants/colors'
 import moment from 'moment';
 import Dialog, {
@@ -40,18 +41,27 @@ class RegisterScreen extends Component {
             dateView: STRING.ENTER_DATE_OF_BIRTH,
             loadingDialog: false,
             date: "2016-05-15",
-            calendarDialog: false
+            calendarDialog: false,
+            deviceId: '',
+            id: null,
+            token: ''
         };
     }
-    handlerDate = (date) => {
-        console.log('ngay sinh', date);
-        this.setState({
-            dateOfBirth: date,
-            datePicker: false,
-            dateView: moment(date).format('DD/MM/YYYY')
-        })
+    // handlerDate = (date) => {
+    //     console.log('ngay sinh', date);
+    //     this.setState({
+    //         dateOfBirth: date,
+    //         datePicker: false,
+    //         dateView: moment(date).format('DD/MM/YYYY')
+    //     })
 
-    }
+    // }
+    onChange = (event, date) => {
+        this.setState({
+            dateView: moment(date).format('DD/MM/YYYY'),
+            calendarDialog: false
+        })
+    };
     showPassword = () => {
         this.setState({
             showPassword: !this.state.showPassword
@@ -88,6 +98,57 @@ class RegisterScreen extends Component {
         }
         return true;
     }
+    connect = () => {
+        this.setState({ loadingDialog: true })
+        var data = new FormData();
+        data.append(API.SCOPES, API.SCOPES_DATA);
+        data.append(API.GRANT_TYPE, API.GRANT_TYPE_DATA);
+        data.append(API.CLIENT_ID, API.CLIENT_ID_DATA);
+        data.append(API.CLIENT_SECRET, API.CLIENT_SECRET_DATA);
+
+        axios.post(API.URL_CONNECT_KIOT, data, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            console.log(response.data.access_token);
+            if (response.data.access_token == null || response.data.access_token == '') {
+                Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
+            } else {
+                this.setState({ token: response.data.access_token })
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${this.state.token}`,
+                        Retailer: API.RETAILER,
+                    }
+                };
+                axios.get(API.URL_API_KIOT + API.CUSTOMERS + '?contactNumber=' + this.state.phone, config).then(res => {
+                    if (res.data.data.length > 0) {
+                        this.setState({
+                            loadingDialog: false,
+                            name: res.data.data[0].name,
+                            address: res.data.data[0].address,
+                            email: res.data.data[0].email,
+                            dateView: moment(res.data.data[0].birthDate).format('DD/MM/YYYY'),
+                            id: res.data.data[0].id
+                        })
+
+                    } else {
+                        this.setState({ loadingDialog: false })
+                    }
+
+                }).catch(err => {
+                    this.setState({ loadingDialog: false })
+                    // Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
+                    console.log('loi' + JSON.stringify(err))
+                })
+            }
+        }).catch(err => {
+            this.setState({ loadingDialog: false })
+            console.log(JSON.stringify(err));
+            Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
+        })
+    }
     register = () => {
         let data = {};
         this.validate();
@@ -98,6 +159,7 @@ class RegisterScreen extends Component {
             data.name = this.state.name;
             data.phone = this.state.phone;
             data.password = this.state.password;
+            // data.device_id = this.state.deviceId;
             if (this.state.email.trim() != '') {
                 data.email = this.state.email;
             }
@@ -108,23 +170,82 @@ class RegisterScreen extends Component {
             if (this.state.address.trim() != '') {
                 data.address = this.state.address;
             }
-            axios.post(API.URL + API.REGISTER, data).then(response => {
-                this.setState({ loadingDialog: false });
-                if (response.data.success.token != null || response.data.success.token != '') {
-                    AsyncStorage.setItem('token', response.data.success.token);
-                    this.getInfo(response.data.success.token);
-                    this.setState({ loadingDialog: false });
-                    Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
-                        text: STRING.ACCEPT,
-                        onPress: () => { this.props.navigation.replace('App') }
-                    }])
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${this.state.token}`,
+                    Retailer: API.RETAILER,
                 }
-            }).catch(error => {
-                this.setState({ loadingDialog: false });
-                Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }])
+            };
+            if (this.state.id == null || this.state.id == '') {
+                data.branchId = API.BRANDID;
+                axios.post(API.URL_API_KIOT + API.CUSTOMERS, data, config).then(response => {
+                    console.log('code day' + response.data.data.code);
+                    if(response.data.data.code == '' || response.data.data.code == '') {
+                        Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
+                    } else {
+                        AsyncStorage.setItem('code', response.data.data.code);
+                        axios.post(API.URL + API.REGISTER, data).then(response => {
+                            this.setState({ loadingDialog: false });
+                            if (response.data.success.token != null || response.data.success.token != '') {
+                                AsyncStorage.setItem('token', response.data.success.token);
+                                AsyncStorage.setItem('password', this.state.password);
+                                this.getInfo(response.data.success.token);
+                                this.setState({ loadingDialog: false });
+                                Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
+                                    text: STRING.ACCEPT,
+                                    onPress: () => { this.props.navigation.replace('App') }
+                                }])
+                            }
+                        }).catch(error => {
+                            this.setState({ loadingDialog: false });
+                            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
+                            console.log(JSON.stringify(error.response.data));
+                        }
+                        );
+                    }
+                    
+                }).catch(err => {
+                    console.log(JSON.stringify(err)); 
+                    Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.responseStatus) , [{ text: STRING.ACCEPT }]);
+                    this.setState({ loadingDialog: false });
+                })
+            } else {
+                axios.put(API.URL_API_KIOT + API.CUSTOMERS + '/' + this.state.id, data, config).then(response => {
+                    console.log('khach hang kiot ' + response.data.data.code);
+                    if(response.data.data.code == '' || response.data.data.code == '') {
+                        Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
+                    } else {
+                        AsyncStorage.setItem('code', response.data.data.code);
+                        axios.post(API.URL + API.REGISTER, data).then(response => {
+                            this.setState({ loadingDialog: false });
+                            if (response.data.success.token != null || response.data.success.token != '') {
+                                AsyncStorage.setItem('token', response.data.success.token);
+                                AsyncStorage.setItem('password', this.state.password);
+                                this.getInfo(response.data.success.token);
+                                this.setState({ loadingDialog: false });
+                                Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
+                                    text: STRING.ACCEPT,
+                                    onPress: () => { this.props.navigation.replace('App') }
+                                }])
+                            }
+                        }).catch(error => {
+                            this.setState({ loadingDialog: false });
+                            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
+                            console.log(JSON.stringify(error.response.data));
+                        }
+                        );
+                    }
+                    
+                }).catch(err => {
+                    Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.responseStatus.message), [{ text: STRING.ACCEPT }])
+                })
             }
-            );
         }
+    }
+    componentDidMount = () => {
+        AsyncStorage.getItem('deviceId', (err, deviceId) => {
+            this.setState({ deviceId: deviceId });
+        })
     }
     getInfo = (token) => {
         var listOrder = [];
@@ -156,17 +277,17 @@ class RegisterScreen extends Component {
                             <SvgUri svgXmlData={LOGO} />
                         </View>
                         <Text style={styles.title}>{STRING.ENTER_INFO}</Text>
-
-                        <TextInput style={styles.textInput} placeholder={STRING.ENTER_NAME} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ name: value }) }}></TextInput>
+                        <TextInput style={styles.textInput} onBlur={() => this.connect()} placeholder={STRING.ENTER_PHONE_INPUT} keyboardType='numeric' maxLength={10} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
+                        <TextInput style={styles.textInput} value={this.state.name} placeholder={STRING.ENTER_NAME} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ name: value }) }}></TextInput>
                         <TouchableOpacity onPress={() => { this.setState({ calendarDialog: true }) }} style={styles.input_dob}>
                             <Text style={{ flex: 7, color: COLOR.PLACEHODER }}>{this.state.dateView}</Text>
-                            <View  style={{ flex: 1 }}>
+                            <View style={{ flex: 1 }}>
                                 <SvgUri svgXmlData={DROPDOWN} />
                             </View>
                         </TouchableOpacity>
-                        <TextInput style={styles.textInput} placeholder={STRING.ENTER_ADDRESS} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ address: value }) }}></TextInput>
-                        <TextInput style={styles.textInput} placeholder={STRING.EMAIL} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
-                        <TextInput style={styles.textInput} placeholder={STRING.ENTER_PHONE_INPUT} keyboardType='numeric' maxLength={10} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
+                        <TextInput style={styles.textInput} value={this.state.address} placeholder={STRING.ENTER_ADDRESS} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ address: value }) }}></TextInput>
+                        <TextInput style={styles.textInput} value={this.state.email} placeholder={STRING.EMAIL} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
+
                         <View style={styles.input_dob}>
                             <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
@@ -193,64 +314,14 @@ class RegisterScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                <DateTimePickerModal
-                    isVisible={this.state.datePicker}
-                    mode="date"
-                    date={new Date()}
-                    onConfirm={this.handlerDate}
-                    onCancel={() => {
-                        this.setState({ datePicker: false })
-                    }}
-                />
-                <Dialog
-                    // dialogStyle={{ backgroundColor: 'transparent' }}
-                    onDismiss={() => {
-                        this.setState({ calendarDialog: false });
-                    }}
-                    onTouchOutside={() => {
-                        this.setState({ calendarDialog: false });
-                    }}
-                    height={300}
-                    width={0.9}
-                    visible={this.state.calendarDialog}
-                    footer={
-                        <DialogFooter>
-                            <DialogButton
-                                text={STRING.CANCEL}
-                                bordered
-                                onPress={() => {
-                                    this.setState({ calendarDialog: false });
-                                }}
-                                key="button-2"
-                            />
-                            <DialogButton
-                                text={STRING.ACCEPT}
-                                bordered
-                                onPress={() => {
-                                    this.setState({ calendarDialog: false });
-                                }}
-                                key="button-1"
-                            />
-
-                        </DialogFooter>
-                    }
-                >
-                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <DatePicker
-                            textColor={COLOR.PLACEHODER}
-                            style={{ backgroundColor: COLOR.WHITE }}
-                            minimumDate={new Date('1900-01-01')}
-                            mode="date"
-                            onDateChange={(date) => {
-                                this.setState({
-                                    dateView: moment(date).format('DD/MM/YYYY')
-                                })
-                                console.log(date);
-                            }}
-                        />
-                    </DialogContent>
-                </Dialog>
+                {this.state.calendarDialog ? (
+                    <DateTimePicker
+                        value={new Date()}
+                        mode='date'
+                        display="spinner"
+                        onChange={this.onChange}
+                    />
+                ) : null}
                 <Dialog
                     dialogStyle={{ backgroundColor: 'transparent' }}
                     onDismiss={() => {
