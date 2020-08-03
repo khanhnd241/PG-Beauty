@@ -52,10 +52,15 @@ class CartDetailScreen extends Component {
         // this.reload();
         this.rerenderList(listProducts);
         this.reload();
+        this.reloadFlatlist();
+        this.stopReloadFlatlist();
         this.sumProduct();
     }
     reloadFlatlist = () => {
         this.setState({ refresh: true })
+    }
+    stopReloadFlatlist = () => {
+        this.setState({ refresh: false })
     }
     rerenderList = (listProducts) => {
         this.setState({ listProducts: listProducts });
@@ -92,6 +97,11 @@ class CartDetailScreen extends Component {
                 AsyncStorage.getItem(result, (err, listOrder) => {
                     this.setState({ listProducts: JSON.parse(listOrder) })
                     console.log('length order hien tai' + this.state.listProducts.length);
+                    if (this.state.listProducts.length > 0) {
+                        this.setState({ isHave: true })
+                    } else {
+                        this.setState({ isHave: false })
+                    }
                     this.sumProduct();
                 })
             }
@@ -140,8 +150,8 @@ class CartDetailScreen extends Component {
                     {this.state.isHave ? (
                         <View style={styles.content}>
                             <FlatList
-                                extraData={this.state.refresh}
                                 data={this.state.listProducts}
+                                refreshing={this.state.refresh}
                                 renderItem={({ item, index }) => {
                                     console.log('load' + index)
                                     const imageUri = item.primary_image != null ? item.primary_image : ""
@@ -304,6 +314,7 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: COLOR.WHITE,
+        flex:1
 
     },
     item_container: {

@@ -133,7 +133,11 @@ const STRING = {
     PROCESSING: 'Đang xử lí',
     SUCCESS: 'Thành công',
     CANCELED: 'Đã hủy',
-    LOGIN_FAILED: 'Đăng nhập thất bại'
+    LOGIN_FAILED: 'Đăng nhập thất bại',
+    DETAIL_ORDER: 'Chi tiết đơn hàng',
+    LIST_PRODUCTS: 'Danh sách sản phẩm',
+    AT: 'lúc',
+    STATUS: 'Trạng thái'
 }
 
 export  {STRING}

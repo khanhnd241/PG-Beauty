@@ -146,7 +146,7 @@ class AccountScreen extends Component {
                                 <Text style={styles.item_title_text}>{STRING.PURCHASED_HISTORY}</Text>
                             </View>
                             <View style={styles.item_description}>
-                                <Text style={styles.item_description_text}>chưa có</Text>
+                                {/* <Text style={styles.item_description_text}>chưa có</Text> */}
                             </View>
                             <View style={styles.next}>
                                 <SvgUri svgXmlData={NEXT} />

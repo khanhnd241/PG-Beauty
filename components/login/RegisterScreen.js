@@ -123,6 +123,7 @@ class RegisterScreen extends Component {
                     }
                 };
                 axios.get(API.URL_API_KIOT + API.CUSTOMERS + '?contactNumber=' + this.state.phone, config).then(res => {
+                    console.log(res.data.data.length);
                     if (res.data.data.length > 0) {
                         this.setState({
                             loadingDialog: false,
@@ -134,7 +135,14 @@ class RegisterScreen extends Component {
                         })
 
                     } else {
-                        this.setState({ loadingDialog: false })
+                        this.setState({ 
+                            loadingDialog: false,
+                            name: '',
+                            address: '',
+                            email: '',
+                            dateView: STRING.ENTER_DATE_OF_BIRTH,
+                            id: '' 
+                        })
                     }
 
                 }).catch(err => {
@@ -150,6 +158,7 @@ class RegisterScreen extends Component {
         })
     }
     register = () => {
+        console.log('id nguoi dung' + this.state.id)
         let data = {};
         this.validate();
         console.log(this.validate());

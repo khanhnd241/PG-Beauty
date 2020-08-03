@@ -149,14 +149,17 @@ class ProductDetailScreen extends Component {
                         console.log('chua dang nhap ' + this.state.listUserOrder)
                         this.setState({ loadingDialog: false });
                         AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listUserOrder));
+                        this.loadOrder();
+
                     } else {
                         console.log(' dang nhap roi')
                         console.log('length order sau do' + this.state.listUserOrder.length);
                         AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listUserOrder));
+                        this.loadOrder();
+
                     }
                 })
             })
-            this.loadOrder();
             Alert.alert('Thông báo', 'Đã thêm sản phẩm vào giỏ hàng', [{ text: STRING.ACCEPT }])
         }
 
@@ -165,7 +168,7 @@ class ProductDetailScreen extends Component {
 
     }
     loadOrder = () => {
-        this.setState({loadingDialog: true})
+        this.setState({ loadingDialog: true })
         AsyncStorage.getItem('id', (err, result) => {
             console.log('id day' + result);
             if (result == null || result == '') {
@@ -188,7 +191,7 @@ class ProductDetailScreen extends Component {
                     this.checkOrder();
                 })
             }
-            this.setState({loadingDialog: false})
+            this.setState({ loadingDialog: false })
         });
     }
     format(n) {
