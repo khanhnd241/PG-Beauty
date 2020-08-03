@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert } from "react-native";
 import { BACK_BLACK } from '../../../constants/images/back_black';
 import { STRING } from '../../../constants/string';
@@ -16,14 +16,14 @@ import Dialog, {
 } from 'react-native-popup-dialog';
 import axios from 'axios';
 import moment from 'moment';
-function Item({ total, statusValue, orderDetail, purchaseDate }) {
+function Item({ total, status, statusValue, orderDetail, purchaseDate }) {
     const [title, setTitle] = useState('');
-    useEffect(() =>{
+    useEffect(() => {
         let title = '';
-        for(let i = 0; i < orderDetail.length; i ++) {
-            title = title  + orderDetail[i].productName +  ' + ';
+        for (let i = 0; i < orderDetail.length; i++) {
+            title = title + orderDetail[i].productName + ' + ';
         }
-        setTitle(title.slice(0,-3))
+        setTitle(title.slice(0, -3))
     })
     return (
         <View style={{ marginHorizontal: 15, marginTop: 10 }}>
@@ -36,7 +36,15 @@ function Item({ total, statusValue, orderDetail, purchaseDate }) {
                     <Text style={{ lineHeight: 25, marginTop: 5, color: COLOR.PRIMARY, fontFamily: STRING.FONT_BOLD }}>{total} {STRING.CURRENCY}</Text>
                 </View>
             </View>
-            <Text style={{ marginTop: 5 }}>{statusValue} lúc {moment(purchaseDate).format('DD/MM/YYYY') }</Text>
+            {status == 1 ? (
+                <Text style={{ marginTop: 5, color: COLOR.YELLOW }}>{statusValue} lúc {moment(purchaseDate).format('DD/MM/YYYY')}</Text>
+            ) : null}
+            {status == 3 ? (
+                <Text style={{ marginTop: 5, color: COLOR.GREEN }}>{statusValue} lúc {moment(purchaseDate).format('DD/MM/YYYY')}</Text>
+            ) : null}
+            {status == 4 ? (
+                <Text style={{ marginTop: 5, color: COLOR.PRIMARY }}>{statusValue} lúc {moment(purchaseDate).format('DD/MM/YYYY')}</Text>
+            ) : null}
             <View style={{ borderBottomColor: COLOR.GRAY, borderBottomWidth: 1, marginVertical: 10 }} />
         </View>
     )
@@ -52,16 +60,17 @@ class HistoryScreen extends Component {
             buyOnline: true,
             colorAll: COLOR.PRIMARY,
             lineAll: COLOR.PRIMARY,
-
+            listAllOrder: [],
             colorNew: COLOR.TEXTBODY,
             lineNew: COLOR.WHITE,
-
+            listNewOrder: [],
             colorProcess: COLOR.TEXTBODY,
             lineProcess: COLOR.WHITE,
-
+            listProcessOrder: [],
             colorSuccess: COLOR.TEXTBODY,
             lineSuccess: COLOR.WHITE,
-
+            listSuccessOrder: [],
+            listCancelOrder: [],
             colorCancel: COLOR.TEXTBODY,
             lineCancel: COLOR.WHITE,
             token: '',
@@ -102,8 +111,20 @@ class HistoryScreen extends Component {
                     axios.get(API.URL_API_KIOT + API.ORDERS + '?customerCode=' + code, config).then(res => {
                         console.log(res.data.data.length);
                         if (res.data.data.length > 0) {
+                            for (let i = 0; i < res.data.data.length; i++) {
+                                if (res.data.data[i].status == 1) {
+                                    this.state.listProcessOrder.push(res.data.data[i]);
+                                }
+                                if (res.data.data[i].status == 3) {
+                                    this.state.listSuccessOrder.push(res.data.data[i]);
+                                }
+                                if (res.data.data[i].status == 4) {
+                                    this.state.listCancelOrder.push(res.data.data[i]);
+                                }
+                            }
                             this.setState({
                                 loadingDialog: false,
+                                listAllOrder: res.data.data,
                                 listOrder: res.data.data
                             })
 
@@ -113,7 +134,22 @@ class HistoryScreen extends Component {
 
                     }).catch(err => {
                         this.setState({ loadingDialog: false })
-                        // Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
+                        console.log('loi' + JSON.stringify(err))
+                    })
+                    axios.get(API.URL_API_KIOT + API.ORDERS + '?customerCode=' + code + '&orderBy=purchaseDate&orderDirection=Desc', config).then(res => {
+                        console.log(res.data.data.length);
+                        if (res.data.data.length > 0) {
+                            this.setState({
+                                loadingDialog: false,
+                                listNewOrder: res.data.data
+                            })
+
+                        } else {
+                            this.setState({ loadingDialog: false })
+                        }
+
+                    }).catch(err => {
+                        this.setState({ loadingDialog: false })
                         console.log('loi' + JSON.stringify(err))
                     })
                 })
@@ -164,6 +200,7 @@ class HistoryScreen extends Component {
 
             colorCancel: COLOR.TEXTBODY,
             lineCancel: COLOR.WHITE,
+            listOrder: this.state.listAllOrder
         })
     }
     openNew = () => {
@@ -182,6 +219,7 @@ class HistoryScreen extends Component {
 
             colorCancel: COLOR.TEXTBODY,
             lineCancel: COLOR.WHITE,
+            listOrder: this.state.listNewOrder
         })
     }
     openProcess = () => {
@@ -200,6 +238,7 @@ class HistoryScreen extends Component {
 
             colorCancel: COLOR.TEXTBODY,
             lineCancel: COLOR.WHITE,
+            listOrder: this.state.listProcessOrder
         })
     }
     openSuccess = () => {
@@ -218,6 +257,7 @@ class HistoryScreen extends Component {
 
             colorCancel: COLOR.TEXTBODY,
             lineCancel: COLOR.WHITE,
+            listOrder: this.state.listSuccessOrder
         })
     }
     openCancel = () => {
@@ -236,6 +276,7 @@ class HistoryScreen extends Component {
 
             colorCancel: COLOR.PRIMARY,
             lineCancel: COLOR.PRIMARY,
+            listOrder: this.state.listCancelOrder
         })
     }
     format(n) {
@@ -283,16 +324,29 @@ class HistoryScreen extends Component {
                         </ScrollView>
                     </View>
                     <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginTop: 5 }} />
-                    <FlatList
-                        data={this.state.listOrder}
-                        renderItem={({ item }) =>
-                            <Item
-                                total={this.format(parseInt(item.total))}
-                                statusValue={item.statusValue}
-                                orderDetail={item.orderDetails}
-                                purchaseDate={item.purchaseDate} />
-                        }
-                    />
+                    {this.state.listOrder == 0 ? (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 100 }}>
+                            <SvgUri svgXmlData={BASKET_RED} />
+                            <Text style={{ fontSize: 14, fontFamily: STRING.FONT_NORMAL, color: COLOR.PLACEHODER, marginTop: 15 }}>{STRING.NO_ORDER}</Text>
+                        </View>
+                    ) : (
+                            <FlatList
+                                data={this.state.listOrder}
+                                renderItem={({ item }) =>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetailScreen', {id: item.id, status: item.status, total:this.format(parseInt(item.total)), statusValue:item.statusValue,orderDetails:item.orderDetails, purchaseDate: item.purchaseDate})}>
+                                        <Item
+                                            total={this.format(parseInt(item.total))}
+                                            status={item.status}
+                                            statusValue={item.statusValue}
+                                            orderDetail={item.orderDetails}
+                                            purchaseDate={item.purchaseDate} />
+                                    </TouchableOpacity>
+
+                                }
+                            />
+
+                        )}
+
                 </View>
                 <Dialog
                     dialogStyle={{ backgroundColor: 'transparent' }}

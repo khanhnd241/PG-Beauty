@@ -126,8 +126,10 @@ class PayScreen extends Component {
                     let newListOrder = [];
                     if (this.state.userId == null || this.state.userId == '') {
                         AsyncStorage.setItem(this.state.deviceId, JSON.stringify(newListOrder));
+                        this.props.navigation.pop(3)
                     } else {
                         AsyncStorage.setItem(this.state.userId, JSON.stringify(newListOrder));
+                        this.props.navigation.pop(3)
                     }
                 }).catch(err => {
                     this.setState({ loadingDialog: false })
@@ -270,7 +272,7 @@ class PayScreen extends Component {
                             <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
                         </View>
                         <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.state.total} {STRING.CURRENCY}</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                         </View>
                     </View>
                     <TouchableOpacity onPress={() => { this.connect() }} style={styles.btn_footer}>
