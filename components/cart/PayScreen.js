@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, AsyncStorage, ScrollView, ActivityIndicator, StatusBar, Image, Alert } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -9,42 +9,90 @@ import { NEXT } from '../../constants/images/next';
 import { INFO } from '../../constants/images/info';
 import SvgUri from 'react-native-svg-uri';
 import axios from 'axios';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 class PayScreen extends Component {
     constructor(props) {
         super(props);
         const { selectedCity, total, discount, name, phone, district, ward, address, comment } = this.props.route.params;
         this.state = {
-            listProducts: [
-            ],
+            listProducts: [],
             total: total,
             discount: discount,
             name: name,
             phone: phone,
             comment: comment,
-            userAddress: address + ' ' + ward + ' ' + district + ' ' + selectedCity
+            userAddress: address + ' ' + ward + ' ' + district + ' ' + selectedCity,
+            listTransfer: [],
+            customer: {},
+            loadingDialog: false,
+            code: '',
+            userId: '',
+            deviceId: ''
         };
     }
     componentDidMount = () => {
+        AsyncStorage.getItem('code', (err, code) => {
+            this.setState({ code: code })
+            console.log('code' + this.state.code)
+        })
         this.loadOrder();
     }
     loadOrder = () => {
         AsyncStorage.getItem('id', (err, result) => {
-            console.log('id day' + result);
-            this.setState({ userId: result });
-            AsyncStorage.getItem(result, (err, listOrder) => {
-                console.log('list order' + JSON.parse(listOrder));
-                this.setState({ listProducts: JSON.parse(listOrder) })
-                console.log('length order hien tai' + this.state.listProducts.length);
-            })
+            if (result == null || result == '') {
+                AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    this.setState({ deviceId: deviceId })
+                    AsyncStorage.getItem(deviceId, (err, listOrder) => {
+                        this.setState({ listProducts: JSON.parse(listOrder) })
+                        console.log('length order hien tai' + this.state.listProducts.length);
+                        this.transfer();
+                    })
+                })
+            } else {
+                console.log('id day' + result);
+                this.setState({ userId: result });
+                AsyncStorage.getItem(result, (err, listOrder) => {
+                    console.log('list order' + JSON.parse(listOrder));
+                    this.setState({ listProducts: JSON.parse(listOrder) })
+                    console.log('length order hien tai' + this.state.listProducts.length);
+                    this.transfer();
+                })
+            }
+
         });
     }
+    transfer = () => {
+        for (let i = 0; i < this.state.listProducts.length; i++) {
+            let product = {};
+            product.productId = this.state.listProducts[i].id;
+            product.quantity = this.state.listProducts[i].quantity;
+            product.price = this.state.listProducts[i].base_price;
+            this.state.listTransfer.push(product);
+        }
+        console.log('chieu dai' + this.state.listTransfer.length);
+        if (this.state.code == null || this.state.code == '') {
+            this.state.customer.name = this.state.name;
+            this.state.customer.address = this.state.userAddress;
+            this.state.customer.comment = this.state.comment;
+        } else {
+            this.state.customer.code = this.state.code;
+        }
+
+    }
     connect = () => {
+        this.setState({ loadingDialog: true })
         var data = new FormData();
         data.append(API.SCOPES, API.SCOPES_DATA);
         data.append(API.GRANT_TYPE, API.GRANT_TYPE_DATA);
         data.append(API.CLIENT_ID, API.CLIENT_ID_DATA);
         data.append(API.CLIENT_SECRET, API.CLIENT_SECRET_DATA);
-
+        // goi api connect
         axios.post(API.URL_CONNECT_KIOT, data, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -52,14 +100,46 @@ class PayScreen extends Component {
         }).then(response => {
             console.log(response.data.access_token);
             if (response.data.access_token == null || response.data.access_token == '') {
-                Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.APPLY }])
+                Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.ACCEPT }])
             } else {
-                console.log('call api')
+                let orderDelivery = {
+                    contactNumber: this.state.phone,
+                    address: this.state.userAddress
+                }
+                let data = {
+                    branchId: API.BRANDID,
+                    orderDetails: this.state.listTransfer,
+                    customer: this.state.customer,
+                    orderDelivery: orderDelivery
+                }
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${response.data.access_token}`,
+                        Retailer: API.RETAILER,
+                    }
+                };
+                //goi api tao moi dat hang
+                axios.post(API.URL_API_KIOT + API.ORDERS, data, config).then(res => {
+                    this.setState({ loadingDialog: false })
+                    console.log('respone' + JSON.stringify(res.data))
+                    Alert.alert(STRING.NOTIFICATION, STRING.ORDER_SUCCESS, [{ text: STRING.ACCEPT }])
+                    let newListOrder = [];
+                    if (this.state.userId == null || this.state.userId == '') {
+                        AsyncStorage.setItem(this.state.deviceId, JSON.stringify(newListOrder));
+                    } else {
+                        AsyncStorage.setItem(this.state.userId, JSON.stringify(newListOrder));
+                    }
+                }).catch(err => {
+                    this.setState({ loadingDialog: false })
+                    Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.ACCEPT }])
+                    console.log('loi' + JSON.stringify(err))
+                })
             }
         }).catch(err => {
-            console.log(JSON.stringify(err))
+            this.setState({ loadingDialog: false })
+            console.log(JSON.stringify(err));
+            Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.ACCEPT }])
         })
-        console.log('xong')
     }
     format(n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -135,7 +215,7 @@ class PayScreen extends Component {
                                 <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT_LEVEL}</Text>
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.format(parseInt(this.state.discount))} {STRING.CURRENCY}</Text>
                             </View>
                         </View>
                     </View>
@@ -161,7 +241,7 @@ class PayScreen extends Component {
                                 <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.MONEY}</Text>
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row', marginVertical: 10 }}>
@@ -169,7 +249,7 @@ class PayScreen extends Component {
                                 <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.DISCOUNT}</Text>
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.state.discount}</Text>
+                                <Text style={{ fontSize: 14, color: COLOR.ORANGE }}>{this.format(parseInt(this.state.discount))} {STRING.CURRENCY}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
@@ -177,7 +257,7 @@ class PayScreen extends Component {
                                 <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{STRING.TOTAL}</Text>
                             </View>
                             <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>890.000 đ</Text>
+                                <Text style={{ fontSize: 14, color: COLOR.TEXTBODY }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                             </View>
                         </View>
                     </View>
@@ -190,13 +270,26 @@ class PayScreen extends Component {
                             <Text style={{ color: COLOR.TEXTBODY, fontSize: 14 }}>{STRING.TOTAL}</Text>
                         </View>
                         <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>890.000 đ</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.state.total} {STRING.CURRENCY}</Text>
                         </View>
                     </View>
                     <TouchableOpacity onPress={() => { this.connect() }} style={styles.btn_footer}>
                         <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.ORDER}</Text>
                     </TouchableOpacity>
                 </View>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }

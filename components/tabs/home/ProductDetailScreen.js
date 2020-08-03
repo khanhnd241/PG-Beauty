@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, AsyncStorage, Image, ActivityIndicator } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, AsyncStorage, Image, ActivityIndicator, Alert } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -70,7 +70,8 @@ class ProductDetailScreen extends Component {
             category: {},
             listUserOrder: [],
             userId: '',
-            loadingDialog: false
+            loadingDialog: false,
+            deviceId: ''
         };
     }
     componentDidMount = () => {
@@ -130,45 +131,64 @@ class ProductDetailScreen extends Component {
         console.log('check length' + this.state.listUserOrder.length);
         if (this.state.listUserOrder.length >= 1) {
             this.setState({ isHave: true, loadingDialog: false })
-        }else {
+        } else {
             this.setState({ isHave: false })
         }
-        this.setState({loadingDialog: false })
+        this.setState({ loadingDialog: false })
     }
     order = () => {
-        this.setState({ loadingDialog: true }, () => {
-            AsyncStorage.getItem('token', (err, result) => {
-                if (result == null || result == '') {
-                    this.setState({ warningLoginDialog: true, loadingDialog: false })
-                } else {
-                    if (this.state.amountOrder == 0) {
-                        this.setState({ warningAmountDialog: true, loadingDialog: false })
+        let productOrder = this.state.product;
+        if (this.state.amountOrder == 0) {
+            this.setState({ warningAmountDialog: true, loadingDialog: false })
+        } else {
+            productOrder.quantity = this.state.amountOrder;
+            this.state.listUserOrder.push(productOrder);
+            this.setState({ loadingDialog: true }, () => {
+                AsyncStorage.getItem('id', (err, result) => {
+                    if (result == null || result == '') {
+                        console.log('chua dang nhap ' + this.state.listUserOrder)
+                        this.setState({ loadingDialog: false });
+                        AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listUserOrder));
                     } else {
-
-                        let productOrder = this.state.product;
-                        productOrder.quantity = this.state.amountOrder;
-                        this.state.listUserOrder.push(productOrder);
+                        console.log(' dang nhap roi')
                         console.log('length order sau do' + this.state.listUserOrder.length);
                         AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listUserOrder));
-                        this.loadOrder();
                     }
-
-                }
+                })
             })
-        })
+            this.loadOrder();
+            Alert.alert('Thông báo', 'Đã thêm sản phẩm vào giỏ hàng', [{ text: STRING.ACCEPT }])
+        }
+
+
 
 
     }
     loadOrder = () => {
+        this.setState({loadingDialog: true})
         AsyncStorage.getItem('id', (err, result) => {
             console.log('id day' + result);
-            this.setState({ userId: result });
-            AsyncStorage.getItem(result, (err, listOrder) => {
-                console.log('list order' + JSON.parse(listOrder));
-                this.setState({ listUserOrder: JSON.parse(listOrder) })
-                console.log('length order hien tai' + this.state.listUserOrder.length);
-                this.checkOrder();
-            })
+            if (result == null || result == '') {
+                console.log('chua dang nhap')
+                AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    this.setState({ deviceId: deviceId })
+                    AsyncStorage.getItem(deviceId, (err, listOrder) => {
+                        this.setState({ listUserOrder: JSON.parse(listOrder) }, () => {
+                            this.checkOrder();
+                        })
+                    })
+                })
+            } else {
+                console.log('da dang nhap')
+                this.setState({ userId: result });
+                AsyncStorage.getItem(result, (err, listOrder) => {
+                    console.log('list order' + JSON.parse(listOrder));
+                    this.setState({ listUserOrder: JSON.parse(listOrder) })
+                    console.log('length order hien tai' + this.state.listUserOrder.length);
+                    this.checkOrder();
+                })
+            }
+            this.setState({loadingDialog: false})
         });
     }
     format(n) {
@@ -275,8 +295,10 @@ class ProductDetailScreen extends Component {
                                 <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
                                     <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
                                 </View>
-                                <TouchableOpacity onPress={this.plus}>
-                                    <Image source={IMAGE.BTN_ADD} />
+                                <TouchableOpacity onPress={this.plus} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
+                                    <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
+                                    {/* <Image style={{borderWidth:0.5, borderColor:COLOR.PRIMARY}} source={IMAGE.BTN_ADD} /> */}
                                 </TouchableOpacity>
                             </View>
                         </View>)}
@@ -385,42 +407,10 @@ class ProductDetailScreen extends Component {
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
-                            {/* <SvgUri svgXmlData={PLUS}/> */}
                             <Image source={IMAGE.ORDER} />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Dialog
-                    // dialogStyle={{ backgroundColor: 'transparent' }}
-                    onDismiss={() => {
-                        this.setState({ warningLoginDialog: false });
-                    }}
-                    width={0.9}
-                    visible={this.state.warningLoginDialog}
-                    dialogTitle={
-                        <DialogTitle
-                            title={STRING.WARNING}
-                            hasTitleBar={false}
-                            align="center"
-                        />
-                    }
-                    footer={
-                        <DialogFooter>
-                            <DialogButton
-                                text={STRING.ACCEPT}
-                                bordered
-                                onPress={() => {
-                                    this.setState({ warningLoginDialog: false });
-                                }}
-                                key="button-1"
-                            />
-                        </DialogFooter>
-                    }
-                >
-                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>{STRING.LOGIN_BEFORE_ORDER}</Text>
-                    </DialogContent>
-                </Dialog>
                 <Dialog
                     onDismiss={() => {
                         this.setState({ warningAmountDialog: false });

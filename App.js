@@ -47,6 +47,9 @@ function TabNavigator(props) {
       tabBarOptions={{
         activeTintColor: COLOR.PRIMARY,
         inactiveTintColor: COLOR.PLACEHODER,
+        tabStyle: {
+          backgroundColor:COLOR.WHITE
+        }
       }}
     >
       <Tab.Screen name="Trang chủ" component={HomeScreen} />

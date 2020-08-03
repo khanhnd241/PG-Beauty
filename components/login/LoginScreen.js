@@ -24,7 +24,8 @@ class LoginScreen extends Component {
             phone: '',
             password: '',
             showPassword: true,
-            loadingDialog: false
+            loadingDialog: false,
+            code: ''
         };
     }
     componentDidMount = () => {
@@ -54,8 +55,56 @@ class LoginScreen extends Component {
         }
         return true;
     }
-    login = () => {
+    connect = () => {
+        this.setState({ loadingDialog: true })
+        var data = new FormData();
+        data.append(API.SCOPES, API.SCOPES_DATA);
+        data.append(API.GRANT_TYPE, API.GRANT_TYPE_DATA);
+        data.append(API.CLIENT_ID, API.CLIENT_ID_DATA);
+        data.append(API.CLIENT_SECRET, API.CLIENT_SECRET_DATA);
 
+        axios.post(API.URL_CONNECT_KIOT, data, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            console.log(response.data.access_token);
+            if (response.data.access_token == null || response.data.access_token == '') {
+                Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
+            } else {
+                this.setState({ token: response.data.access_token })
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${this.state.token}`,
+                        Retailer: API.RETAILER,
+                    }
+                };
+                axios.get(API.URL_API_KIOT + API.CUSTOMERS + '?contactNumber=' + this.state.phone, config).then(res => {
+                    if (res.data.data[0].code == '' || res.data.data[0].code == null) {
+                        this.setState({ loadingDialog: false })
+                    } else {
+                        console.log('code dang nhap' + res.data.data[0].code);
+                        this.setState({
+                            loadingDialog: false,
+                            code: res.data.data[0].code
+                        })
+                        
+                        this.login();
+                    }
+
+                }).catch(err => {
+                    this.setState({ loadingDialog: false })
+                    Alert.alert(STRING.NOTIFICATION, STRING.LOGIN_FAILED, [{ text: STRING.ACCEPT }])
+                    console.log('loi' + JSON.stringify(err))
+                })
+            }
+        }).catch(err => {
+            this.setState({ loadingDialog: false })
+            console.log(JSON.stringify(err));
+            Alert.alert(STRING.NOTIFICATION, STRING.LOGIN_FAILED, [{ text: STRING.ACCEPT }])
+        })
+    }
+    login = () => {
         console.log(this.validate())
         if (this.validate() == true) {
             this.setState({ loadingDialog: true });
@@ -66,6 +115,9 @@ class LoginScreen extends Component {
                 console.log(response.data);
                 if (response.data.success.token != null || response.data.success.token != '') {
                     AsyncStorage.setItem('token', response.data.success.token);
+                    AsyncStorage.setItem('phone', this.state.phone);
+                    AsyncStorage.setItem('password', this.state.password);
+                    AsyncStorage.setItem('code', this.state.code);
                     this.getInfo(response.data.success.token);
                     this.props.navigation.replace('App')
                     this.setState({ loadingDialog: false })
@@ -85,7 +137,7 @@ class LoginScreen extends Component {
         };
         axios.get(API.URL + API.USER, config).then(response => {
             console.log(response.data);
-            AsyncStorage.setItem('id',JSON.stringify(response.data.success.id));
+            AsyncStorage.setItem('id', JSON.stringify(response.data.success.id));
             AsyncStorage.setItem('name', response.data.success.name);
             AsyncStorage.setItem('phone', response.data.success.phone);
         }).catch(error => {
@@ -120,7 +172,7 @@ class LoginScreen extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.btn_login} onPress={this.login}>
+                    <TouchableOpacity style={styles.btn_login} onPress={this.connect}>
                         <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16 }}>{STRING.LOGIN}</Text>
                     </TouchableOpacity>
                     <View style={{ flexDirection: 'row', marginTop: 10 }}>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, ImageBackground, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -22,12 +22,27 @@ class OrderInfomationScreen extends Component {
             district: '',
             ward: '',
             address: '',
-            comment: ''
+            comment: '',
+            isEdit: true
 
         };
     }
     componentDidMount = () => {
-        console.log(this.state.total + 'discount' + this.state.discount);
+        AsyncStorage.getItem('name', (err, result) => {
+            if (result != null) {
+                this.setState({ name: result, isEdit: false });
+
+            } else {
+                this.setState({ isEdit: true });
+            }
+        });
+        AsyncStorage.getItem('phone', (err, result) => {
+            if (result != null) {
+                this.setState({ phone: result, isEdit: false });
+            } else {
+                this.setState({ isEdit: true });
+            }
+        });
     }
     render() {
         return (
@@ -69,9 +84,9 @@ class OrderInfomationScreen extends Component {
                     <View style={{ height: 40, backgroundColor: COLOR.GRAY, marginTop: 15 }}></View>
                     <ScrollView style={styles.background}>
                         <KeyboardAwareScrollView style={styles.form}>
-                            <TextInput onChangeText={(value) => this.setState({ name: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
+                            <TextInput value={this.state.name} editable={this.state.isEdit} onChangeText={(value) => this.setState({ name: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
+                            <TextInput value={this.state.phone} editable={this.state.isEdit} onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <Text style={styles.city}>{STRING.CITY}</Text>
                             <Picker
@@ -199,7 +214,8 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 14,
-        marginTop: 20
+        marginTop: 20,
+        color:COLOR.BLACK
     },
     city: {
         fontSize: 14,

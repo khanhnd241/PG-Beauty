@@ -116,11 +116,24 @@ const STRING = {
     CURRENCY: 'đ',
     VIEW_MORE: 'Xem thêm',
     FONT_NORMAL: 'Nunito-Regular',
+    FONT_BOLD: 'Nunito-Bold',
     TAG: '#',
     WARNING: 'Cảnh báo',
     LOGIN_BEFORE_ORDER: 'Bạn cần đăng nhập trước khi đặt hàng',
     CHOOSE_QUANTITY: 'Vui lòng chọn số lượng',
-    ORDER_FAILED: 'Đặt hàng không thành công, hãy thử lại!'
+    ORDER_FAILED: 'Đặt hàng thất bại, hãy thử lại!',
+    ORDER_SUCCESS: 'Đặt hàng thành công!',
+    REGISTRATION_FAILED: 'Đăng kí thất bại, hãy thử lại',
+    NO_ORDER: 'Hiện chưa có đơn hàng nào',
+    HISTORY: 'Lịch sử mua hàng',
+    BUY_ONLINE: 'Mua Online',
+    BUY_AT_STORE: 'Mua tại cửa hàng',
+    ALL: 'Tất cả',
+    NEW_ORDER: 'Mới đặt',
+    PROCESSING: 'Đang xử lí',
+    SUCCESS: 'Thành công',
+    CANCELED: 'Đã hủy',
+    LOGIN_FAILED: 'Đăng nhập thất bại'
 }
 
 export  {STRING}
