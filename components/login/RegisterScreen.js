@@ -11,8 +11,6 @@ import { EYE_ACTIVE } from '../../constants/images/eye_active';
 import { DROPDOWN } from '../../constants/images/dropdown';
 import { CLOSE } from '../../constants/images/close';
 import axios from 'axios';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { DatePicker } from '@davidgovea/react-native-wheel-datepicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLOR } from '../../constants/colors'
 import moment from 'moment';
@@ -72,6 +70,7 @@ class RegisterScreen extends Component {
             showConfirmPassword: !this.state.showConfirmPassword
         })
     }
+    // kiem tra cac truong nhap vao neu dung return true
     validate = () => {
         if (this.state.name.trim() == '' || this.state.phone.trim() == '' || this.state.password.trim() == '' || this.state.confirmPassword.trim() == '') {
             // this.setState({loadingDialog: false});
@@ -99,6 +98,7 @@ class RegisterScreen extends Component {
         return true;
     }
     connect = () => {
+        // ket noi den kiot viet
         this.setState({ loadingDialog: true })
         var data = new FormData();
         data.append(API.SCOPES, API.SCOPES_DATA);
@@ -122,19 +122,10 @@ class RegisterScreen extends Component {
                         Retailer: API.RETAILER,
                     }
                 };
+                // goi api tim kiem nguoi dung theo sdt
                 axios.get(API.URL_API_KIOT + API.CUSTOMERS + '?contactNumber=' + this.state.phone, config).then(res => {
                     console.log(res.data.data.length);
-                    if (res.data.data.length > 0) {
-                        this.setState({
-                            loadingDialog: false,
-                            name: res.data.data[0].name,
-                            address: res.data.data[0].address,
-                            email: res.data.data[0].email,
-                            dateView: moment(res.data.data[0].birthDate).format('DD/MM/YYYY'),
-                            id: res.data.data[0].id
-                        })
-
-                    } else {
+                    if (res.data.data.length == 0) {
                         this.setState({ 
                             loadingDialog: false,
                             name: '',
@@ -143,6 +134,18 @@ class RegisterScreen extends Component {
                             dateView: STRING.ENTER_DATE_OF_BIRTH,
                             id: '' 
                         })
+
+                    } else {
+                        // neu co account roi, lay thong tin hien thi vao cac truong
+                        this.setState({
+                            loadingDialog: false,
+                            name: res.data.data[0].name,
+                            address: res.data.data[0].address,
+                            email: res.data.data[0].email,
+                            dateView: moment(res.data.data[0].birthDate).format('DD/MM/YYYY'),
+                            id: res.data.data[0].id
+                        })
+                        
                     }
 
                 }).catch(err => {
@@ -157,14 +160,36 @@ class RegisterScreen extends Component {
             Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
         })
     }
-    register = () => {
+    register = (data) => {
+        // goi api dang ki ben pg beauty
+        axios.post(API.URL + API.REGISTER, data).then(response => {
+            this.setState({ loadingDialog: false });
+            if (response.data.success.token != null || response.data.success.token != '') {
+                // neu thanh cong, set cac gia tri
+                AsyncStorage.setItem('token', response.data.success.token);
+                AsyncStorage.setItem('password', this.state.password);
+                this.getInfo(response.data.success.token);
+                this.setState({ loadingDialog: false });
+                Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
+                    text: STRING.ACCEPT,
+                    onPress: () => { this.props.navigation.replace('App') }
+                }])
+            }
+        }).catch(error => {
+            this.setState({ loadingDialog: false });
+            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
+            console.log(JSON.stringify(error.response.data));
+        }
+        );
+    }
+    ClickRegister = () => {
         console.log('id nguoi dung' + this.state.id)
         let data = {};
         this.validate();
         console.log(this.validate());
         if (this.validate() == true) {
             this.setState({ loadingDialog: true });
-
+            
             data.name = this.state.name;
             data.phone = this.state.phone;
             data.password = this.state.password;
@@ -185,64 +210,33 @@ class RegisterScreen extends Component {
                     Retailer: API.RETAILER,
                 }
             };
+            // kiem tra neu chua co nguoi dung ben kiot viet thi tao moi 1 account, neu co roi thi update lai thong tin
             if (this.state.id == null || this.state.id == '') {
+                console.log('tao moi nguoi dung')
                 data.branchId = API.BRANDID;
+                data.contactNumber = this.state.phone
                 axios.post(API.URL_API_KIOT + API.CUSTOMERS, data, config).then(response => {
-                    console.log('code day' + response.data.data.code);
+                    console.log('code moi' + response.data.data.code);
                     if(response.data.data.code == '' || response.data.data.code == '') {
                         Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
                     } else {
                         AsyncStorage.setItem('code', response.data.data.code);
-                        axios.post(API.URL + API.REGISTER, data).then(response => {
-                            this.setState({ loadingDialog: false });
-                            if (response.data.success.token != null || response.data.success.token != '') {
-                                AsyncStorage.setItem('token', response.data.success.token);
-                                AsyncStorage.setItem('password', this.state.password);
-                                this.getInfo(response.data.success.token);
-                                this.setState({ loadingDialog: false });
-                                Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
-                                    text: STRING.ACCEPT,
-                                    onPress: () => { this.props.navigation.replace('App') }
-                                }])
-                            }
-                        }).catch(error => {
-                            this.setState({ loadingDialog: false });
-                            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
-                            console.log(JSON.stringify(error.response.data));
-                        }
-                        );
+                        this.register(data);
                     }
-                    
                 }).catch(err => {
                     console.log(JSON.stringify(err)); 
                     Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.responseStatus) , [{ text: STRING.ACCEPT }]);
                     this.setState({ loadingDialog: false });
                 })
             } else {
+                console.log('update nguoi dung')
                 axios.put(API.URL_API_KIOT + API.CUSTOMERS + '/' + this.state.id, data, config).then(response => {
                     console.log('khach hang kiot ' + response.data.data.code);
                     if(response.data.data.code == '' || response.data.data.code == '') {
                         Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
                     } else {
                         AsyncStorage.setItem('code', response.data.data.code);
-                        axios.post(API.URL + API.REGISTER, data).then(response => {
-                            this.setState({ loadingDialog: false });
-                            if (response.data.success.token != null || response.data.success.token != '') {
-                                AsyncStorage.setItem('token', response.data.success.token);
-                                AsyncStorage.setItem('password', this.state.password);
-                                this.getInfo(response.data.success.token);
-                                this.setState({ loadingDialog: false });
-                                Alert.alert(STRING.NOTIFI, STRING.SIGN_UP_SUCCESS, [{
-                                    text: STRING.ACCEPT,
-                                    onPress: () => { this.props.navigation.replace('App') }
-                                }])
-                            }
-                        }).catch(error => {
-                            this.setState({ loadingDialog: false });
-                            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
-                            console.log(JSON.stringify(error.response.data));
-                        }
-                        );
+                        this.register(data)
                     }
                     
                 }).catch(err => {
@@ -256,6 +250,7 @@ class RegisterScreen extends Component {
             this.setState({ deviceId: deviceId });
         })
     }
+    // lay thong tin nguoi dung
     getInfo = (token) => {
         var listOrder = [];
         const config = {
@@ -309,7 +304,7 @@ class RegisterScreen extends Component {
                                 {this.state.showConfirmPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.btn_register} onPress={this.register}>
+                        <TouchableOpacity style={styles.btn_register} onPress={this.ClickRegister}>
                             <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16 }}>{STRING.REGISTER}</Text>
                         </TouchableOpacity>
 

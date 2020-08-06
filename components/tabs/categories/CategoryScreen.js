@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, StatusBar, FlatList, ActivityIndicator, AppState } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, StatusBar, FlatList, ActivityIndicator, AsyncStorage } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -17,9 +17,20 @@ import { COLOR } from '../../../constants/colors';
 import ItemCategory from './ItemCategory';
 import { API } from '../../../constants/api';
 import axios from 'axios';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 class CategoryScreen extends Component {
     constructor(props) {
         super(props);
+        const { navigation } = this.props;
+        navigation.addListener('focus', async () => {
+            this.setState({ loadingDialog: true }, this.loadOrder());
+        })
         this.state = {
             beauty: false,
             tool: false,
@@ -28,33 +39,30 @@ class CategoryScreen extends Component {
             page: 1,
             isLoading: false,
             listCategories: [],
-            listChildCategories: []
+            listChildCategories: [],
+            end: false,
+            loadingDialog: false,
+            isHave: false
         };
     }
-    openBeauty = () => {
-        this.setState({ beauty: !this.state.beauty })
-    }
-    openTool = () => {
-        this.setState({ tool: !this.state.tool })
-    }
-    openFashion = () => {
-        this.setState({ fashion: !this.state.fashion })
-    }
-    openCleansing = () => {
-        this.setState({ cleansing: !this.state.cleansing })
-    }
     componentDidMount = () => {
-        this.setState({ isLoading: true }, this.loadCategories());
+        this.setState({ isLoading: true });
+        this.loadCategories();
+        this.loadOrder();
     }
-    loadCategories =  () => {
+    loadCategories = () => {
         console.log('gọi api' + this.state.page)
         axios.get(API.URL + API.CATEGORIES, {
             params: {
                 page: this.state.page,
             }
         }).then(response => {
-            for(let i = 0; i < response.data.success.data.length; i++) {
-                if(response.data.success.data[i].parent_id == null) {
+            console.log('chieu dai 1 api' + response.data.success.data.length);
+            if (response.data.success.data.length == 0) {
+                this.setState({ end: true })
+            }
+            for (let i = 0; i < response.data.success.data.length; i++) {
+                if (response.data.success.data[i].parent_id == null) {
                     this.state.listCategories.push(response.data.success.data[i]);
                 } else {
                     this.state.listChildCategories.push(response.data.success.data[i]);
@@ -68,11 +76,59 @@ class CategoryScreen extends Component {
         })
     }
     loadMore = () => {
-        let page = this.state.page + 1
-        console.log('goi api lan nua')
-                this.setState({
-                    isLoading: true,
-                    page: page },this.loadCategories);
+        if (this.state.end == false) {
+            let page = this.state.page + 1
+            console.log('goi api lan nua')
+            this.setState({
+                isLoading: true,
+                page: page
+            }, this.loadCategories);
+        }
+
+    }
+    loadOrder = () => {
+        this.setState({loadingDialog: true})
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            if (result == null || result == '') {
+                AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    console.log('device id' + deviceId);
+                    AsyncStorage.getItem(deviceId, (err, listOrder) => {
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        this.checkOrder();
+                    })
+                })
+            } else {
+                this.setState({ userId: result });
+                AsyncStorage.getItem(result, (err, listOrder) => {
+                    if (JSON.parse(listOrder) == null || JSON.parse(listOrder) == '') {
+                        console.log('tao moi 1 list order')
+                        var newListOrder = [];
+                        AsyncStorage.setItem(result, JSON.stringify(newListOrder));
+                        AsyncStorage.getItem(result, (err, listOrder) => {
+                            this.setState({ listUserOrder: JSON.parse(listOrder) })
+                            this.checkOrder();
+                        })
+                    } else {
+                        console.log('list order' + listOrder);
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        console.log('length order hien tai' + this.state.listUserOrder.length);
+                        this.checkOrder();
+                    }
+
+                })
+            }
+        });
+    }
+    checkOrder = () => {
+        console.log('check length' + this.state.listUserOrder.length);
+        if (this.state.listUserOrder.length > 0) {
+            console.log('co data')
+            this.setState({ isHave: true })
+        } else {
+            this.setState({ isHave: false })
+        }
+        this.setState({ loadingDialog: false })
     }
     handleFooter = () => {
         // console.log('footer day');
@@ -89,21 +145,27 @@ class CategoryScreen extends Component {
             <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
-                    <View style={styles.header}>
+                <View style={styles.header}>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
-
                             </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity>
-                            <SvgUri svgXmlData={BASKET} />
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }}>
+                                <SvgUri svgXmlData={BASKET} />
+                                {this.state.isHave ? (
+                                    <View style={styles.basket_number}>
+                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                    </View>
+                                ) : null}
+                            </View>
                         </TouchableOpacity>
                     </View>
                     <View>
@@ -111,10 +173,11 @@ class CategoryScreen extends Component {
                             data={this.state.listCategories}
                             renderItem={({ item }) =>
                                 <ItemCategory
-                                    listChild={this.state.listCategories} //danh sach cac muc con (dang fake data muc cha)
+                                    listChild={this.state.listChildCategories} //danh sach cac muc con (dang fake data muc cha)
                                     id={item.id}
                                     name={item.name}
                                     parent_id={item.parent_id}
+                                    navigation={this.props.navigation}
                                 />
                             }
                             onEndReached={this.loadMore}
@@ -193,23 +256,19 @@ class CategoryScreen extends Component {
                             </TouchableOpacity>
                         </View> */}
                         {/* PG Beauty Fashion */}
-                        {/* <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
-                            <View style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={PG_FASHION} />
-                            </View>
-                            <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={styles.text}>{STRING.PG_FASHION}</Text>
-                            </View>
-                            <TouchableOpacity onPress={this.openFashion} style={{ flex: 1, alignItems: 'center' }}>
-                                {this.state.fashion ? (
-                                    <SvgUri svgXmlData={SUB} width={15} height={20} />
-                                ) : (
-                                        <SvgUri svgXmlData={PLUS} width={25} height={25} />
-                                    )}
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} /> */}
+                        <Dialog
+                            dialogStyle={{ backgroundColor: 'transparent' }}
+                            onDismiss={() => {
+                                this.setState({ loadingDialog: false });
+                            }}
+                            height={400}
+                            width={0.9}
+                            visible={this.state.loadingDialog}
+                        >
+                            <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                            </DialogContent>
+                        </Dialog>
                     </View>
                 </View>
             </SafeAreaView>
@@ -238,9 +297,20 @@ const styles = StyleSheet.create({
         width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 20,
+        marginRight: 10,
         alignItems: 'center',
         marginTop: 10
+    },
+    basket_number: {
+        position: 'absolute',
+        top: 8,
+        right: -8,
+        height: 14,
+        width: 14,
+        borderRadius: 7,
+        backgroundColor: COLOR.WHITE,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     text: {
         fontSize: 14,

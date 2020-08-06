@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, Image, Alert } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -9,25 +9,38 @@ import { SUB } from '../../constants/images/sub';
 import { EDIT } from '../../constants/images/edit';
 import SvgUri from 'react-native-svg-uri';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { API } from '../../constants/api';
+import axios from 'axios';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
 class OrderInfomationScreen extends Component {
     constructor(props) {
         super(props);
         const { total, discount } = this.props.route.params
         this.state = {
-            selectedCity: ' Hà Nội',
+            selectedCity: 'Chọn tỉnh/ thành phố',
             total: total,
             discount: discount,
             name: '',
             phone: '',
-            district: '',
-            ward: '',
+            district: 'Chọn quận/ huyện',
+            ward: 'Chọn phường/ xã',
             address: '',
             comment: '',
-            isEdit: true
-
+            isEdit: true,
+            listProvinces: [],
+            listDistricts: [],
+            listWards: [],
+            loadingDialog: false
         };
     }
     componentDidMount = () => {
+        this.setState({ loadingDialog: true })
         AsyncStorage.getItem('name', (err, result) => {
             if (result != null) {
                 this.setState({ name: result, isEdit: false });
@@ -43,6 +56,13 @@ class OrderInfomationScreen extends Component {
                 this.setState({ isEdit: true });
             }
         });
+        axios.get(API.URL + API.PROVINCES).then(res => {
+            console.log(res.data);
+            this.setState({ listProvinces: res.data.success, loadingDialog: false })
+        }).catch(err => {
+            console.log(err)
+            this.setState({ loadingDialog: false })
+        })
     }
     render() {
         return (
@@ -92,26 +112,45 @@ class OrderInfomationScreen extends Component {
                             <Picker
                                 selectedValue={this.state.selectedCity}
                                 style={{ marginBottom: 10 }}
-                                onValueChange={(itemValue, itemIndex) => this.setState({ selectedCity: itemValue })}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    this.setState({ selectedCity: itemValue, listDistricts: this.state.listProvinces[itemIndex].districts })
+                                }
+                                }
                             >
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
-                                <Picker.Item label="Hà Nội" value="Hà Nội" />
-                                <Picker.Item label="TP.Hồ Chí Minh" value="TP.Hồ Chí Minh" />
+                                {this.state.listProvinces.map((item, index) => {
+                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
+                                })}
                             </Picker>
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput onChangeText={(value) => this.setState({ district: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.DISTRICT} />
+                            <Text style={styles.city}>{STRING.DISTRICT}</Text>
+                            <Picker
+                                selectedValue={this.state.district}
+                                style={{ marginBottom: 10 }}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    this.setState({ district: itemValue, listWards: this.state.listDistricts[itemIndex].wards })
+                                    console.log('danh sach phuong ' + this.state.listWards)
+                                }
+                                }
+                            >
+                                {this.state.listDistricts.map((item, index) => {
+                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
+                                })}
+                            </Picker>
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <TextInput onChangeText={(value) => this.setState({ ward: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.WARD} />
+                            <Text style={styles.city}>{STRING.WARD}</Text>
+                            <Picker
+                                selectedValue={this.state.ward}
+                                style={{ marginBottom: 10 }}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    this.setState({ ward: itemValue })
+                                }
+                                }
+                            >
+                                {this.state.listWards.map((item, index) => {
+                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
+                                })}
+                            </Picker>
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <TextInput onChangeText={(value) => this.setState({ address: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ADDRESS} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
@@ -147,6 +186,19 @@ class OrderInfomationScreen extends Component {
                         <Text style={{ color: COLOR.WHITE, fontSize: 16, textTransform: 'uppercase' }}>{STRING.CONTINUE}</Text>
                     </TouchableOpacity>
                 </View>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView>
         );
     }
@@ -215,7 +267,7 @@ const styles = StyleSheet.create({
     input: {
         fontSize: 14,
         marginTop: 20,
-        color:COLOR.BLACK
+        color: COLOR.BLACK
     },
     city: {
         fontSize: 14,

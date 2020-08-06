@@ -62,7 +62,7 @@ class ProductDetailScreen extends Component {
             listSameType: [],
             idProduct: id,
             categoryId: '',
-            amountOrder: 0,
+            amountOrder: 1,
             product: {},
             isHave: false,
             warningLoginDialog: false,
@@ -71,7 +71,8 @@ class ProductDetailScreen extends Component {
             listUserOrder: [],
             userId: '',
             loadingDialog: false,
-            deviceId: ''
+            deviceId: '',
+            total: ''
         };
     }
     componentDidMount = () => {
@@ -95,6 +96,7 @@ class ProductDetailScreen extends Component {
                 imagesProduct.push(response.data.success.images[i].url);
             }
             this.setState({
+                total: response.data.success.base_price,
                 product: response.data.success,
                 category: response.data.success.category,
                 images: imagesProduct
@@ -120,12 +122,20 @@ class ProductDetailScreen extends Component {
         })
     }
     plus = () => {
-        this.setState({ amountOrder: this.state.amountOrder + 1 });
+        this.setState({loadingDialog: true})
+        let quantity = this.state.amountOrder + 1;
+        let total = this.state.product.base_price * quantity;
+        this.setState({ amountOrder: quantity, total: total, loadingDialog: false });
     }
     sub = () => {
-        if (this.state.amountOrder > 0) {
-            this.setState({ amountOrder: this.state.amountOrder - 1 });
-        }
+        this.setState({loadingDialog: true})
+        if (this.state.amountOrder > 1) {
+            let quantity = this.state.amountOrder - 1;
+            let total = this.state.product.base_price * quantity;
+            this.setState({ amountOrder: quantity, total: total});
+        } 
+            this.setState({loadingDialog: false})
+        
     }
     checkOrder = () => {
         console.log('check length' + this.state.listUserOrder.length);
@@ -185,10 +195,20 @@ class ProductDetailScreen extends Component {
                 console.log('da dang nhap')
                 this.setState({ userId: result });
                 AsyncStorage.getItem(result, (err, listOrder) => {
-                    console.log('list order' + JSON.parse(listOrder));
-                    this.setState({ listUserOrder: JSON.parse(listOrder) })
-                    console.log('length order hien tai' + this.state.listUserOrder.length);
-                    this.checkOrder();
+                    if (JSON.parse(listOrder) == null || JSON.parse(listOrder) == '') {
+                        var newListOrder = [];
+                        AsyncStorage.setItem(result, JSON.stringify(newListOrder));
+                        AsyncStorage.getItem(result, (err, listOrder) => {
+                            this.setState({ listUserOrder: JSON.parse(listOrder) })
+                            this.checkOrder();
+                        })
+                    } else {
+                        console.log('list order' + JSON.parse(listOrder));
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        console.log('length order hien tai' + this.state.listUserOrder.length);
+                        this.checkOrder();
+                    }
+                    
                 })
             }
             this.setState({ loadingDialog: false })
@@ -212,17 +232,21 @@ class ProductDetailScreen extends Component {
 
                     <View style={{ position: 'absolute', top: 0 }}>
                         <View style={styles.header}>
-                            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ marginVertical: 10, marginLeft: 15 }}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ alignItems:'center',justifyContent:'center', height:45, width:45 }}>
                                 <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{height:45, width:45, position:'absolute', right:15}}>
+                            <View  style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
-                            </TouchableOpacity>
-                            {this.state.isHave ? (
+                                {this.state.isHave ? (
                                 <View style={styles.basket_number}>
                                     <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
                                 </View>
                             ) : null}
+                            </View>
+                            
+                            </TouchableOpacity>
+                            
 
                         </View>
                     </View>
@@ -406,7 +430,7 @@ class ProductDetailScreen extends Component {
                 </ScrollView>
                 <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
@@ -472,21 +496,22 @@ const styles = StyleSheet.create({
     },
     header: {
         opacity: 0.8,
-        backgroundColor: COLOR.PRIMARY, position: 'absolute',
+        backgroundColor: COLOR.PRIMARY, 
+        position: 'absolute',
         top: 0,
         width: deviceWidth,
-        height: 40,
+        height: 45,
         flexDirection: 'row'
     },
     basket: {
         position: 'absolute',
-        top: 8,
-        right: 20
+        top: 12,
+        alignSelf:'center'
     },
     basket_number: {
         position: 'absolute',
-        top: 16,
-        right: 12,
+        right: -8,
+        top:8,
         height: 14,
         width: 14,
         borderRadius: 7,

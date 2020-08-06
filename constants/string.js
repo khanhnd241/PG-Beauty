@@ -137,7 +137,10 @@ const STRING = {
     DETAIL_ORDER: 'Chi tiết đơn hàng',
     LIST_PRODUCTS: 'Danh sách sản phẩm',
     AT: 'lúc',
-    STATUS: 'Trạng thái'
+    STATUS: 'Trạng thái',
+    SUGGEST: 'Gợi ý',
+    SEARCH_HISTORY: 'Lịch sử tìm kiếm',
+    DELETE_HISTORY: 'Xóa lịch sử'
 }
 
 export  {STRING}

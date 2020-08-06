@@ -26,33 +26,6 @@ import Dialog, {
 } from 'react-native-popup-dialog';
 let deviceWidth = Dimensions.get('window').width - 10;
 const height = Dimensions.get('window').height;
-function Item({ image, name, price, point, review, sell, sale }) {
-    return (
-        <View style={styles.container_items}>
-            <View style={{ flex: 1 }}>
-                <ImageBackground source={{ uri: image }} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
-                    <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                        <SvgUri svgXmlData={RECTANGLE} />
-                        <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
-                    </View>
-                </ImageBackground>
-                <View style={{ marginLeft: 16 }} >
-                    <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                    <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{parseInt(price)}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                        <SvgUri svgXmlData={STAR} />
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
-                    </View>
-                </View>
-            </View>
-
-
-        </View>
-
-    );
-}
 
 class HomeScreen extends Component {
     constructor(props) {
@@ -69,82 +42,8 @@ class HomeScreen extends Component {
                 "https://source.unsplash.com/1024x768/?girl",
                 "https://source.unsplash.com/1024x768/?tree" // Network image
             ],
-            listDeal: [
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Kem nền đa năng chanel les beiges tinted Moisturize',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '471',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_2,
-                    name: 'Máy Rửa Mặt Foreo Luna Mini 2',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '7411',
-                    sale: '-40%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Kem nền đa năng chanel les beiges tinted Moisturize',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_2,
-                    name: 'Máy Rửa Mặt Foreo Luna Mini 2',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-40%'
-                }
-            ],
-            listSellingProduct: [
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Kem nền đa năng chanel les beiges tinted Moisturize',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '471',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_3,
-                    name: 'Phấn nước sulwhasoo hoa anh đào limited 2020',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '7411',
-                    sale: '-40%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_1,
-                    name: 'Son Gucci Matte mới nhất',
-                    price: '690.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-30%'
-                },
-                {
-                    image: IMAGE.ANH_DEMO_2,
-                    name: 'Máy Rửa Mặt Foreo Luna Mini 2',
-                    price: '250.000 đ',
-                    point: '4.8',
-                    review: '26',
-                    sell: '74',
-                    sale: '-40%'
-                }
-            ],
+            listDeal: [],
+            listSellingProduct: [],
             listNewProducts: [],
             basketNumber: 3,
             page: 1,
@@ -155,6 +54,7 @@ class HomeScreen extends Component {
         };
     }
     loadListNewProduct = () => {
+        console.log(this.state.page);
         axios.get(API.URL + API.PRODUCTS, {
             params: {
                 order_by: 'id',
@@ -168,9 +68,11 @@ class HomeScreen extends Component {
             });
             console.log(this.state.listNewProducts.length);
         }).catch(error => {
+            this.setState({isLoading: false})
         })
     }
     componentDidMount = () => {
+
         this.setState({ isLoading: true }, this.loadListNewProduct);
 
     }
@@ -179,6 +81,7 @@ class HomeScreen extends Component {
             console.log('id day' + result);
             if (result == null || result == '') {
                 AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    console.log('device id' + deviceId);
                     AsyncStorage.getItem(deviceId, (err, listOrder) => {
                         this.setState({ listUserOrder: JSON.parse(listOrder) })
                         this.checkOrder();
@@ -187,10 +90,21 @@ class HomeScreen extends Component {
             } else {
                 this.setState({ userId: result });
                 AsyncStorage.getItem(result, (err, listOrder) => {
-                    console.log('list order' + JSON.parse(listOrder));
-                    this.setState({ listUserOrder: JSON.parse(listOrder) })
-                    console.log('length order hien tai' + this.state.listUserOrder.length);
-                    this.checkOrder();
+                    if (JSON.parse(listOrder) == null || JSON.parse(listOrder) == '') {
+                        console.log('tao moi 1 list order')
+                        var newListOrder = [];
+                        AsyncStorage.setItem(result, JSON.stringify(newListOrder));
+                        AsyncStorage.getItem(result, (err, listOrder) => {
+                            this.setState({ listUserOrder: JSON.parse(listOrder) })
+                            this.checkOrder();
+                        })
+                    } else {
+                        console.log('list order' + listOrder);
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        console.log('length order hien tai' + this.state.listUserOrder.length);
+                        this.checkOrder();
+                    }
+
                 })
             }
         });
@@ -206,9 +120,10 @@ class HomeScreen extends Component {
         this.setState({ loadingDialog: false })
     }
     loadMore = () => {
-        console.log('goi api lan nua')
-        this.setState({ page: this.state.page + 1, isLoading: true });
-        this.loadListNewProduct();
+        console.log('goi api lan nua' + this.state.page)
+        this.state.page++;
+        this.setState({ isLoading: true }, this.loadListNewProduct());
+
     }
     handleFooter = () => {
         console.log('footer day');
@@ -227,7 +142,7 @@ class HomeScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.screen}>
-                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
+                <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <ScrollView style={styles.background}>
                     <View style={styles.header}>
                         <View style={styles.inputHeader}>
@@ -235,19 +150,23 @@ class HomeScreen extends Component {
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SearchProductsScreen', {amount: this.state.listUserOrder.length})} style={{ flex: 5,  alignItems:'center', justifyContent:'center' }}>
+                                    <Text style={{color:COLOR.PLACEHODER,fontSize: 15, fontFamily:STRING.FONT_NORMAL}}>{STRING.SEARCH_INPUT}</Text>
+                                </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
-                            <SvgUri svgXmlData={BASKET} />
-                            {this.state.isHave ? (
-                                <View style={styles.basket_number}>
-                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
-                                </View>
-                            ) : null}
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
+                                <SvgUri svgXmlData={BASKET} />
+                                {this.state.isHave ? (
+                                    <View style={styles.basket_number}>
+                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                    </View>
+                                ) : null}
+                            </View>
                         </TouchableOpacity>
                     </View>
                     {/* banner và tool */}
@@ -257,15 +176,15 @@ class HomeScreen extends Component {
                             images={this.state.images}
                         />
                         <View style={styles.tools}>
-                            <TouchableOpacity style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_BEAUTY} />
                                 <Text>{STRING.PG_BEAUTY}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_TOOL} />
                                 <Text>{STRING.PG_BEAUTY_TOOL}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_FASHION} />
                                 <Text>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
@@ -390,7 +309,8 @@ const styles = StyleSheet.create({
         width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 30,
+        marginRight: 10,
+        marginLeft: 5,
         alignItems: 'center',
         marginTop: 10
     },
@@ -442,9 +362,6 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     basket: {
-        position: 'absolute',
-        top: 18,
-        right: 20
     },
     basket_number: {
         position: 'absolute',

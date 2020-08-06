@@ -17,7 +17,7 @@ import { COLOR } from '../../../constants/colors';
 class ItemCategory extends Component {
     constructor(props) {
         super(props);
-        const { id, name, parent_id, listChild } = this.props
+        const { id, name, parent_id, listChild , navigation} = this.props
         this.state = {
             id: id,
             name: name,
@@ -27,44 +27,67 @@ class ItemCategory extends Component {
             tool: false,
             fashion: false,
             cleansing: false,
-            listSubCategory: []
+            listSubCategory: [],
+            haveChild: false,
+            navigation: navigation
 
         };
     }
     openChild = () => {
-        this.setState({ openChild: !this.state.openChild }, this.getSubCategory)
+        if(this.state.haveChild == true) {
+            this.setState({ openChild: !this.state.openChild })
+        } else {
+            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.id })
+        }
     }
     getSubCategory = () => {
         console.log('chieu dai chuoi con' + this.state.listChild.length)
         let listSubCategory = []
         if (this.state.openChild == true) {
             for (let i = 0; i < this.state.listChild.length; i++) {
-                if (this.state.id == this.state.listChild[i].id) {
+                if (this.state.id == this.state.listChild[i].parent_id) {
                     listSubCategory.push(this.state.listChild[i]);
                 }
             }
         }
         this.setState({ listSubCategory: listSubCategory });
     }
+    componentDidMount = () => {
+        this.getSubCategory();
+        this.checkChild();
+
+    }
+    checkChild = () => {
+        if(this.state.listSubCategory > 0) {
+            this.setState({haveChild: true})
+        } else {
+            this.setState({haveChild: false})
+        }
+    }
     render() {
         const { id, name, parent_id } = this.state
         return (
             <View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
+                <TouchableOpacity onPress={this.openChild} style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <SvgUri svgXmlData={PG_BEAUTY} />
                     </View>
                     <View style={{ flex: 4, flexDirection: 'row' }}>
                         <Text style={styles.text}>{name}</Text>
                     </View>
-                    <TouchableOpacity onPress={this.openChild} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    {this.state.haveChild?(
+                        <View onPress={this.openChild} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         {this.state.openChild ? (
                             <SvgUri svgXmlData={SUB} width={15} height={20} />
                         ) : (
                                 <SvgUri svgXmlData={PLUS} width={25} height={25} />
                             )}
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                    ):(
+                        <View style={{flex:1}}/>
+                    )}
+                    
+                </TouchableOpacity>
                 {this.state.openChild ? (
                     <FlatList
                         data={this.state.listSubCategory}
