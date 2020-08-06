@@ -19,7 +19,8 @@ const API = {
     BRANDID: '38228',
     RETAILER: 'pgbeautyshop',
     CUSTOMERS: '/customers',
-    ORDERS: '/orders'
+    ORDERS: '/orders',
+    PROVINCES: '/provinces'
 
 }
 export {API}

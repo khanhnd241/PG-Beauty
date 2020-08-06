@@ -37,6 +37,7 @@ class PayScreen extends Component {
         };
     }
     componentDidMount = () => {
+        console.log('userAddress' + this.state.userAddress)
         AsyncStorage.getItem('code', (err, code) => {
             this.setState({ code: code })
             console.log('code' + this.state.code)
