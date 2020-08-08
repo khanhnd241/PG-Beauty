@@ -29,7 +29,7 @@ class CategoryScreen extends Component {
         super(props);
         const { navigation } = this.props;
         navigation.addListener('focus', async () => {
-            this.setState({ loadingDialog: true }, this.loadOrder());
+            this.setState(this.loadOrder());
         })
         this.state = {
             beauty: false,
@@ -87,7 +87,6 @@ class CategoryScreen extends Component {
 
     }
     loadOrder = () => {
-        this.setState({loadingDialog: true})
         AsyncStorage.getItem('id', (err, result) => {
             console.log('id day' + result);
             if (result == null || result == '') {
@@ -128,7 +127,6 @@ class CategoryScreen extends Component {
         } else {
             this.setState({ isHave: false })
         }
-        this.setState({ loadingDialog: false })
     }
     handleFooter = () => {
         // console.log('footer day');
@@ -145,7 +143,8 @@ class CategoryScreen extends Component {
             <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
-                <View style={styles.header}>
+                    <View style={styles.header}>
+                        <View style={{ flex: 0.5 }} />
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
@@ -157,7 +156,7 @@ class CategoryScreen extends Component {
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex:1, height: 50, alignItems: 'center', justifyContent: 'center' }}>
                             <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
@@ -291,13 +290,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     inputHeader: {
+        flex: 5,
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
-        width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 10,
         alignItems: 'center',
         marginTop: 10
     },

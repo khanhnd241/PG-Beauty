@@ -136,7 +136,7 @@ class SearchProductsScreen extends Component {
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ marginHorizontal: 15, marginTop: 5 }}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flex:1, alignItems:'center', marginTop: 5 }}>
                             <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                         </TouchableOpacity>
                         <View style={styles.inputHeader}>
@@ -146,11 +146,9 @@ class SearchProductsScreen extends Component {
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <TextInput onEndEditing={this.search} onChangeText={(text) => this.textChange(text)} autoFocus={this.state.focus} placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15, fontFamily: STRING.FONT_NORMAL }} />
                             </View>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ flex:1, alignItems: 'center', justifyContent: 'center', height:50}}>
                             <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.amount > 0 ? (
@@ -275,11 +273,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
-        width: 310,
+        flex:6,
         height: 40,
         marginBottom: 5,
-        marginRight: 5,
-        marginLeft: 5,
         alignItems: 'center',
         marginTop: 10
     },

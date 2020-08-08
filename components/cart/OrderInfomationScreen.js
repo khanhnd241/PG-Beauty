@@ -11,12 +11,9 @@ import SvgUri from 'react-native-svg-uri';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { API } from '../../constants/api';
 import axios from 'axios';
+import { Dropdown } from 'react-native-material-dropdown';
 import Dialog, {
-    DialogTitle,
-    DialogContent,
-    DialogFooter,
-    DialogButton,
-    SlideAnimation,
+    DialogContent
 } from 'react-native-popup-dialog';
 class OrderInfomationScreen extends Component {
     constructor(props) {
@@ -36,6 +33,7 @@ class OrderInfomationScreen extends Component {
             listProvinces: [],
             listDistricts: [],
             listWards: [],
+            listCity: [],
             loadingDialog: false
         };
     }
@@ -58,7 +56,13 @@ class OrderInfomationScreen extends Component {
         });
         axios.get(API.URL + API.PROVINCES).then(res => {
             console.log(res.data);
-            this.setState({ listProvinces: res.data.success, loadingDialog: false })
+            this.setState({ listProvinces: res.data.success, loadingDialog: false },()=>{
+                for(let i = 0; i < this.state.listProvinces.length; i++) {
+                    let city = {};
+                    city.value = this.state.listProvinces[i].name
+                    this.state.listCity.push(city);
+                }
+            })
         }).catch(err => {
             console.log(err)
             this.setState({ loadingDialog: false })
@@ -108,8 +112,8 @@ class OrderInfomationScreen extends Component {
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <TextInput value={this.state.phone} editable={this.state.isEdit} onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <Text style={styles.city}>{STRING.CITY}</Text>
-                            <Picker
+                            {/* <Text style={styles.city}>{STRING.CITY}</Text> */}
+                            {/* <Picker
                                 selectedValue={this.state.selectedCity}
                                 style={{ marginBottom: 10 }}
                                 onValueChange={(itemValue, itemIndex) => {
@@ -120,9 +124,11 @@ class OrderInfomationScreen extends Component {
                                 {this.state.listProvinces.map((item, index) => {
                                     return (<Picker.Item label={item.name} value={item.name} key={index} />)
                                 })}
-                            </Picker>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                            </Picker> */}
+                            <Dropdown
+                                label={STRING.CITY}
+                                data={this.state.listCity}
+                            />
                             <Text style={styles.city}>{STRING.DISTRICT}</Text>
                             <Picker
                                 selectedValue={this.state.district}

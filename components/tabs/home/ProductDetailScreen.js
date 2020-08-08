@@ -34,10 +34,7 @@ class ProductDetailScreen extends Component {
         let { id } = this.props.route.params;
         this.state = {
             images: [
-                IMAGE.ANH_DEMO_3,
-                IMAGE.ANH_DEMO_6,
-                IMAGE.ANH_DEMO_2,
-                IMAGE.ANH_DEMO_1
+                IMAGE.NO_IMAGE,
             ],
             product: {},
             tag: '',
@@ -98,9 +95,11 @@ class ProductDetailScreen extends Component {
             this.setState({
                 total: response.data.success.base_price,
                 product: response.data.success,
-                category: response.data.success.category,
-                images: imagesProduct
+                category: response.data.success.category
             });
+            if(imagesProduct.length > 0) {
+                this.setState({images: imagesProduct})
+            }
         }).catch(error => {
             console.log(JSON.stringify(error.response.data.error));
         })
@@ -285,7 +284,7 @@ class ProductDetailScreen extends Component {
                             </View>
                         </View>
                         <View style={{ borderColor: COLOR.LINE, borderTopWidth: 0.5, marginVertical: 8 }}></View>
-                        <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+                        {/* <View style={{ flexDirection: 'row', marginBottom: 15 }}>
                             <Text style={{ color: COLOR.DESCRIPTION }}>{STRING.COLOR} </Text>
                             <Text style={{ color: COLOR.DESCRIPTION, fontWeight: 'bold' }}>{this.state.color.length} </Text>
                             {this.state.ammount == '0' ? (
@@ -307,7 +306,7 @@ class ProductDetailScreen extends Component {
                                         <TouchableOpacity onPress={() => { this.setState({ index: index, colorSelect: item }) }} style={{ backgroundColor: item, width: 30, height: 30, borderRadius: 15, marginRight: 15, marginVertical: 5 }}></TouchableOpacity>
                                     )
                             }
-                        />
+                        /> */}
                         {/* kiểm tra còn hàng không */}
                         {this.state.ammount == '0' ? (
                             null
