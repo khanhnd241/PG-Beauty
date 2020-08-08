@@ -569,12 +569,14 @@ const styles = StyleSheet.create({
         marginTop: 7
     },
     title_list: {
+        fontFamily:STRING.FONT_SEMI_BOLD,
         color: COLOR.TEXTBODY,
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
     },
     see_all: {
+        fontFamily:STRING.FONT_SEMI_BOLD,
         color: COLOR.LINK,
         flex: 1,
         textDecorationLine: "underline",

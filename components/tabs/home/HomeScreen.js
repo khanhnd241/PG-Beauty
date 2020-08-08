@@ -32,7 +32,7 @@ class HomeScreen extends Component {
         super(props);
         const { navigation } = this.props;
         navigation.addListener('focus', async () => {
-            this.setState({ loadingDialog: true }, this.loadOrder());
+            this.loadOrder()
 
         })
         this.state = {
@@ -178,15 +178,15 @@ class HomeScreen extends Component {
                         <View style={styles.tools}>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_BEAUTY} />
-                                <Text>{STRING.PG_BEAUTY}</Text>
+                                <Text style={styles.tool_text}>{STRING.PG_BEAUTY}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_TOOL} />
-                                <Text>{STRING.PG_BEAUTY_TOOL}</Text>
+                                <Text style={styles.tool_text}>{STRING.PG_BEAUTY_TOOL}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_FASHION} />
-                                <Text>{STRING.PG_FASHION}</Text>
+                                <Text style={styles.tool_text}>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -331,7 +331,8 @@ const styles = StyleSheet.create({
     },
     title_list: {
         color: COLOR.TEXTBODY,
-        fontWeight: '600',
+        fontFamily:STRING.FONT_SEMI_BOLD,
+        fontWeight:'900',
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
@@ -340,6 +341,7 @@ const styles = StyleSheet.create({
     },
     see_all: {
         color: COLOR.LINK,
+        fontFamily:STRING.FONT_BOLD,
         flex: 1,
         textDecorationLine: "underline",
         textDecorationStyle: "solid",
@@ -359,6 +361,8 @@ const styles = StyleSheet.create({
     },
     tool_text: {
         color: COLOR.TEXTBODY,
+        fontFamily:STRING.FONT_SEMI_BOLD,
+        fontWeight:'600',
         fontSize: 14
     },
     basket: {

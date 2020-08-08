@@ -41,7 +41,7 @@ class AccountScreen extends Component {
             loadingDialog: false,
             name: '',
             phone: '',
-            id:''
+            id: ''
         };
     }
     componentDidMount = () => {
@@ -54,10 +54,10 @@ class AccountScreen extends Component {
                 this.setState({ isLogin: false });
             } else {
                 AsyncStorage.getItem('name', (err, result) => {
-                    this.setState({name: result});
+                    this.setState({ name: result });
                 });
                 AsyncStorage.getItem('phone', (err, result) => {
-                    this.setState({phone: result});
+                    this.setState({ phone: result });
                 });
                 AsyncStorage.getItem('id', (err, result) => {
                     console.log('id cua user' + result);
@@ -75,11 +75,11 @@ class AccountScreen extends Component {
     }
     logout = () => {
         this.setState({ loadingDialog: true })
-        AsyncStorage.multiRemove(['token', 'id', 'name','phone', 'code', 'password'], (err) => {
+        AsyncStorage.multiRemove(['token', 'id', 'name', 'phone', 'code', 'password'], (err) => {
             if (err) {
             } else {
                 this.loadData();
-                this.setState({loadingDialog:false})
+                this.setState({ loadingDialog: false })
             }
         })
     }
@@ -213,7 +213,6 @@ class AccountScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 ) : (
-
                         <View style={styles.container}>
                             <View style={{ alignItems: 'center', marginTop: 32 }} >
                                 <Text style={{ color: COLOR.PRIMARY, textTransform: 'uppercase', fontSize: 16 }}>{STRING.LOGIN}</Text>
@@ -269,7 +268,7 @@ class AccountScreen extends Component {
                         </View>
                     )}
                 <Dialog
-                    dialogStyle={{backgroundColor:'transparent'}}
+                    dialogStyle={{ backgroundColor: 'transparent' }}
                     onDismiss={() => {
                         this.setState({ loadingDialog: false });
                     }}
@@ -277,8 +276,8 @@ class AccountScreen extends Component {
                     width={0.9}
                     visible={this.state.loadingDialog}
                 >
-                    <DialogContent style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
-                            <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
                     </DialogContent>
                 </Dialog>
             </SafeAreaView>
@@ -287,13 +286,13 @@ class AccountScreen extends Component {
 }
 const styles = StyleSheet.create({
     screen: {
-        flex:1, 
-        backgroundColor:COLOR.PRIMARY,
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY,
         justifyContent: 'center'
     },
     background: {
         backgroundColor: COLOR.WHITE,
-        flex:1
+        flex: 1
     },
     container: {
         marginHorizontal: 15, shadowColor: "#000",
