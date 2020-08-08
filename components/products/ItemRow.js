@@ -24,7 +24,7 @@ class ItemRow extends Component {
         return (
             <View style={styles.container_items}>
                 <View style={{ flex: 1 }}>
-                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
+                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: IMAGE.NO_IMAGE} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
                             <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily:STRING.FONT_NORMAL }}>{sale}</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, FlatList, ImageBackground, ScrollView, Dimensions, StatusBar, ActivityIndicator, AsyncStorage, Image } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -13,16 +13,13 @@ import { BASKET } from '../../../constants/images/basket';
 import { PG_BEAUTY } from '../../../constants/images/pg_beauty';
 import { PG_FASHION } from '../../../constants/images/pg_fashion';
 import { PG_TOOL } from '../../../constants/images/pg_tool';
+import { BTN_CLOSE } from '../../../constants/images/btn_close';
 import axios from 'axios';
 import { API } from '../../../constants/api';
 import ItemColumn from '../../products/ItemColumn';
 import ItemRow from '../../products/ItemRow';
 import Dialog, {
-    DialogTitle,
-    DialogContent,
-    DialogFooter,
-    DialogButton,
-    SlideAnimation,
+    DialogContent
 } from 'react-native-popup-dialog';
 let deviceWidth = Dimensions.get('window').width - 10;
 const height = Dimensions.get('window').height;
@@ -50,7 +47,8 @@ class HomeScreen extends Component {
             isLoading: false,
             listUserOrder: [],
             isHave: false,
-            loadingDialog: false
+            loadingDialog: false,
+            bannerDialog: true
         };
     }
     loadListNewProduct = () => {
@@ -68,7 +66,7 @@ class HomeScreen extends Component {
             });
             console.log(this.state.listNewProducts.length);
         }).catch(error => {
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
         })
     }
     componentDidMount = () => {
@@ -145,20 +143,19 @@ class HomeScreen extends Component {
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <ScrollView style={styles.background}>
                     <View style={styles.header}>
+                        <View style={{flex:0.5}} />
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SearchProductsScreen', {amount: this.state.listUserOrder.length})} style={{ flex: 5,  alignItems:'center', justifyContent:'center' }}>
-                                    <Text style={{color:COLOR.PLACEHODER,fontSize: 15, fontFamily:STRING.FONT_NORMAL}}>{STRING.SEARCH_INPUT}</Text>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SearchProductsScreen', { amount: this.state.listUserOrder.length })} style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ color: COLOR.PLACEHODER, fontSize: 15, fontFamily: STRING.FONT_NORMAL }}>{STRING.SEARCH_INPUT}</Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex:1, alignItems: 'center', justifyContent: 'center', height:50 }}>
                             <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
@@ -282,6 +279,22 @@ class HomeScreen extends Component {
                             <ActivityIndicator color={COLOR.PRIMARY} size='large' />
                         </DialogContent>
                     </Dialog>
+                    <Dialog
+                        dialogStyle={{ backgroundColor: 'transparent' }}
+                        onDismiss={() => {
+                            this.setState({ bannerDialog: false });
+                        }}
+                        visible={this.state.bannerDialog}
+                    >
+                        <DialogContent>
+                            <TouchableOpacity onPress={() => this.setState({bannerDialog: false})} style={{flexDirection:'row-reverse', marginBottom:25}}>
+                                <SvgUri svgXmlData={BTN_CLOSE} />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Image style={{width:deviceWidth -20}} source={IMAGE.DELIVERY} />
+                            </TouchableOpacity>
+                        </DialogContent>
+                    </Dialog>
                 </ScrollView>
             </SafeAreaView>
         );
@@ -303,14 +316,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     inputHeader: {
+        flex:6,
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
-        width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 10,
-        marginLeft: 5,
         alignItems: 'center',
         marginTop: 10
     },
@@ -331,8 +342,8 @@ const styles = StyleSheet.create({
     },
     title_list: {
         color: COLOR.TEXTBODY,
-        fontFamily:STRING.FONT_SEMI_BOLD,
-        fontWeight:'900',
+        fontFamily: STRING.FONT_SEMI_BOLD,
+        fontWeight: '900',
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
@@ -341,7 +352,7 @@ const styles = StyleSheet.create({
     },
     see_all: {
         color: COLOR.LINK,
-        fontFamily:STRING.FONT_BOLD,
+        fontFamily: STRING.FONT_BOLD,
         flex: 1,
         textDecorationLine: "underline",
         textDecorationStyle: "solid",
@@ -361,8 +372,8 @@ const styles = StyleSheet.create({
     },
     tool_text: {
         color: COLOR.TEXTBODY,
-        fontFamily:STRING.FONT_SEMI_BOLD,
-        fontWeight:'600',
+        fontFamily: STRING.FONT_SEMI_BOLD,
+        fontWeight: '600',
         fontSize: 14
     },
     basket: {

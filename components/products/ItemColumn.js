@@ -25,7 +25,7 @@ class ItemColumn extends Component {
         return (
             <View style={styles.items_new_product}>
                 <View style={{ flex: 1 }}>
-                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 164, height: 110, marginLeft: 12, marginTop: 7 }}>
+                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: IMAGE.NO_IMAGE} style={{ width: 164, height: 110, marginLeft: 12, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
                             <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily:STRING.FONT_NORMAL }}>{sale}</Text>

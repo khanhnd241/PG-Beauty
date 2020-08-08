@@ -33,7 +33,9 @@ const IMAGE = {
     ANH_DEMO_6: require('../images/anh_demo6.png'),
     ICON_SALE_BG: require('../images/sale_bg.png'),
     ORDER: require('../images/order.png'),
-    BTN_ADD: require ('../images/btn_add.png')
+    BTN_ADD: require ('../images/btn_add.png'),
+    NO_IMAGE: require('../images/no_image.png'),
+    DELIVERY: require('../images/delivery.png')
 
 }
 
