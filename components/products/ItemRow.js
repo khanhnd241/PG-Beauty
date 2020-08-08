@@ -27,17 +27,17 @@ class ItemRow extends Component {
                     <ImageBackground source={imageUri.length!=0?{uri: imageUri}: null} style={{ width: 160, height: 111, marginLeft: 12, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
-                            <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9 }}>{sale}</Text>
+                            <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily:STRING.FONT_NORMAL }}>{sale}</Text>
                         </View>
                     </ImageBackground>
                     <View style={{ marginLeft: 16 }} >
-                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71 }}>{name}</Text>
-                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16 }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
+                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71, fontFamily:STRING.FONT_NORMAL }}>{name}</Text>
+                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16, fontFamily:STRING.FONT_SEMI_BOLD }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <SvgUri svgXmlData={STAR} />
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2 }}>({review} {STRING.REVIEW})</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1 }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3, fontFamily:STRING.FONT_NORMAL }}>{point}</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2, fontFamily:STRING.FONT_NORMAL }}>({review} {STRING.REVIEW})</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1, fontFamily:STRING.FONT_NORMAL }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
                         </View>
                     </View>
                 </View>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert, KeyboardAvoidingView } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -102,8 +102,8 @@ class OrderInfomationScreen extends Component {
                         </View>
                     </View>
                     <View style={{ height: 40, backgroundColor: COLOR.GRAY, marginTop: 15 }}></View>
-                    <ScrollView style={styles.background}>
-                        <KeyboardAwareScrollView style={styles.form}>
+                    <KeyboardAwareScrollView style={styles.background}>
+                        <View style={styles.form}>
                             <TextInput value={this.state.name} editable={this.state.isEdit} onChangeText={(value) => this.setState({ name: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <TextInput value={this.state.phone} editable={this.state.isEdit} onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
@@ -160,8 +160,8 @@ class OrderInfomationScreen extends Component {
                             </View>
                             <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.NOTE_ORDER} />
                             <View style={{ marginBottom: 250 }} />
-                        </KeyboardAwareScrollView>
-                    </ScrollView>
+                        </View>
+                    </KeyboardAwareScrollView>
                 </View>
 
                 <View style={styles.footer}>

@@ -47,13 +47,14 @@ class CartDetailScreen extends Component {
 
     deleteProduct = (index) => {
         this.setState({ loadingDialog: true });
-        let listProducts = this.state.listProducts;
-        listProducts.splice(index, 1);
+        // let listProducts = this.state.listProducts;
+        this.state.listProducts.splice(index, 1);
+        // listProducts.splice(index, 1);
         // this.reload();
-        this.rerenderList(listProducts);
+        // this.rerenderList(listProducts);
         this.reload();
-        this.reloadFlatlist();
-        this.stopReloadFlatlist();
+        // this.reloadFlatlist();
+        // this.stopReloadFlatlist();
         this.sumProduct();
     }
     reloadFlatlist = () => {
@@ -63,13 +64,17 @@ class CartDetailScreen extends Component {
         this.setState({ refresh: false })
     }
     rerenderList = (listProducts) => {
-        this.setState({ listProducts: listProducts });
+        this.setState({ listProducts: listProducts }, () => {
+            this.setState({ refresh: true })
+        });
     }
     reload = () => {
         if (this.state.userId == '' || this.state.userId == null) {
             AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listProducts));
+        } else {
+            AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+
         }
-        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
 
     }
     goToOrderInfo = () => {
@@ -125,13 +130,22 @@ class CartDetailScreen extends Component {
     sub = (index) => {
         if (this.state.listProducts[index].quantity > 1) {
             this.state.listProducts[index].quantity--;
-            AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+            if (this.state.userId == null || this.state.userId == '') {
+                AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listProducts));
+            } else {
+                AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+            }
+
         };
         this.sumProduct()
     }
     sum = (index) => {
         this.state.listProducts[index].quantity++;
-        AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+        if (this.state.userId == null || this.state.userId == '') {
+            AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listProducts));
+        } else {
+            AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+        }
         this.sumProduct()
     }
     render() {
@@ -149,7 +163,7 @@ class CartDetailScreen extends Component {
                     </View>
                     {this.state.isHave ? (
                         <View style={styles.content}>
-                            <FlatList
+                            {/* <FlatList
                                 data={this.state.listProducts}
                                 refreshing={this.state.refresh}
                                 renderItem={({ item, index }) => {
@@ -185,7 +199,6 @@ class CartDetailScreen extends Component {
                                                         <TouchableOpacity onPress={() => { this.sum(index) }} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
                                                             <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
                                                             <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
-                                                            {/* <Image style={{borderWidth:0.5, borderColor:COLOR.PRIMARY}} source={IMAGE.BTN_ADD} /> */}
                                                         </TouchableOpacity>
                                                     </View>
                                                     <View style={{ flex: 0.5 }}></View>
@@ -195,9 +208,49 @@ class CartDetailScreen extends Component {
                                         </View>
                                     )
                                 }
-
                                 }
-                            />
+                            /> */}
+                            {this.state.listProducts.map((item, index) => {
+                                const imageUri = item.primary_image != null ? item.primary_image : ""
+                                return (
+                                    <View>
+                                        <View style={styles.item_container}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <View style={{ flex: 2 }}>
+                                                    <Image style={{ width: 90, height: 60 }} source={imageUri.length != 0 ? { uri: imageUri } : null}></Image>
+
+                                                </View>
+                                                <View style={{ flex: 4 }}>
+                                                    <Text>{item.full_name}</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                    </View>
+
+                                                </View>
+                                                <TouchableOpacity onPress={() => { this.deleteProduct(index) }} style={{ flex: 0.5, alignItems: 'center' }}>
+                                                    <SvgUri svgXmlData={ICON_CLOSE} />
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                                <View style={{ flex: 2 }}></View>
+                                                <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
+                                                    <TouchableOpacity onPress={() => { this.sub(index) }}>
+                                                        <SvgUri svgXmlData={BTN_SUB} />
+                                                    </TouchableOpacity>
+                                                    <Text style={{ marginHorizontal: 15 }}>{item.quantity}</Text>
+                                                    <TouchableOpacity onPress={() => { this.sum(index) }} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
+                                                        <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <View style={{ flex: 0.5 }}></View>
+                                            </View>
+                                        </View>
+                                        <View style={{ backgroundColor: COLOR.GRAY, height: 5, marginVertical: 10 }} />
+                                    </View>
+                                )
+                            })}
                             <View style={styles.item_container}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Text style={{ color: COLOR.TEXTBODY, fontSize: 16, marginRight: 5, fontWeight: '600' }}>{STRING.ENTER_DISCOUNT_CODE}</Text>
@@ -314,7 +367,7 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: COLOR.WHITE,
-        flex:1
+        flex: 1
 
     },
     item_container: {

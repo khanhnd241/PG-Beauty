@@ -88,7 +88,7 @@ class LoginScreen extends Component {
                             loadingDialog: false,
                             code: res.data.data[0].code
                         })
-                        
+
                         this.login();
                     }
 
@@ -165,29 +165,29 @@ class LoginScreen extends Component {
                         <TextInput keyboardType="numeric" maxLength={10} value={this.state.phone} name="phone" onChangeText={(value) => this.setState({ phone: value })} style={styles.phone_input}
                             placeholder={STRING.PH_ENTER_PHONE} placeholderTextColor={COLOR.PLACEHODER} onBlur={this.blurInput}></TextInput>
                         <View style={styles.password_input}>
-                            <TextInput style={{ flex: 5 }} secureTextEntry={this.state.showPassword} value={this.state.password} name="password" onChangeText={(value) => this.setState({ password: value })}
+                            <TextInput style={{ flex: 5, fontFamily: STRING.FONT_NORMAL }} secureTextEntry={this.state.showPassword} value={this.state.password} name="password" onChangeText={(value) => this.setState({ password: value })}
                                 placeholder={STRING.PH_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onBlur={this.blurInput}></TextInput>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
-                                {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE_ACTIVE} fill={COLOR.PLACEHODER} />)}
+                            <TouchableOpacity style={styles.icon_show} onPress={this.showPassword}>
+                                {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
                     </View>
                     <TouchableOpacity style={styles.btn_login} onPress={this.connect}>
-                        <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16 }}>{STRING.LOGIN}</Text>
+                        <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16, fontFamily: STRING.FONT_BOLD }}>{STRING.LOGIN}</Text>
                     </TouchableOpacity>
-                    <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                        <Text style={{ color: COLOR.WHITE, fontSize: 15 }}>{STRING.FOGOT_PASSWORD}</Text>
+                    <View style={{ flexDirection: 'row', marginTop: 20, }}>
+                        <Text style={styles.fogot_pass}>{STRING.FOGOT_PASSWORD}</Text>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate('ForgotPassScreen') }}>
-                            <Text style={{ color: COLOR.WHITE, fontWeight: 'bold', fontSize: 15 }}>{STRING.GET_PASSWORD}</Text>
+                            <Text style={styles.get_pass}>{STRING.GET_PASSWORD}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 20 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ color: COLOR.WHITE, fontSize: 15, fontFamily: 'Nunito-Regular' }}>{STRING.NOT_HAVE_ACCOUNT}</Text>
+                            <Text style={styles.fogot_pass}>{STRING.NOT_HAVE_ACCOUNT}</Text>
                             <TouchableOpacity onPress={() => {
                                 this.props.navigation.navigate('RegisterScreen')
                             }}>
-                                <Text style={{ color: COLOR.WHITE, fontSize: 15, fontFamily: 'Nunito-Bold' }}>{STRING.SIGN_UP}</Text>
+                                <Text style={styles.get_pass}>{STRING.SIGN_UP}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -223,12 +223,13 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     text: {
-        fontFamily: 'Nunito-Regular',
+        fontFamily: STRING.FONT_NORMAL,
         marginTop: 14,
         fontSize: 14,
         color: COLOR.WHITE
     },
     phone_input: {
+        fontFamily: STRING.FONT_NORMAL,
         borderRadius: 30,
         width: 320,
         height: 45,
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     password_input: {
+        fontFamily: STRING.FONT_NORMAL,
         borderRadius: 30,
         width: 320,
         height: 45,
@@ -257,6 +259,21 @@ const styles = StyleSheet.create({
     btn_close: {
         marginLeft: 16,
         marginTop: 20
+    },
+    icon_show: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    fogot_pass: {
+        color: COLOR.WHITE, 
+        fontSize: 15, 
+        fontFamily: STRING.FONT_NORMAL
+    },
+    get_pass: {
+        color: COLOR.WHITE,
+        fontFamily: STRING.FONT_BOLD,
+        fontSize: 15
     }
 
 })

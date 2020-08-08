@@ -92,7 +92,6 @@ class SearchProductsScreen extends Component {
                     if(historySearch.indexOf(this.state.textSearch) == -1) {
                         historySearch.push(this.state.textSearch);
                         AsyncStorage.setItem('history', JSON.stringify(historySearch));
-
                     }
                 })
                 console.log('san pham tim kiem' + response.data.success.data);
@@ -151,8 +150,8 @@ class SearchProductsScreen extends Component {
                                 <SvgUri svgXmlData={SCAN} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.amount > 0 ? (
                                     <View style={styles.basket_number}>

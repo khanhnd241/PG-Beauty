@@ -293,28 +293,28 @@ class RegisterScreen extends Component {
                         <TextInput style={styles.textInput} value={this.state.email} placeholder={STRING.EMAIL} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
 
                         <View style={styles.input_dob}>
-                            <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
+                            <TextInput style={{ flex: 6, fontFamily:STRING.FONT_NORMAL }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
                                 {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
                         <View style={styles.input_dob}>
-                            <TextInput style={{ flex: 6 }} secureTextEntry={this.state.showConfirmPassword} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.CONFIRM_PASSWORD} onChangeText={(value) => { this.setState({ confirmPassword: value }) }}></TextInput>
+                            <TextInput style={{ flex: 6,fontFamily:STRING.FONT_NORMAL }} secureTextEntry={this.state.showConfirmPassword} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.CONFIRM_PASSWORD} onChangeText={(value) => { this.setState({ confirmPassword: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showConfirmPassword}>
                                 {this.state.showConfirmPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.btn_register} onPress={this.ClickRegister}>
-                            <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16 }}>{STRING.REGISTER}</Text>
+                            <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16,fontFamily:STRING.FONT_BOLD }}>{STRING.REGISTER}</Text>
                         </TouchableOpacity>
 
                     </View>
                 </KeyboardAwareScrollView>
                 <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 5, alignItems: 'center' }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ color: COLOR.WHITE, fontSize: 14 }}>{STRING.HAVE_ACCOUNT}</Text>
+                        <Text style={{ color: COLOR.WHITE, fontSize: 14, fontFamily:STRING.FONT_NORMAL }}>{STRING.HAVE_ACCOUNT}</Text>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('LoginScreen')}>
-                            <Text style={{ color: COLOR.WHITE, fontWeight: 'bold', fontSize: 14 }}>{STRING.LOGIN_NOW}</Text>
+                            <Text style={{ color: COLOR.WHITE, fontFamily:STRING.FONT_BOLD, fontSize: 14 }}>{STRING.LOGIN_NOW}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -361,12 +361,14 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     title: {
+        fontFamily:STRING.FONT_NORMAL,
         color: COLOR.WHITE,
         marginTop: 10,
         fontSize: 14,
         marginBottom: 20
     },
     textInput: {
+        fontFamily:STRING.FONT_NORMAL,
         paddingLeft: 16,
         width: 320,
         height: 45,
@@ -385,6 +387,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     btn_register: {
+        fontFamily:STRING.FONT_BOLD,
         width: 320,
         height: 45,
         borderRadius: 30,

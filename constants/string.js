@@ -117,6 +117,7 @@ const STRING = {
     VIEW_MORE: 'Xem thêm',
     FONT_NORMAL: 'Nunito-Regular',
     FONT_BOLD: 'Nunito-Bold',
+    FONT_SEMI_BOLD: 'Nunito-SemiBold',
     TAG: '#',
     WARNING: 'Cảnh báo',
     LOGIN_BEFORE_ORDER: 'Bạn cần đăng nhập trước khi đặt hàng',
