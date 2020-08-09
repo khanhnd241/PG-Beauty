@@ -34,6 +34,8 @@ class OrderInfomationScreen extends Component {
             listDistricts: [],
             listWards: [],
             listCity: [],
+            listDistrictsSelected: [],
+            listWardsSelected:[],
             loadingDialog: false
         };
     }
@@ -67,6 +69,37 @@ class OrderInfomationScreen extends Component {
             console.log(err)
             this.setState({ loadingDialog: false })
         })
+    }
+    openDistricts = (value, index) => {
+        this.setState({selectedCity:value});
+        let listDistricts = [];
+        console.log(value + 'index' + index);
+        this.setState({listDistricts: this.state.listProvinces[index].districts},() => {
+            for(let i =0; i < this.state.listDistricts.length;i++){
+                let district = {};
+                district.value = this.state.listDistricts[i].name;
+                listDistricts.push(district);
+            }
+            this.setState({listDistrictsSelected:listDistricts})
+
+        })
+        
+    }
+    openDWards = (value, index) => {
+        this.setState({district: value})
+        let listWards = [];
+        this.setState({listWards: this.state.listDistricts[index].wards},() => {
+            for(let i =0; i < this.state.listWards.length;i++){
+                let ward = {};
+                ward.value = this.state.listWards[i].name;
+                listWards.push(ward);
+            }
+            this.setState({listWardsSelected:listWards});
+        })
+        
+    }
+    selecteWard = (value, index) => {
+        this.setState({ward:value})
     }
     render() {
         return (
@@ -112,52 +145,22 @@ class OrderInfomationScreen extends Component {
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <TextInput value={this.state.phone} editable={this.state.isEdit} onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            {/* <Text style={styles.city}>{STRING.CITY}</Text> */}
-                            {/* <Picker
-                                selectedValue={this.state.selectedCity}
-                                style={{ marginBottom: 10 }}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    this.setState({ selectedCity: itemValue, listDistricts: this.state.listProvinces[itemIndex].districts })
-                                }
-                                }
-                            >
-                                {this.state.listProvinces.map((item, index) => {
-                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
-                                })}
-                            </Picker> */}
                             <Dropdown
                                 label={STRING.CITY}
                                 data={this.state.listCity}
+                                onChangeText={(value,index,data) => {this.openDistricts(value,index)}}
                             />
-                            <Text style={styles.city}>{STRING.DISTRICT}</Text>
-                            <Picker
-                                selectedValue={this.state.district}
-                                style={{ marginBottom: 10 }}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    this.setState({ district: itemValue, listWards: this.state.listDistricts[itemIndex].wards })
-                                    console.log('danh sach phuong ' + this.state.listWards)
-                                }
-                                }
-                            >
-                                {this.state.listDistricts.map((item, index) => {
-                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
-                                })}
-                            </Picker>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
-                            <Text style={styles.city}>{STRING.WARD}</Text>
-                            <Picker
-                                selectedValue={this.state.ward}
-                                style={{ marginBottom: 10 }}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    this.setState({ ward: itemValue })
-                                }
-                                }
-                            >
-                                {this.state.listWards.map((item, index) => {
-                                    return (<Picker.Item label={item.name} value={item.name} key={index} />)
-                                })}
-                            </Picker>
-                            <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                            <Dropdown
+                            
+                                label={STRING.DISTRICT}
+                                data={this.state.listDistrictsSelected}
+                                onChangeText={(value,index,data) => {this.openDWards(value,index)}}
+                            />
+                            <Dropdown
+                                label={STRING.WARD}
+                                data={this.state.listWardsSelected}
+                                onChangeText={(value,index,data) => {this.selecteWard(value,index)}}
+                            />
                             <TextInput onChangeText={(value) => this.setState({ address: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ADDRESS} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
