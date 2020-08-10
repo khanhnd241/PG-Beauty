@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, TextInput, Alert, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, TextInput, Alert, StatusBar, ActivityIndicator, AsyncStorage, Platform } from "react-native";
 import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../constants/string';
@@ -12,6 +12,7 @@ import { DROPDOWN } from '../../constants/images/dropdown';
 import { CLOSE } from '../../constants/images/close';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { COLOR } from '../../constants/colors'
 import moment from 'moment';
 import Dialog, {
@@ -42,18 +43,19 @@ class RegisterScreen extends Component {
             calendarDialog: false,
             deviceId: '',
             id: null,
-            token: ''
+            token: '',
+            isShowDatePicker: false
         };
     }
-    // handlerDate = (date) => {
-    //     console.log('ngay sinh', date);
-    //     this.setState({
-    //         dateOfBirth: date,
-    //         datePicker: false,
-    //         dateView: moment(date).format('DD/MM/YYYY')
-    //     })
+    handlerDate = (date) => {
+        console.log('ngay sinh', date);
+        this.setState({
+            dateOfBirth: date,
+            isShowDatePicker: false,
+            dateView: moment(date).format('DD/MM/YYYY')
+        })
 
-    // }
+    }
     onChange = (event, date) => {
         this.setState({
             dateView: moment(date).format('DD/MM/YYYY'),
@@ -126,13 +128,13 @@ class RegisterScreen extends Component {
                 axios.get(API.URL_API_KIOT + API.CUSTOMERS + '?contactNumber=' + this.state.phone, config).then(res => {
                     console.log(res.data.data.length);
                     if (res.data.data.length == 0) {
-                        this.setState({ 
+                        this.setState({
                             loadingDialog: false,
                             name: '',
                             address: '',
                             email: '',
                             dateView: STRING.ENTER_DATE_OF_BIRTH,
-                            id: '' 
+                            id: ''
                         })
 
                     } else {
@@ -145,7 +147,7 @@ class RegisterScreen extends Component {
                             dateView: moment(res.data.data[0].birthDate).format('DD/MM/YYYY'),
                             id: res.data.data[0].id
                         })
-                        
+
                     }
 
                 }).catch(err => {
@@ -189,11 +191,12 @@ class RegisterScreen extends Component {
         console.log(this.validate());
         if (this.validate() == true) {
             this.setState({ loadingDialog: true });
-            
+
             data.name = this.state.name;
             data.phone = this.state.phone;
             data.password = this.state.password;
-            // data.device_id = this.state.deviceId;
+            data.device_id = this.state.deviceId;
+            data.device_type = Platform.OS;
             if (this.state.email.trim() != '') {
                 data.email = this.state.email;
             }
@@ -214,33 +217,36 @@ class RegisterScreen extends Component {
             if (this.state.id == null || this.state.id == '') {
                 console.log('tao moi nguoi dung')
                 data.branchId = API.BRANDID;
-                data.contactNumber = this.state.phone
+                data.contactNumber = this.state.phone;
+                data.birthDate = this.state.dateView;
                 axios.post(API.URL_API_KIOT + API.CUSTOMERS, data, config).then(response => {
                     console.log('code moi' + response.data.data.code);
-                    if(response.data.data.code == '' || response.data.data.code == '') {
+                    if (response.data.data.code == '' || response.data.data.code == '') {
                         Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
                     } else {
                         AsyncStorage.setItem('code', response.data.data.code);
                         this.register(data);
                     }
                 }).catch(err => {
-                    console.log(JSON.stringify(err)); 
-                    Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.responseStatus) , [{ text: STRING.ACCEPT }]);
+                    console.log(JSON.stringify(err.response));
+                    Alert.alert(STRING.NOTIFICATION,JSON.stringify(err.response.data.responseStatus.message), [{ text: STRING.ACCEPT }]);
                     this.setState({ loadingDialog: false });
                 })
             } else {
                 console.log('update nguoi dung')
                 axios.put(API.URL_API_KIOT + API.CUSTOMERS + '/' + this.state.id, data, config).then(response => {
                     console.log('khach hang kiot ' + response.data.data.code);
-                    if(response.data.data.code == '' || response.data.data.code == '') {
+                    if (response.data.data.code == '' || response.data.data.code == '') {
                         Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }]);
+                        this.setState({ loadingDialog: false });
                     } else {
                         AsyncStorage.setItem('code', response.data.data.code);
                         this.register(data)
                     }
-                    
+
                 }).catch(err => {
-                    Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.responseStatus.message), [{ text: STRING.ACCEPT }])
+                    Alert.alert(STRING.NOTIFICATION,JSON.stringify(err.response.data.responseStatus.message), [{ text: STRING.ACCEPT }]);
+                    this.setState({ loadingDialog: false });
                 })
             }
         }
@@ -267,7 +273,16 @@ class RegisterScreen extends Component {
         }).catch(error => {
         });
     }
-
+    showCalender = () => {
+        if(Platform.OS === 'ios') {
+            console.log(" ios") 
+            this.setState({ isShowDatePicker: true })
+         } else {
+               console.log("android") 
+               this.setState({ calendarDialog: true })
+        } 
+        
+    }
     render() {
         return (
             <SafeAreaView style={styles.background}>
@@ -283,7 +298,7 @@ class RegisterScreen extends Component {
                         <Text style={styles.title}>{STRING.ENTER_INFO}</Text>
                         <TextInput style={styles.textInput} onBlur={() => this.connect()} placeholder={STRING.ENTER_PHONE_INPUT} keyboardType='numeric' maxLength={10} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ phone: value }) }}></TextInput>
                         <TextInput style={styles.textInput} value={this.state.name} placeholder={STRING.ENTER_NAME} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ name: value }) }}></TextInput>
-                        <TouchableOpacity onPress={() => { this.setState({ calendarDialog: true }) }} style={styles.input_dob}>
+                        <TouchableOpacity onPress={this.showCalender} style={styles.input_dob}>
                             <Text style={{ flex: 7, color: COLOR.PLACEHODER }}>{this.state.dateView}</Text>
                             <View style={{ flex: 1 }}>
                                 <SvgUri svgXmlData={DROPDOWN} />
@@ -293,28 +308,28 @@ class RegisterScreen extends Component {
                         <TextInput style={styles.textInput} value={this.state.email} placeholder={STRING.EMAIL} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ email: value }) }}></TextInput>
 
                         <View style={styles.input_dob}>
-                            <TextInput style={{ flex: 6, fontFamily:STRING.FONT_NORMAL }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
+                            <TextInput style={{ flex: 6, fontFamily: STRING.FONT_NORMAL, color:COLOR.TEXTBODY }} secureTextEntry={this.state.showPassword} placeholder={STRING.ENTER_PASSWORD} placeholderTextColor={COLOR.PLACEHODER} onChangeText={(value) => { this.setState({ password: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showPassword}>
                                 {this.state.showPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
                         <View style={styles.input_dob}>
-                            <TextInput style={{ flex: 6,fontFamily:STRING.FONT_NORMAL }} secureTextEntry={this.state.showConfirmPassword} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.CONFIRM_PASSWORD} onChangeText={(value) => { this.setState({ confirmPassword: value }) }}></TextInput>
+                            <TextInput style={{ flex: 6, fontFamily: STRING.FONT_NORMAL, color:COLOR.TEXTBODY }} secureTextEntry={this.state.showConfirmPassword} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.CONFIRM_PASSWORD} onChangeText={(value) => { this.setState({ confirmPassword: value }) }}></TextInput>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.showConfirmPassword}>
                                 {this.state.showConfirmPassword ? (<SvgUri svgXmlData={EYE} />) : (<SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />)}
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.btn_register} onPress={this.ClickRegister}>
-                            <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16,fontFamily:STRING.FONT_BOLD }}>{STRING.REGISTER}</Text>
+                            <Text style={{ textTransform: 'uppercase', color: COLOR.WHITE, fontSize: 16, fontFamily: STRING.FONT_BOLD }}>{STRING.REGISTER}</Text>
                         </TouchableOpacity>
 
                     </View>
                 </KeyboardAwareScrollView>
                 <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 5, alignItems: 'center' }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ color: COLOR.WHITE, fontSize: 14, fontFamily:STRING.FONT_NORMAL }}>{STRING.HAVE_ACCOUNT}</Text>
+                        <Text style={{ color: COLOR.WHITE, fontSize: 14, fontFamily: STRING.FONT_NORMAL }}>{STRING.HAVE_ACCOUNT}</Text>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('LoginScreen')}>
-                            <Text style={{ color: COLOR.WHITE, fontFamily:STRING.FONT_BOLD, fontSize: 14 }}>{STRING.LOGIN_NOW}</Text>
+                            <Text style={{ color: COLOR.WHITE, fontFamily: STRING.FONT_BOLD, fontSize: 14 }}>{STRING.LOGIN_NOW}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -339,6 +354,15 @@ class RegisterScreen extends Component {
                         <ActivityIndicator color={COLOR.PRIMARY} size='large' />
                     </DialogContent>
                 </Dialog>
+                <DateTimePickerModal
+                    isVisible={this.state.isShowDatePicker}
+                    mode="date"
+                    date={new Date()}
+                    onConfirm={this.handlerDate}
+                    onCancel={() => {
+                        this.setState({ isShowDatePicker: false })
+                    }}
+                />
             </SafeAreaView>
         );
     }
@@ -361,20 +385,21 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     title: {
-        fontFamily:STRING.FONT_NORMAL,
+        fontFamily: STRING.FONT_NORMAL,
         color: COLOR.WHITE,
         marginTop: 10,
         fontSize: 14,
         marginBottom: 20
     },
     textInput: {
-        fontFamily:STRING.FONT_NORMAL,
+        fontFamily: STRING.FONT_NORMAL,
         paddingLeft: 16,
         width: 320,
         height: 45,
         borderRadius: 30,
         backgroundColor: COLOR.WHITE,
-        marginBottom: 10
+        marginBottom: 10,
+        color:COLOR.TEXTBODY
     },
     input_dob: {
         paddingLeft: 16,
@@ -387,7 +412,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     btn_register: {
-        fontFamily:STRING.FONT_BOLD,
+        fontFamily: STRING.FONT_BOLD,
         width: 320,
         height: 45,
         borderRadius: 30,

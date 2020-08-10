@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Picker, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert, KeyboardAvoidingView } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Button, AsyncStorage, ScrollView, Dimensions, StatusBar, ActivityIndicator, Alert, KeyboardAvoidingView } from "react-native";
 import { STRING } from '../../constants/string';
 import { COLOR } from '../../constants/colors';
 import { IMAGE } from '../../constants/images';
@@ -35,7 +35,7 @@ class OrderInfomationScreen extends Component {
             listWards: [],
             listCity: [],
             listDistrictsSelected: [],
-            listWardsSelected:[],
+            listWardsSelected: [],
             loadingDialog: false
         };
     }
@@ -58,8 +58,8 @@ class OrderInfomationScreen extends Component {
         });
         axios.get(API.URL + API.PROVINCES).then(res => {
             console.log(res.data);
-            this.setState({ listProvinces: res.data.success, loadingDialog: false },()=>{
-                for(let i = 0; i < this.state.listProvinces.length; i++) {
+            this.setState({ listProvinces: res.data.success, loadingDialog: false }, () => {
+                for (let i = 0; i < this.state.listProvinces.length; i++) {
                     let city = {};
                     city.value = this.state.listProvinces[i].name
                     this.state.listCity.push(city);
@@ -71,35 +71,35 @@ class OrderInfomationScreen extends Component {
         })
     }
     openDistricts = (value, index) => {
-        this.setState({selectedCity:value});
+        this.setState({ selectedCity: value });
         let listDistricts = [];
         console.log(value + 'index' + index);
-        this.setState({listDistricts: this.state.listProvinces[index].districts},() => {
-            for(let i =0; i < this.state.listDistricts.length;i++){
+        this.setState({ listDistricts: this.state.listProvinces[index].districts }, () => {
+            for (let i = 0; i < this.state.listDistricts.length; i++) {
                 let district = {};
                 district.value = this.state.listDistricts[i].name;
                 listDistricts.push(district);
             }
-            this.setState({listDistrictsSelected:listDistricts})
+            this.setState({ listDistrictsSelected: listDistricts })
 
         })
-        
+
     }
     openDWards = (value, index) => {
-        this.setState({district: value})
+        this.setState({ district: value })
         let listWards = [];
-        this.setState({listWards: this.state.listDistricts[index].wards},() => {
-            for(let i =0; i < this.state.listWards.length;i++){
+        this.setState({ listWards: this.state.listDistricts[index].wards }, () => {
+            for (let i = 0; i < this.state.listWards.length; i++) {
                 let ward = {};
                 ward.value = this.state.listWards[i].name;
                 listWards.push(ward);
             }
-            this.setState({listWardsSelected:listWards});
+            this.setState({ listWardsSelected: listWards });
         })
-        
+
     }
     selecteWard = (value, index) => {
-        this.setState({ward:value})
+        this.setState({ ward: value })
     }
     render() {
         return (
@@ -116,6 +116,7 @@ class OrderInfomationScreen extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.background}>
+                    
                     <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginBottom: 15 }} />
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ flex: 1, alignItems: 'center' }}>
@@ -139,8 +140,9 @@ class OrderInfomationScreen extends Component {
                         </View>
                     </View>
                     <View style={{ height: 40, backgroundColor: COLOR.GRAY, marginTop: 15 }}></View>
-                    <KeyboardAwareScrollView style={styles.background}>
+                    <ScrollView ref={scrollView => this.scrollView = scrollView} style={styles.background}>
                         <View style={styles.form}>
+                        {/* <Button onPress={() => { this.scrollView.scrollToEnd() }}title="Scroll To Bottom "></Button> */}
                             <TextInput value={this.state.name} editable={this.state.isEdit} onChangeText={(value) => this.setState({ name: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ENTER_NAME} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             <TextInput value={this.state.phone} editable={this.state.isEdit} onChangeText={(value) => this.setState({ phone: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.PHONE} />
@@ -148,18 +150,18 @@ class OrderInfomationScreen extends Component {
                             <Dropdown
                                 label={STRING.CITY}
                                 data={this.state.listCity}
-                                onChangeText={(value,index,data) => {this.openDistricts(value,index)}}
+                                onChangeText={(value, index, data) => { this.openDistricts(value, index) }}
                             />
                             <Dropdown
-                            
+
                                 label={STRING.DISTRICT}
                                 data={this.state.listDistrictsSelected}
-                                onChangeText={(value,index,data) => {this.openDWards(value,index)}}
+                                onChangeText={(value, index, data) => { this.openDWards(value, index) }}
                             />
                             <Dropdown
                                 label={STRING.WARD}
                                 data={this.state.listWardsSelected}
-                                onChangeText={(value,index,data) => {this.selecteWard(value,index)}}
+                                onChangeText={(value, index, data) => { this.selecteWard(value, index) }}
                             />
                             <TextInput onChangeText={(value) => this.setState({ address: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.ADDRESS} />
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
@@ -170,7 +172,7 @@ class OrderInfomationScreen extends Component {
                             <TextInput onChangeText={(value) => this.setState({ comment: value })} style={styles.input} placeholderTextColor={COLOR.PLACEHODER} placeholder={STRING.NOTE_ORDER} />
                             <View style={{ marginBottom: 250 }} />
                         </View>
-                    </KeyboardAwareScrollView>
+                    </ScrollView>
                 </View>
 
                 <View style={styles.footer}>

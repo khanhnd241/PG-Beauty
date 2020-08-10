@@ -12,33 +12,39 @@ class ItemColumn extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            point:''
         };
     }
-     format(n) {
+    format(n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      }
-
+    }
+    genRand(min, max, decimalPlaces) {
+        var Rand = Math.random() * (max - min) + min;
+        var power = Math.pow(10, decimalPlaces);
+        return Math.floor(Rand * power) / power;
+    }
+    componentDidMount = () => {
+        this.setState({point:this.genRand(4.5,5,1)})
+    }
     render() {
-        const { image, name, price, point, review, sell, sale } = this.props
-        const imageUri = image!=null ? image : ""
+        const { image, name, price, point, views, sell, sale } = this.props
+        const imageUri = image != null ? image : ""
         return (
             <View style={styles.items_new_product}>
                 <View style={{ flex: 1 }}>
-                    <ImageBackground source={imageUri.length!=0?{uri: imageUri}: IMAGE.NO_IMAGE} style={{ width: 164, height: 110, marginLeft: 12, marginTop: 7 }}>
+                    <ImageBackground source={imageUri.length != 0 ? { uri: imageUri } : IMAGE.NO_IMAGE} style={{ height: 110, marginTop: 7 }}>
                         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                             <SvgUri svgXmlData={RECTANGLE} />
-                            <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily:STRING.FONT_NORMAL }}>{sale}</Text>
+                            <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily: STRING.FONT_NORMAL }}>{sale}</Text>
                         </View>
                     </ImageBackground>
-                    <View style={{ marginLeft: 16 }} >
-                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71, fontFamily:STRING.FONT_NORMAL }}>{name}</Text>
-                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16, fontFamily:STRING.FONT_SEMI_BOLD }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 , fontFamily:STRING.FONT_NORMAL}}>
+                    <View style={{ marginHorizontal: 7 }}>
+                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71, fontFamily: STRING.FONT_NORMAL }}>{name}</Text>
+                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16, fontFamily: STRING.FONT_SEMI_BOLD }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, fontFamily: STRING.FONT_NORMAL }}>
                             <SvgUri svgXmlData={STAR} />
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{point}</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 2, fontFamily:STRING.FONT_NORMAL }}>({review} {STRING.REVIEW})</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1, fontFamily:STRING.FONT_NORMAL }} numberOfLines={1}>{STRING.SOLD} {sell}</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3 }}>{this.state.point}</Text>
+                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 11, marginLeft: 8, flex: 1, fontFamily: STRING.FONT_NORMAL, textAlign: 'right' }} numberOfLines={1}>{STRING.VIEWS} {views}</Text>
                         </View>
                     </View>
                 </View>
@@ -110,7 +116,7 @@ const styles = StyleSheet.create({
         width: deviceWidth / 2,
         height: 255,
         flex: 1,
-        margin: 3
+        paddingHorizontal: 5
     },
     tool_text: {
         color: COLOR.TEXTBODY,
@@ -135,7 +141,7 @@ const styles = StyleSheet.create({
     loader: {
         marginTop: 10,
         alignItems: 'center',
-        marginBottom:10
+        marginBottom: 10
     }
 
 })

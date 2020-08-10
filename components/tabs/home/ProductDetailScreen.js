@@ -33,6 +33,7 @@ class ProductDetailScreen extends Component {
         super(props);
         let { id } = this.props.route.params;
         this.state = {
+            id: id,
             images: [
                 IMAGE.NO_IMAGE,
             ],
@@ -43,11 +44,11 @@ class ProductDetailScreen extends Component {
             newPrice: '',
             oldPrice: '',
             rate: '5',
-            review: '26',
+            views: '',
             sold: '74',
             color: ['#FF3358', '#FB4911', '#C80078'],
             status: '1',
-            ammount: '5',
+            ammount: '',
             delivery: 'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
             description: '',
             tradeMark: '',
@@ -57,7 +58,6 @@ class ProductDetailScreen extends Component {
             index: null,
             colorSelect: '',
             listSameType: [],
-            idProduct: id,
             categoryId: '',
             amountOrder: 1,
             product: {},
@@ -69,23 +69,30 @@ class ProductDetailScreen extends Component {
             userId: '',
             loadingDialog: false,
             deviceId: '',
-            total: ''
+            total: '',
+            noImages : [IMAGE.NO_IMAGE]
         };
     }
     componentDidMount = () => {
         const { navigation } = this.props;
         navigation.addListener('focus', async () => {
-            this.setState({ idProduct: this.props.route.params.id, loadingDialog: true })
-            console.log('load screen' + this.props.route.params.id);
-            this.loadDetail();
+            this.setState({rate:this.genRand(4.5,5,1)});
+            this.loadDetail(this.state.id);
             this.loadOrder();
-            this.getlistSameType();
+            // this.getlistSameType();
         })
 
     }
-    loadDetail = () => {
-        let imagesProduct = []
-        axios.get(API.URL + API.PRODUCTS + '/' + this.props.route.params.id).then(response => {
+    genRand(min, max, decimalPlaces) {  
+        var Rand = Math.random()*(max-min) + min;
+        var power = Math.pow(10, decimalPlaces);
+        return Math.floor(Rand*power) / power;
+    }
+    loadDetail = (id) => {
+        this.setState({ loadingDialog: true })
+        let imagesProduct = [];
+        
+        axios.get(API.URL + API.PRODUCTS + '/' + id).then(response => {
             console.log(response.data.success.category_id);
             console.log(parseInt(response.data.success.base_price));
             console.log(response.data.success.images.length);
@@ -95,13 +102,24 @@ class ProductDetailScreen extends Component {
             this.setState({
                 total: response.data.success.base_price,
                 product: response.data.success,
+                categoryId: response.data.success.category_id,
+                ammount: response.data.success.on_hand,
+                views: response.data.success.views,
                 category: response.data.success.category
+            }, () => {
+                this.getlistSameType()
             });
-            if(imagesProduct.length > 0) {
-                this.setState({images: imagesProduct})
+            if (imagesProduct.length > 0) {
+                console.log(imagesProduct.length);
+                this.setState({ images: imagesProduct })
+            } else {
+                console.log(imagesProduct.length);
+                this.setState({ images: this.state.noImages })
             }
+            this.setState({ loadingDialog: false })
         }).catch(error => {
             console.log(JSON.stringify(error.response.data.error));
+            this.setState({ loadingDialog: false })
         })
     }
     getlistSameType = () => {
@@ -121,20 +139,20 @@ class ProductDetailScreen extends Component {
         })
     }
     plus = () => {
-        this.setState({loadingDialog: true})
+        this.setState({ loadingDialog: true })
         let quantity = this.state.amountOrder + 1;
         let total = this.state.product.base_price * quantity;
         this.setState({ amountOrder: quantity, total: total, loadingDialog: false });
     }
     sub = () => {
-        this.setState({loadingDialog: true})
+        this.setState({ loadingDialog: true })
         if (this.state.amountOrder > 1) {
             let quantity = this.state.amountOrder - 1;
             let total = this.state.product.base_price * quantity;
-            this.setState({ amountOrder: quantity, total: total});
-        } 
-            this.setState({loadingDialog: false})
-        
+            this.setState({ amountOrder: quantity, total: total });
+        }
+        this.setState({ loadingDialog: false })
+
     }
     checkOrder = () => {
         console.log('check length' + this.state.listUserOrder.length);
@@ -207,7 +225,7 @@ class ProductDetailScreen extends Component {
                         console.log('length order hien tai' + this.state.listUserOrder.length);
                         this.checkOrder();
                     }
-                    
+
                 })
             }
             this.setState({ loadingDialog: false })
@@ -220,7 +238,7 @@ class ProductDetailScreen extends Component {
         return (
             <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
-                <ScrollView style={styles.background}>
+                <ScrollView ref='_scrollView' style={styles.background}>
                     <View style={{ height: 250 }}>
                         <SliderBox
                             sliderBoxHeight={250}
@@ -231,21 +249,21 @@ class ProductDetailScreen extends Component {
 
                     <View style={{ position: 'absolute', top: 0 }}>
                         <View style={styles.header}>
-                            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ alignItems:'center',justifyContent:'center', height:45, width:45 }}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ alignItems: 'center', justifyContent: 'center', height: 45, width: 45 }}>
                                 <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{height:45, width:45, position:'absolute', right:15}}>
-                            <View  style={styles.basket}>
-                                <SvgUri svgXmlData={BASKET} />
-                                {this.state.isHave ? (
-                                <View style={styles.basket_number}>
-                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ height: 45, width: 45, position: 'absolute', right: 15 }}>
+                                <View style={styles.basket}>
+                                    <SvgUri svgXmlData={BASKET} />
+                                    {this.state.isHave ? (
+                                        <View style={styles.basket_number}>
+                                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                        </View>
+                                    ) : null}
                                 </View>
-                            ) : null}
-                            </View>
-                            
+
                             </TouchableOpacity>
-                            
+
 
                         </View>
                     </View>
@@ -277,10 +295,10 @@ class ProductDetailScreen extends Component {
                                     ratingColor={COLOR.PRIMARY}
                                     style={{ backgroundColor: COLOR.WHITE, marginLeft: -1 }}
                                 />
-                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, marginLeft: 8 }}>({this.state.review} {STRING.REVIEW} )</Text>
+
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11 }}>{STRING.SOLD} {this.state.sold}</Text>
+                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11 }}>{STRING.VIEWS} {this.state.views}</Text>
                             </View>
                         </View>
                         <View style={{ borderColor: COLOR.LINE, borderTopWidth: 0.5, marginVertical: 8 }}></View>
@@ -309,25 +327,26 @@ class ProductDetailScreen extends Component {
                         /> */}
                         {/* kiểm tra còn hàng không */}
                         {this.state.ammount == '0' ? (
-                            null
-                        ) : (<View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 3 }}>
-                                <Text style={{ fontSize: 14 }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
-                            </View>
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
-                                <TouchableOpacity onPress={this.sub}>
-                                    <SvgUri svgXmlData={BTN_SUB} />
-                                </TouchableOpacity>
-                                <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
-                                    <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
-                                </View>
-                                <TouchableOpacity onPress={this.plus} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                                    <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
-                                    <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
-                                    {/* <Image style={{borderWidth:0.5, borderColor:COLOR.PRIMARY}} source={IMAGE.BTN_ADD} /> */}
-                                </TouchableOpacity>
-                            </View>
-                        </View>)}
+                            <Text style={{ fontFamily: STRING.FONT_NORMAL, color: COLOR.PRIMARY, fontSize: 14 }}>{STRING.OUT_OF_STOCK}</Text>
+                        ) : (
+                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 3 }}>
+                                        <Text style={{ fontSize: 14 }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
+                                    </View>
+                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
+                                        <TouchableOpacity onPress={this.sub}>
+                                            <SvgUri svgXmlData={BTN_SUB} />
+                                        </TouchableOpacity>
+                                        <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
+                                            <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={this.plus} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                            <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
+                                            <View style={{ height: 0.5, width: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', top: 9 }} />
+                                            {/* <Image style={{borderWidth:0.5, borderColor:COLOR.PRIMARY}} source={IMAGE.BTN_ADD} /> */}
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>)}
 
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
@@ -376,7 +395,7 @@ class ProductDetailScreen extends Component {
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     {/* Danh sach cac san pham khac */}
-                    <View style={styles.content}>
+                    <View>
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.SAME_PRODUCT}</Text>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.categoryId })}>
@@ -387,14 +406,13 @@ class ProductDetailScreen extends Component {
                             horizontal={true}
                             data={this.state.listSameType}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen', { id: item.id }) }}>
+                                <TouchableOpacity onPress={() => { this.setState({ id: item.id }, () => { this.loadDetail(this.state.id); this.refs._scrollView.scrollTo(0); }) }}>
                                     <ItemRow image={item.primary_image}
                                         name={item.full_name}
                                         price={item.base_price}
                                         point={5}
-                                        review={10}
+                                        views={item.views}
                                         sale={'-10%'}
-                                        sell={50}
                                     />
                                 </TouchableOpacity>
                             }
@@ -412,14 +430,13 @@ class ProductDetailScreen extends Component {
                             horizontal={true}
                             data={this.state.listSameType}
                             renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen') }}>
+                                <TouchableOpacity onPress={() => { this.setState({ id: item.id }, () => { this.loadDetail(this.state.id); this.refs._scrollView.scrollTo(0); }) }}>
                                     <ItemRow image={item.primary_image}
                                         name={item.full_name}
                                         price={item.base_price}
                                         point={5}
-                                        review={10}
+                                        views={item.views}
                                         sale={'-10%'}
-                                        sell={50}
                                     />
                                 </TouchableOpacity>
                             }
@@ -427,60 +444,62 @@ class ProductDetailScreen extends Component {
                     </View>
 
                 </ScrollView>
-                <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
-                    <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
+                {this.state.ammount == '0' ? null : (
+                    <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
+                                <Image source={IMAGE.ORDER} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
-                            <Image source={IMAGE.ORDER} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <Dialog
+                )}
+                    < Dialog
                     onDismiss={() => {
-                        this.setState({ warningAmountDialog: false });
-                    }}
+                    this.setState({ warningAmountDialog: false });
+                }}
                     width={0.9}
                     visible={this.state.warningAmountDialog}
                     dialogTitle={
-                        <DialogTitle
-                            title={STRING.WARNING}
-                            hasTitleBar={false}
-                            align="center"
-                        />
-                    }
+                    <DialogTitle
+                        title={STRING.WARNING}
+                        hasTitleBar={false}
+                        align="center"
+                    />
+                }
                     footer={
-                        <DialogFooter>
-                            <DialogButton
-                                text={STRING.ACCEPT}
-                                bordered
-                                onPress={() => {
-                                    this.setState({ warningAmountDialog: false });
-                                }}
-                                key="button-1"
-                            />
-                        </DialogFooter>
-                    }
+                    <DialogFooter>
+                        <DialogButton
+                            text={STRING.ACCEPT}
+                            bordered
+                            onPress={() => {
+                                this.setState({ warningAmountDialog: false });
+                            }}
+                            key="button-1"
+                        />
+                    </DialogFooter>
+                }
                 >
                     <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>{STRING.CHOOSE_QUANTITY}</Text>
-                    </DialogContent>
+                    <Text>{STRING.CHOOSE_QUANTITY}</Text>
+                </DialogContent>
                 </Dialog>
-                <Dialog
-                    dialogStyle={{ backgroundColor: 'transparent' }}
-                    onDismiss={() => {
-                        this.setState({ loadingDialog: false });
-                    }}
-                    height={400}
-                    width={0.9}
-                    visible={this.state.loadingDialog}
-                >
-                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
-                    </DialogContent>
-                </Dialog>
-            </SafeAreaView>
+            <Dialog
+                dialogStyle={{ backgroundColor: 'transparent' }}
+                onDismiss={() => {
+                    this.setState({ loadingDialog: false });
+                }}
+                height={400}
+                width={0.9}
+                visible={this.state.loadingDialog}
+            >
+                <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                </DialogContent>
+            </Dialog>
+            </SafeAreaView >
         );
     }
 }
@@ -495,7 +514,7 @@ const styles = StyleSheet.create({
     },
     header: {
         opacity: 0.8,
-        backgroundColor: COLOR.PRIMARY, 
+        backgroundColor: COLOR.PRIMARY,
         position: 'absolute',
         top: 0,
         width: deviceWidth,
@@ -505,12 +524,12 @@ const styles = StyleSheet.create({
     basket: {
         position: 'absolute',
         top: 12,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     basket_number: {
         position: 'absolute',
         right: -8,
-        top:8,
+        top: 8,
         height: 14,
         width: 14,
         borderRadius: 7,
@@ -523,7 +542,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     content_footer: {
-        marginLeft: 17,
         marginTop: 10,
         marginBottom: 56
     },
@@ -568,14 +586,14 @@ const styles = StyleSheet.create({
         marginTop: 7
     },
     title_list: {
-        fontFamily:STRING.FONT_SEMI_BOLD,
+        fontFamily: STRING.FONT_SEMI_BOLD,
         color: COLOR.TEXTBODY,
         flex: 4,
         textTransform: 'uppercase',
         fontSize: 14,
     },
     see_all: {
-        fontFamily:STRING.FONT_SEMI_BOLD,
+        fontFamily: STRING.FONT_SEMI_BOLD,
         color: COLOR.LINK,
         flex: 1,
         textDecorationLine: "underline",
@@ -587,6 +605,8 @@ const styles = StyleSheet.create({
     flex_direction_row: {
         flexDirection: 'row',
         marginTop: 9,
+        marginLeft: 10,
+        marginBottom: 10
     },
 })
 export default ProductDetailScreen;
