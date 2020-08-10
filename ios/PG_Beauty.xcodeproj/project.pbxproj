@@ -348,10 +348,8 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-<<<<<<< HEAD
 				FA22393224C7DD8700B35DFD /* GoogleService-Info.plist in Resources */,
 				FA22393524C83ABF00B35DFD /* main.jsbundle in Resources */,
-=======
 				EB6F520686C54DA99C893CAD /* Nunito-Black.ttf in Resources */,
 				BBE052A68B1E46C4803BD120 /* Nunito-BlackItalic.ttf in Resources */,
 				7FB11C1CD86C490397CFA4C6 /* Nunito-Bold.ttf in Resources */,
@@ -366,7 +364,6 @@
 				6477FA8ADA3E4E54922D4561 /* Nunito-Regular.ttf in Resources */,
 				1426E04D2B1C43A3BBC2CE5E /* Nunito-SemiBold.ttf in Resources */,
 				807F9C3707A842EBA3CF90FD /* VINCHAND.ttf in Resources */,
->>>>>>> feature/cart_detail
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

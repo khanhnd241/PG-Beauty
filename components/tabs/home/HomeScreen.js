@@ -21,6 +21,7 @@ import ItemRow from '../../products/ItemRow';
 import Dialog, {
     DialogContent
 } from 'react-native-popup-dialog';
+import DeviceInfo from 'react-native-device-info';
 let deviceWidth = Dimensions.get('window').width - 10;
 const height = Dimensions.get('window').height;
 
@@ -70,6 +71,9 @@ class HomeScreen extends Component {
         })
     }
     componentDidMount = () => {
+        DeviceInfo.getAndroidId().then((id) => {
+            console.log('id' + id)
+        })
 
         this.setState({ isLoading: true }, this.loadListNewProduct);
 
@@ -143,7 +147,7 @@ class HomeScreen extends Component {
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <ScrollView style={styles.background}>
                     <View style={styles.header}>
-                        <View style={{flex:0.5}} />
+                        <View style={{ flex: 0.5 }} />
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
@@ -155,7 +159,7 @@ class HomeScreen extends Component {
                             </View>
                             <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex:1, alignItems: 'center', justifyContent: 'center', height:50 }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
                             <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
@@ -206,7 +210,7 @@ class HomeScreen extends Component {
                                         name={item.full_name}
                                         price={item.base_price}
                                         point={5}
-                                        review={10}
+                                        views={item.views}
                                         sale={'-10%'}
                                         sell={50}
                                     />
@@ -225,6 +229,7 @@ class HomeScreen extends Component {
                             </TouchableOpacity>
                         </View>
                         <FlatList
+
                             horizontal={true}
                             data={this.state.listNewProducts}
                             renderItem={({ item }) =>
@@ -233,7 +238,7 @@ class HomeScreen extends Component {
                                         name={item.full_name}
                                         price={item.base_price}
                                         point={5}
-                                        review={10}
+                                        views={item.views}
                                         sale={'-10%'}
                                         sell={50}
                                     />
@@ -247,24 +252,27 @@ class HomeScreen extends Component {
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.NEW_PRODUCT}</Text>
                         </View>
-                        <FlatList
-                            numColumns={2}
-                            data={this.state.listNewProducts}
-                            renderItem={({ item }) =>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })}>
-                                    <ItemColumn image={item.primary_image}
-                                        name={item.full_name}
-                                        price={item.base_price}
-                                        point={5}
-                                        review={10}
-                                        sale={'-10%'}
-                                        sell={50} />
-                                </TouchableOpacity>
-                            }
-                            // onEndReached={() => this.loadMore}
-                            // onEndReachedThreshold={0}
-                            ListFooterComponent={this.handleFooter}
-                        />
+                        <View style={{paddingLeft:5}}>
+                            <FlatList
+                                numColumns={2}
+                                data={this.state.listNewProducts}
+                                renderItem={({ item }) =>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })}>
+                                        <ItemColumn image={item.primary_image}
+                                            name={item.full_name}
+                                            price={item.base_price}
+                                            point={5}
+                                            views={item.views}
+                                            sale={'-10%'}
+                                            sell={50} />
+                                    </TouchableOpacity>
+                                }
+                                // onEndReached={() => this.loadMore}
+                                // onEndReachedThreshold={0}
+                                ListFooterComponent={this.handleFooter}
+                            />
+                        </View>
+
                     </View>
                     <Dialog
                         dialogStyle={{ backgroundColor: 'transparent' }}
@@ -287,11 +295,11 @@ class HomeScreen extends Component {
                         visible={this.state.bannerDialog}
                     >
                         <DialogContent>
-                            <TouchableOpacity onPress={() => this.setState({bannerDialog: false})} style={{flexDirection:'row-reverse', marginBottom:25}}>
+                            <TouchableOpacity onPress={() => this.setState({ bannerDialog: false })} style={{ flexDirection: 'row-reverse', marginBottom: 25 }}>
                                 <SvgUri svgXmlData={BTN_CLOSE} />
                             </TouchableOpacity>
                             <TouchableOpacity>
-                                <Image style={{width:deviceWidth -20}} source={IMAGE.DELIVERY} />
+                                <Image style={{ width: deviceWidth - 20 }} source={IMAGE.DELIVERY} />
                             </TouchableOpacity>
                         </DialogContent>
                     </Dialog>
@@ -316,7 +324,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     inputHeader: {
-        flex:6,
+        flex: 6,
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,

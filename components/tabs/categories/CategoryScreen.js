@@ -150,14 +150,14 @@ class CategoryScreen extends Component {
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SearchProductsScreen', { amount: this.state.listUserOrder.length })} style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ color: COLOR.PLACEHODER, fontSize: 15, fontFamily: STRING.FONT_NORMAL }}>{STRING.SEARCH_INPUT}</Text>
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex:1, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
+                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
                                     <View style={styles.basket_number}>
@@ -167,12 +167,13 @@ class CategoryScreen extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
+
                     <View>
                         <FlatList
                             data={this.state.listCategories}
                             renderItem={({ item }) =>
                                 <ItemCategory
-                                    listChild={this.state.listChildCategories} //danh sach cac muc con (dang fake data muc cha)
+                                    listChild={this.state.listChildCategories}
                                     id={item.id}
                                     name={item.name}
                                     parent_id={item.parent_id}
