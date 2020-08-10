@@ -235,7 +235,8 @@ const styles = StyleSheet.create({
         height: 45,
         backgroundColor: COLOR.WHITE,
         paddingLeft: 15,
-        marginBottom: 10
+        marginBottom: 10,
+        color:COLOR.TEXTBODY
     },
     password_input: {
         fontFamily: STRING.FONT_NORMAL,
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.WHITE,
         paddingLeft: 15,
         marginBottom: 5,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        color:COLOR.TEXTBODY
     },
     btn_login: {
         borderRadius: 30,

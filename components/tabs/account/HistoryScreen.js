@@ -296,15 +296,15 @@ class HistoryScreen extends Component {
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center' }} />
                     </View>
-                    <View style={styles.option}>
+                    {/* <View style={styles.option}>
                         <TouchableOpacity onPress={this.openbuyOnline} style={[styles.tab, { backgroundColor: this.state.buyOnlineBG }]}>
                             <Text style={{ fontSize: 14, color: this.state.buyOnlineText }}>{STRING.BUY_ONLINE}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.openbuyAtStore} style={[styles.tab, { backgroundColor: this.state.buyAtStoreBG }]}>
                             <Text style={{ fontSize: 14, color: this.state.buyAtStoreText }}>{STRING.BUY_AT_STORE}</Text>
                         </TouchableOpacity>
-                    </View>
-                    <View style={{ height: 40, marginHorizontal: 15 }}>
+                    </View> */}
+                    <View style={{ height: 40, marginHorizontal: 15, marginTop:20 }}>
                         <ScrollView horizontal={true}>
                             <TouchableOpacity onPress={this.openAll} style={[styles.btn_tab, { borderBottomColor: this.state.lineAll }]}>
                                 <Text style={[styles.tab_view_text, { color: this.state.colorAll }]}>{STRING.ALL}</Text>

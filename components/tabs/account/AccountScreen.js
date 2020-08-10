@@ -94,9 +94,7 @@ class AccountScreen extends Component {
                 {this.state.isLogin ? (
                     <View style={styles.container}>
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', marginTop: 16 }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, alignItems: 'center', marginTop: 16 }} />
                             <View style={{ flex: 8, alignItems: 'center' }}>
                                 <ImageBackground style={styles.bg_avatar} source={IMAGE.BG_AVATAR}>
                                     {this.state.man ? (
@@ -154,7 +152,7 @@ class AccountScreen extends Component {
                         </TouchableOpacity>
                         <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                         {/* Đánh giá của tôi */}
-                        <TouchableOpacity style={styles.item}>
+                        {/* <TouchableOpacity style={styles.item}>
                             <View style={styles.item_icon}>
                                 <SvgUri svgXmlData={ICON_STAR} />
                             </View>
@@ -167,9 +165,9 @@ class AccountScreen extends Component {
                                 <SvgUri svgXmlData={NEXT} />
                             </View>
                         </TouchableOpacity>
-                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} /> */}
                         {/* Cài đặt */}
-                        <TouchableOpacity style={styles.item}>
+                        {/* <TouchableOpacity style={styles.item}>
                             <View style={styles.item_icon}>
                                 <SvgUri svgXmlData={SETTING} />
                             </View>
@@ -182,7 +180,7 @@ class AccountScreen extends Component {
                                 <SvgUri svgXmlData={NEXT} />
                             </View>
                         </TouchableOpacity>
-                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
+                        <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} /> */}
                         {/* Thông tin */}
                         <TouchableOpacity style={styles.item} onPress={() => { this.props.navigation.navigate('InfoScreen') }}>
                             <View style={styles.item_icon}>
@@ -236,7 +234,7 @@ class AccountScreen extends Component {
                             </View>
                             <View style={{ height: 5, backgroundColor: COLOR.GRAY, marginTop: 30 }} />
                             {/* Cài đặt */}
-                            <TouchableOpacity style={styles.item}>
+                            {/* <TouchableOpacity style={styles.item}>
                                 <View style={styles.item_icon}>
                                     <SvgUri svgXmlData={SETTING} />
                                 </View>
@@ -248,7 +246,7 @@ class AccountScreen extends Component {
                                 <View style={styles.next}>
                                     <SvgUri svgXmlData={NEXT} />
                                 </View>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             <View style={{ borderTopWidth: 0.5, borderColor: COLOR.LINE }} />
                             {/* Thông tin */}
                             <TouchableOpacity style={styles.item} onPress={() => { this.props.navigation.navigate('InfoScreen') }}>

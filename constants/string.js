@@ -31,7 +31,7 @@ const STRING = {
     PG_BEAUTY_FEED: 'PG Beauty Feed',
     POSTS_LIKE: 'Bài viết nhiều người thích',
     POSTS_REVIEW: 'Bài viết nhiều người đánh giá',
-    REVIEW: 'review',
+    VIEWS: 'Lượt xem',
     SOLD: 'Đã bán',
     PG_BEAUTY: 'PG Beauty',
     PG_BEAUTY_TOOL: 'PG Beauty tool',
@@ -141,7 +141,8 @@ const STRING = {
     STATUS: 'Trạng thái',
     SUGGEST: 'Gợi ý',
     SEARCH_HISTORY: 'Lịch sử tìm kiếm',
-    DELETE_HISTORY: 'Xóa lịch sử'
+    DELETE_HISTORY: 'Xóa lịch sử',
+    OUT_OF_STOCK: 'Hết hàng'
 }
 
 export  {STRING}

@@ -106,8 +106,8 @@ class ListProductsScreen extends Component {
                                     name={item.full_name}
                                     price={item.base_price}
                                     point={5}
-                                    review={10}
-                                    sale={'10%'}
+                                    views={item.views}
+                                    sale={'-10%'}
                                     sell={50} />
                             </TouchableOpacity>
                         }

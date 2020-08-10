@@ -18,6 +18,8 @@ import ListProductsScreen from './products/ListProductsScreen';
 import HistoryScreen from '../components/tabs/account/HistoryScreen';
 import OrderDetailScreen from '../components/tabs/account/OrderDetailScreen';
 import SearchProductsScreen from '../components/tabs/home/SearchProductsScreen';
+import InfoDetailScreen from '../components/tabs/account/InfoDetailScreen'
+
 const navOptionHandler = () => ({
     headerShown: false
 })
@@ -48,6 +50,8 @@ class StackNavigator extends Component {
                     <Stack.Screen name="HistoryScreen" component={HistoryScreen} options={navOptionHandler} />
                     <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} options={navOptionHandler} />
                     <Stack.Screen name="SearchProductsScreen" component={SearchProductsScreen} options={navOptionHandler} />
+                    <Stack.Screen name="InfoDetailScreen" component={InfoDetailScreen} options={navOptionHandler} />
+                    
                 </Stack.Navigator>
             </NavigationContainer>
         );

@@ -89,7 +89,7 @@ class SearchProductsScreen extends Component {
             }).then(response => {
                 AsyncStorage.getItem('history', (err, history) => {
                     let historySearch = JSON.parse(history);
-                    if(historySearch.indexOf(this.state.textSearch) == -1) {
+                    if (historySearch.indexOf(this.state.textSearch) == -1) {
                         historySearch.push(this.state.textSearch);
                         AsyncStorage.setItem('history', JSON.stringify(historySearch));
                     }
@@ -136,21 +136,17 @@ class SearchProductsScreen extends Component {
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ marginHorizontal: 15, marginTop: 5 }}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flex: 1, alignItems: 'center', marginTop: 5 }}>
                             <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                         </TouchableOpacity>
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <TextInput onEndEditing={this.search} onChangeText={(text) => this.textChange(text)} autoFocus={this.state.focus} placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15, fontFamily: STRING.FONT_NORMAL }} />
-                            </View>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <TextInput onEndEditing={this.search} onChangeText={(text) => this.textChange(text)} autoFocus={this.state.focus} placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15, fontFamily: STRING.FONT_NORMAL }} />
+                            <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
                             <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.amount > 0 ? (
@@ -179,7 +175,7 @@ class SearchProductsScreen extends Component {
                                     renderItem={({ item }) => {
                                         return (
                                             <TouchableOpacity onPress={() => {
-                                                this.setState({ textSearch: item }, () => {this.search()});
+                                                this.setState({ textSearch: item }, () => { this.search() });
                                             }} style={{ padding: 10, borderTopColor: COLOR.GRAY, borderTopWidth: 1 }}>
                                                 <Text style={{ fontFamily: STRING.FONT_NORMAL, fontSize: 14, color: COLOR.TEXTBODY }}>
                                                     {item}
@@ -213,7 +209,7 @@ class SearchProductsScreen extends Component {
                                                         return (
 
                                                             <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetailScreen', { id: item.id })} style={{ flexDirection: 'row', height: 50, backgroundColor: COLOR.WHITE, borderRadius: 2, borderBottomColor: COLOR.GRAY, borderBottomWidth: 1, alignItems: 'center' }} >
-                                                                <Image source={imageUri.length != 0 ? { uri: imageUri } : null} style={{ width: 40, height: 30, marginHorizontal: 12 }} />
+                                                                <Image source={imageUri.length != 0 ? { uri: imageUri } : IMAGE.NO_IMAGE} style={{ width: 40, height: 30, marginHorizontal: 12 }} />
                                                                 <View>
                                                                     <Text style={{ fontFamily: STRING.FONT_NORMAL, fontSize: 12, color: COLOR.TEXTBODY }}>{item.name}</Text>
                                                                     <Text style={{ fontFamily: STRING.FONT_NORMAL, fontSize: 12, color: COLOR.PRIMARY }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
@@ -275,11 +271,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
-        width: 310,
+        flex: 6,
         height: 40,
         marginBottom: 5,
-        marginRight: 5,
-        marginLeft: 5,
         alignItems: 'center',
         marginTop: 10
     },

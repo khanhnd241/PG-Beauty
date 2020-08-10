@@ -29,7 +29,7 @@ class CategoryScreen extends Component {
         super(props);
         const { navigation } = this.props;
         navigation.addListener('focus', async () => {
-            this.setState({ loadingDialog: true }, this.loadOrder());
+            this.setState(this.loadOrder());
         })
         this.state = {
             beauty: false,
@@ -87,7 +87,6 @@ class CategoryScreen extends Component {
 
     }
     loadOrder = () => {
-        this.setState({loadingDialog: true})
         AsyncStorage.getItem('id', (err, result) => {
             console.log('id day' + result);
             if (result == null || result == '') {
@@ -128,7 +127,6 @@ class CategoryScreen extends Component {
         } else {
             this.setState({ isHave: false })
         }
-        this.setState({ loadingDialog: false })
     }
     handleFooter = () => {
         // console.log('footer day');
@@ -145,20 +143,21 @@ class CategoryScreen extends Component {
             <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
-                <View style={styles.header}>
+                    <View style={styles.header}>
+                        <View style={{ flex: 0.5 }} />
                         <View style={styles.inputHeader}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <TextInput placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15 }}></TextInput>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SearchProductsScreen', { amount: this.state.listUserOrder.length })} style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ color: COLOR.PLACEHODER, fontSize: 15, fontFamily: STRING.FONT_NORMAL }}>{STRING.SEARCH_INPUT}</Text>
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={{ flex: 1, alignItems: 'center' }}>
-                                <SvgUri svgXmlData={SCAN} />
-                            </TouchableOpacity>
+                            <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
+                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
                                     <View style={styles.basket_number}>
@@ -168,12 +167,13 @@ class CategoryScreen extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
+
                     <View>
                         <FlatList
                             data={this.state.listCategories}
                             renderItem={({ item }) =>
                                 <ItemCategory
-                                    listChild={this.state.listChildCategories} //danh sach cac muc con (dang fake data muc cha)
+                                    listChild={this.state.listChildCategories}
                                     id={item.id}
                                     name={item.name}
                                     parent_id={item.parent_id}
@@ -291,13 +291,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     inputHeader: {
+        flex: 5,
         backgroundColor: COLOR.WHITE,
         flexDirection: 'row',
         borderRadius: 30,
-        width: 310,
         height: 40,
         marginBottom: 5,
-        marginRight: 10,
         alignItems: 'center',
         marginTop: 10
     },
