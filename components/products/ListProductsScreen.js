@@ -29,7 +29,7 @@ class ListProductsScreen extends Component {
         } else {
             console.log('load san pham moi');
             this.setState({ isLoading: true }, this.loadListNewProduct);
-        } 
+        }
     }
 
     loadListNewProduct = () => {
@@ -55,23 +55,32 @@ class ListProductsScreen extends Component {
                 category_id: this.state.categoryId
             }
         }).then(response => {
-            this.setState({
-                listProduct: this.state.listProduct.concat(response.data.success.data),
-                isLoading: false
-            });
+            console.log('chieu dai 1 api' + response.data.success.data.length);
+            if (response.data.success.data.length == 0) {
+                this.setState({ end: true,isLoading: false })
+            } else {
+                this.setState({
+                    listProduct: this.state.listProduct.concat(response.data.success.data),
+                    isLoading: false
+                });
+            }
+
         }).catch(error => {
             console.log(JSON.stringify(error.response.data.error));
         })
     }
     loadMore = () => {
-        console.log('goi api lan nua')
-        this.setState({ page: this.state.page + 1, isLoading: true });
-        if (this.state.order_by == 'same_type') {
-            console.log('load them san pham cung loai');
-            this.loadListSameType();
-        } else {
-            this.loadListNewProduct();
+        if (this.state.end == false) {
+            console.log('goi api lan nua')
+            this.setState({ page: this.state.page + 1, isLoading: true });
+            if (this.state.order_by == 'same_type') {
+                console.log('load them san pham cung loai');
+                this.loadListSameType();
+            } else {
+                this.loadListNewProduct();
+            }
         }
+
     }
     handleFooter = () => {
         console.log('footer day');
@@ -101,7 +110,7 @@ class ListProductsScreen extends Component {
                         numColumns={2}
                         data={this.state.listProduct}
                         renderItem={({ item }) =>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen',{ id: item.id }) }}>
+                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('ProductDetailScreen', { id: item.id }) }}>
                                 <ItemColumn image={item.primary_image}
                                     name={item.full_name}
                                     price={item.base_price}

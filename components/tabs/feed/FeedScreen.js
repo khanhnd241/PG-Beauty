@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, ImageBackground, TouchableOpacity, Image, Dimensions, ScrollView, FlatList, StatusBar } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, ImageBackground, TouchableOpacity, Image, Dimensions, ScrollView, FlatList, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
 import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
 import { STRING } from '../../../constants/string';
@@ -11,177 +11,175 @@ import { SHARE } from '../../../constants/images/share';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import PhotoGrid from 'react-native-thumbnail-grid';
 import { COLOR } from '../../../constants/colors';
+import { API } from '../../../constants/api';
+import Dialog, {
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+    DialogButton,
+    SlideAnimation,
+} from 'react-native-popup-dialog';
+import ImageView from 'react-native-image-view';
+import axios from 'axios';
+import ItemFeed from './ItemFeed'
 let deviceWidth = Dimensions.get('window').width;
-function Item({ feedId, image, title, rate, time, content, avatar, like, comment, navigation }) {
-    const likeNumber = parseInt(like);
-    const [count, setCount] = useState(likeNumber);
-    const [isLike, setIsLike] = useState(false);
-    var likePost = () => {
 
-        if (isLike == false) {
-            setIsLike(true);
-            setCount(count + 1);
-        } else {
-            setIsLike(false);
-            setCount(count - 1)
-        }
-    }
-    return (
-        <View>
-            <View style={styles.item_container}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Image source={avatar} style={styles.avatar} />
-                    <View style={{ flexDirection: 'column' }}>
-                        <Text style={styles.item_title}>{title}</Text>
-                        <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
-                            <Rating
-                                readonly
-                                type='custom'
-                                startingValue={rate}
-                                ratingCount={5}
-                                imageSize={15}
-                                tintColor={COLOR.WHITE}
-                                ratingColor={COLOR.PRIMARY}
-                                style={{ backgroundColor: COLOR.WHITE }}
-                            />
-                            <Text style={styles.item_timeline}>{time}</Text>
-                        </View>
-
-                    </View>
-                </View>
-                <View>
-                    <Text style={styles.text_content}>
-                        {content}
-                    </Text>
-                    {/* <Image style={{ width: deviceWidth, height: 400 }} source={image} /> */}
-                    <PhotoGrid width={deviceWidth - 20} source={image} ratio={0.7} onPressImage={uri => { console.log(uri) }} />
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                            <SvgUri svgXmlData={LIKE_ACTIVE} />
-                            <Text style={styles.text_comment}>{count}</Text>
-                        </View>
-                        <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'center' }}>
-                            <Text style={styles.text_comment}>{STRING.COMMENT_2}</Text>
-                            <Text style={styles.text_comment}>{comment}</Text>
-                        </View>
-                    </View>
-                    <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
-                    <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
-                        {isLike ? (
-                            <TouchableOpacity onPress={likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
-                                <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
-                                <Text style={{ marginLeft: 8, color: COLOR.PRIMARY }}>{STRING.LIKE}</Text>
-                            </TouchableOpacity>
-                        ) : (
-                                <TouchableOpacity onPress={likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
-                                    <SvgUri svgXmlData={LIKE} />
-                                    <Text style={{ marginLeft: 8 }}>{STRING.LIKE}</Text>
-                                </TouchableOpacity>
-                            )}
-
-                        <TouchableOpacity onPress={() => navigation.navigate('FeedDetailScreen', { id: feedId })} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                            <SvgUri svgXmlData={COMMENT} />
-                            <Text style={{ marginLeft: 8 }}>{STRING.COMMENT_1}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ flex: 1, alignItems: 'center', flexDirection: 'row-reverse' }}>
-                            <Text style={{ marginLeft: 8 }}>{STRING.SHARE}</Text>
-                            <SvgUri svgXmlData={SHARE} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-            <View style={{ height: 8, backgroundColor: COLOR.GRAY }} />
-
-        </View>
-
-    )
-}
 class FeedScreen extends Component {
     constructor(props) {
         super(props);
+        const { navigation } = this.props;
+        navigation.addListener('focus', async () => {
+            this.setState(this.loadOrder());
+        })
         this.state = {
             likePost: true,
             isLike: false,
-            listPostLike: [
-                {
-                    feedId: 1,
-                    image: [
-                        IMAGE.ANH_DEMO_1,
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
-                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-
-                    ],
-                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
-                    rate: '4',
-                    time: '12 giờ trước',
-                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
-                    avatar: IMAGE.ANH_DEMO_1,
-                    like: '3',
-                    comment: '4'
-                },
-                {
-                    feedId: 2,
-                    image: [IMAGE.ANH_DEMO_3],
-                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
-                    rate: '4',
-                    time: '12 giờ trước',
-                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
-                    avatar: IMAGE.ANH_DEMO_1,
-                    like: '3',
-                    comment: '4'
-                }
-            ],
-            listPostReview: [
-                {
-                    feedId: 1,
-                    image: [
-                        IMAGE.ANH_DEMO_1,
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
-                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-
-                    ],
-                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
-                    rate: '4',
-                    time: '12 giờ trước',
-                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
-                    avatar: IMAGE.ANH_DEMO_1,
-                    like: '3',
-                    comment: '4'
-                },
-                {
-                    feedId: 2,
-                    image: [
-                        IMAGE.ANH_DEMO_1,
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-                        'https://cdn.pixabay.com/photo/2016/08/12/22/34/apple-1589869_960_720.jpg',
-                        'https://taybacsensetravel.com/nview/at_diem-danh-nhung-diem-san-anh-dep-tim-lim-mua-lua-chin_c7ed1097335b91ca8cc67122805c1de7.jpg',
-                        'https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_960_720.jpg',
-
-                    ],
-                    title: 'Giảm giá 30% cho Son cao cấp h_e_rmes',
-                    rate: '4',
-                    time: '12 giờ trước',
-                    content: '"Vẻ đẹp đối với tôi nghĩa là sự hài lòng với chính bản thân mình. Hoặc một thỏi son đỏ thật nổi bật.” – Gwyneth Paltrow Đàn ông đam mê những chiếc xe thể thao đắt đỏ, cũng giống như phụ nữa khao khát những thỏi son h_e_rmes',
-                    avatar: IMAGE.ANH_DEMO_1,
-                    like: '3',
-                    comment: '4'
-                }
-            ],
-            basketNumber: '4'
+            listPostLike: [],
+            listPostComment: [],
+            basketNumber: '4',
+            pageLike: 1,
+            pageComment: 1,
+            isLoading: false,
+            isHave: false,
+            listUserOrder: [],
+            isLoadingList: false
 
         };
     }
     openPostLike = () => {
+        console.log(this.state.likePost);
         this.setState({ likePost: true })
     }
     openPostReview = () => {
+        console.log(this.state.likePost);
         this.setState({ likePost: false })
     }
+    componentDidMount = () => {
+        this.setState({ isLoading: true }, () => {
+            this.loadPostComment();
+            this.loadPostLike();
+            this.loadOrder();
+        })
+    }
+    loadPostComment = () => {
+        axios.get(API.URL + API.NEWS, {
+            params: {
+                order_by: 'comments_count',
+                page: this.state.pageComment,
+                orientation: 'DESC'
+            }
+        }).then(response => {
+            this.setState({
+                listPostComment: response.data.success.data,
+                isLoading: false
+            });
+        }).catch(error => {
+            // console.log(JSON.stringify(error.response.data.error));
+            this.setState({
+                isLoading: false
+            });
+        })
+    }
+    loadPostLike = () => {
+        console.log('load post like')
+        axios.get(API.URL + API.NEWS, {
+            params: {
+                order_by: 'like',
+                page: this.state.pageLike,
+                orientation: 'DESC'
+            }
+        }).then(response => {
+            this.setState({
+                listPostLike: response.data.success.data,
+                isLoading: false,
+            });
+        }).catch(error => {
+            // console.log(JSON.stringify(error.response.data.error));
+            this.setState({
+                isLoading: false
+            });
+        })
+    }
+    loadOrder = () => {
+        AsyncStorage.getItem('id', (err, result) => {
+            console.log('id day' + result);
+            if (result == null || result == '') {
+                AsyncStorage.getItem('deviceId', (err, deviceId) => {
+                    console.log('device id' + deviceId);
+                    AsyncStorage.getItem(deviceId, (err, listOrder) => {
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        this.checkOrder();
+                    })
+                })
+            } else {
+                this.setState({ userId: result });
+                AsyncStorage.getItem(result, (err, listOrder) => {
+                    if (JSON.parse(listOrder) == null || JSON.parse(listOrder) == '') {
+                        console.log('tao moi 1 list order')
+                        var newListOrder = [];
+                        AsyncStorage.setItem(result, JSON.stringify(newListOrder));
+                        AsyncStorage.getItem(result, (err, listOrder) => {
+                            this.setState({ listUserOrder: JSON.parse(listOrder) })
+                            this.checkOrder();
+                        })
+                    } else {
+                        console.log('list order' + listOrder);
+                        this.setState({ listUserOrder: JSON.parse(listOrder) })
+                        console.log('length order hien tai' + this.state.listUserOrder.length);
+                        this.checkOrder();
+                    }
 
+                })
+            }
+        });
+    }
+    checkOrder = () => {
+        console.log('check length' + this.state.listUserOrder.length);
+        if (this.state.listUserOrder.length > 0) {
+            console.log('co data')
+            this.setState({ isHave: true })
+        } else {
+            this.setState({ isHave: false })
+        }
+    }
+    loadMoreLike = () => {
+        if (this.state.end == false) {
+            let page = this.state.pageLike + 1
+            console.log('goi api lan nua')
+            this.setState({
+                pageLike: page
+            }, this.loadPostLike);
+        }
+
+    }
+    loadMoreComment = () => {
+        if (this.state.end == false) {
+            let page = this.state.pageComment + 1
+            console.log('goi api lan nua')
+            this.setState({
+                pageComment: page
+            }, this.loadPostComment);
+        }
+
+    }
+    handleFooter = () => {
+        return (
+            this.state.isLoadingList ? (
+                <View style={styles.loader}>
+                    <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                </View>
+            )
+                :
+                (
+                    <View style={styles.loader}>
+                        <TouchableOpacity onPress={this.loadPostLike} style={{ flex: 1, alignItems: 'center', backgroundColor: COLOR.PRIMARY, padding: 5, borderRadius: 3 }}>
+                            <Text style={{ color: COLOR.WHITE }}>{STRING.VIEW_MORE}</Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+
+        )
+    }
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
@@ -191,14 +189,16 @@ class FeedScreen extends Component {
                     <View style={styles.title}>
                         <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
                     </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                        <TouchableOpacity onPress={() => {this.props.navigation.navigate('CartDetailScreen')}} style={styles.basket}>
+                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
+                        <View>
                             <SvgUri svgXmlData={BASKET} />
-                            <View style={styles.basket_number}>
-                                <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.basketNumber}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                            {this.state.isHave ? (
+                                <View style={styles.basket_number}>
+                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                </View>
+                            ) : null}
+                        </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', marginTop: 8, paddingBottom: 8 }}>
                     <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.openPostLike}>
@@ -227,47 +227,53 @@ class FeedScreen extends Component {
                     </TouchableOpacity>
                     <View style={{ flex: 1 }} />
                 </View>
-                <ScrollView style={styles.content}>
-                    {this.state.likePost ? (
-                        <FlatList
-                            data={this.state.listPostLike}
-                            renderItem={({ item }) =>
-                                <Item
-                                    navigation={this.props.navigation}
-                                    feedId={item.feedId}
-                                    image={item.image}
-                                    avatar={item.avatar}
-                                    title={item.title}
-                                    rate={item.rate}
-                                    time={item.time}
-                                    content={item.content}
-                                    like={item.like}
-                                    comment={item.comment} >
-                                </Item>
-                            }
-                        />
-                    ) : (
-                            <FlatList
-                                data={this.state.listPostReview}
-                                renderItem={({ item }) =>
-                                    <Item
-                                        navigation={this.props.navigation}
-                                        feedId={item.feedId}
-                                        image={item.image}
-                                        avatar={item.avatar}
-                                        title={item.title}
-                                        rate={item.rate}
-                                        time={item.time}
-                                        content={item.content}
-                                        like={item.like}
-                                        comment={item.comment} >
-                                    </Item>
-                                }
-                            />
-                        )}
-
-
-                </ScrollView>
+                {this.state.isLoading ? (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator size='large' color={COLOR.PRIMARY} />
+                    </View>
+                ) : (
+                        <View style={styles.content}>
+                            {this.state.likePost ? (
+                                <FlatList
+                                    data={this.state.listPostLike}
+                                    renderItem={({ item }) =>
+                                        <ItemFeed
+                                            navigation={this.props.navigation}
+                                            id={item.id}
+                                            photo={item.photo}
+                                            title={item.title}
+                                            createdAt={item.created_at}
+                                            content={item.content}
+                                            likeCount={item.like}
+                                            commentsCount={item.comments_count} />
+                                    }
+                                    onEndReached={this.loadMoreLike}
+                                    onEndReachedThreshold={0.1}
+                                    ListFooterComponent={this.handleFooter}
+                                    keyExtractor={(item, index) => index.toString()}
+                                />
+                            ) : (
+                                    <FlatList
+                                        data={this.state.listPostComment}
+                                        renderItem={({ item }) =>
+                                            <ItemFeed
+                                                navigation={this.props.navigation}
+                                                id={item.id}
+                                                photo={item.photo}
+                                                title={item.title}
+                                                createdAt={item.created_at}
+                                                content={item.content}
+                                                likeCount={item.like}
+                                                commentsCount={item.comments_count} />
+                                        }
+                                        // onEndReached={this.loadMoreComment}
+                                        // onEndReachedThreshold={0.5}
+                                        // ListFooterComponent={this.handleFooter}
+                                        // keyExtractor={(item, index) => index.toString()}
+                                    />
+                                )}
+                        </View>
+                    )}
 
             </SafeAreaView>
         );
@@ -280,7 +286,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     title: {
-        flex: 6,
+        flex: 7,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -361,6 +367,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    loader: {
+        marginTop: 10,
+        alignItems: 'center',
+        marginBottom: 10,
+        backgroundColor: 'black',
+        width: 100,
+        height: 100
+    }
 
 })
 export default FeedScreen;

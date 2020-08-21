@@ -177,15 +177,15 @@ class HomeScreen extends Component {
                             images={this.state.images}
                         />
                         <View style={styles.tools}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'PG Beauty', category_id:'1218106' })} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_BEAUTY} />
                                 <Text style={styles.tool_text}>{STRING.PG_BEAUTY}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type',category_id:'1218126', title: 'PG Beauty tools' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_TOOL} />
                                 <Text style={styles.tool_text}>{STRING.PG_BEAUTY_TOOL}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'selling_product', title: 'Danh sách sản phẩm' })} style={styles.icon_tool} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'PG Fashion', category_id:'1218125' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_FASHION} />
                                 <Text style={styles.tool_text}>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>

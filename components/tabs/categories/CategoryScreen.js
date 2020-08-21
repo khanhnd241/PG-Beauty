@@ -42,7 +42,8 @@ class CategoryScreen extends Component {
             listChildCategories: [],
             end: false,
             loadingDialog: false,
-            isHave: false
+            isHave: false,
+            listUserOrder:[]
         };
     }
     componentDidMount = () => {
@@ -109,7 +110,7 @@ class CategoryScreen extends Component {
                             this.checkOrder();
                         })
                     } else {
-                        console.log('list order' + listOrder);
+                        // console.log('list order' + listOrder);
                         this.setState({ listUserOrder: JSON.parse(listOrder) })
                         console.log('length order hien tai' + this.state.listUserOrder.length);
                         this.checkOrder();
@@ -157,7 +158,7 @@ class CategoryScreen extends Component {
                             <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
-                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
+                            <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
                                     <View style={styles.basket_number}>

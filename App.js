@@ -18,7 +18,9 @@ import {NOTIFICATION} from './constants/images/notification';
 import {NOTIFICATION_ACTIVE} from './constants/images/notification_active';
 import {ACCOUNT} from './constants/images/account';
 import {ACCOUNT_ACTIVE} from './constants/images/account_active';
-import {COLOR} from './constants/colors'
+import {COLOR} from './constants/colors';
+import {fcmService} from './components/firebase/FCMService';
+import LocalNotificationService from './components/firebase/LocalNotificationService'
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -65,7 +67,38 @@ export default class App extends Component {
     super(props);
 
   }
- 
+  componentDidMount = () => {
+    fcmService.registerAppWithFCM();
+    fcmService.register(onRegister, onNotification, onOpenNotification);
+    LocalNotificationService.configure(onOpenNotification);
+    function onRegister(token) {
+      console.log("[App] onRegister: ",token);
+    }
+
+    function onNotification(notify) {
+      console.log("[App] onNotification: ", notify);
+      const options = {
+        soundName: 'default',
+        playSound: true
+      }
+      LocalNotificationService.showNotification(
+        0,
+        notify.title,
+        notify.body,
+        notify,
+        options
+      )
+    }
+    function onOpenNotification(notify) {
+      console.log('[App] onOpenNotification: ', notify)
+      alert('Open Notification: ' + notify.body)
+    }
+    return () => {
+      console.log('[App] unRegister')
+      fcmService.unRegister()
+      LocalNotificationService.unregister()
+    }
+  }
   render() {
     return(
       <TabNavigator />

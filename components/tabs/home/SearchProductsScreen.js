@@ -143,7 +143,7 @@ class SearchProductsScreen extends Component {
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <SvgUri svgXmlData={SEARCH} />
                             </View>
-                            <TextInput onEndEditing={this.search} onChangeText={(text) => this.textChange(text)} autoFocus={this.state.focus} placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15, fontFamily: STRING.FONT_NORMAL }} />
+                            <TextInput onEndEditing={this.search} onChangeText={(text) => this.textChange(text)} autoFocus={this.state.focus} placeholder={STRING.SEARCH_INPUT} placeholderTextColor={COLOR.PLACEHODER} style={{ flex: 5, fontSize: 15, fontFamily: STRING.FONT_NORMAL, height:40 }} />
                             <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
                         <TouchableOpacity onPress={() => { this.props.navigation.replace('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
@@ -200,7 +200,7 @@ class SearchProductsScreen extends Component {
                                         </View>
                                     ) : (
                                             <View>
-                                                <Text style={{ marginVertical: 10 }}>Kết quả tìm kiếm</Text>
+                                                <Text style={{ marginVertical: 10 }}>{STRING.SEARCH_RESULT}</Text>
                                                 <FlatList
                                                     data={this.state.listNewProducts}
                                                     extraData={this.state.refresh}

@@ -142,7 +142,12 @@ const STRING = {
     SUGGEST: 'Gợi ý',
     SEARCH_HISTORY: 'Lịch sử tìm kiếm',
     DELETE_HISTORY: 'Xóa lịch sử',
-    OUT_OF_STOCK: 'Hết hàng'
+    OUT_OF_STOCK: 'Hết hàng',
+    FEW_SECOND_AGO: 'Vài giây trước',
+    MINUTES_AGO: ' phút trước',
+    HOURS_AGO: ' giờ trước',
+    MUST_LOGIN_TO_LIKE_AND_COMMENT: 'Bạn cần đăng nhập để có thể thích và bình luận bài viết!',
+    SEARCH_RESULT: 'Kết quả tìm kiếm'
 }
 
 export  {STRING}
