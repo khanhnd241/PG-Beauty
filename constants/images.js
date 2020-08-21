@@ -35,7 +35,8 @@ const IMAGE = {
     ORDER: require('../images/order.png'),
     BTN_ADD: require ('../images/btn_add.png'),
     NO_IMAGE: require('../images/no_image.png'),
-    DELIVERY: require('../images/delivery.png')
+    DELIVERY: require('../images/delivery.png'),
+    ICON_APP: require('../images/Appicon.png')
 
 }
 

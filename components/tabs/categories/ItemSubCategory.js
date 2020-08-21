@@ -14,46 +14,25 @@ import { PG_TOOL } from '../../../constants/images/pg_tool';
 import { PLUS } from '../../../constants/images/plus';
 import { SUB } from '../../../constants/images/sub';
 import { COLOR } from '../../../constants/colors';
-import ItemSubCategory from './ItemSubCategory'
-class ItemCategory extends Component {
+class ItemSubCategory extends Component {
     constructor(props) {
         super(props);
         const { id, name, parent_id, listChild, navigation } = this.props
         this.state = {
-            id: id,
-            name: name,
-            parent_id: parent_id,
+            name:name,
             listChild: listChild,
-            openChild: false,
-            tool: false,
-            fashion: false,
-            cleansing: false,
-            listSubCategory: [],
+            id: id,
             haveChild: false,
             navigation: navigation
-
         };
     }
-    openChild = () => {
-        if (this.state.haveChild == true) {
-            this.setState({ openChild: !this.state.openChild })
-        } else {
-            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.id })
-        }
-    }
     getSubCategory = () => {
-        console.log('chieu dai chuoi con' + this.state.listChild.length)
+        console.log('chieu dai chuoi chau' + this.state.listChild.length)
         for (let i = 0; i < this.state.listChild.length; i++) {
             if (this.state.id == this.state.listChild[i].parent_id) {
                 this.state.listSubCategory.push(this.state.listChild[i]);
             }
         }
-        // this.setState({ listSubCategory: listSubCategory });
-    }
-    componentDidMount = () => {
-        this.getSubCategory();
-        this.checkChild();
-
     }
     checkChild = () => {
         console.log('check chuoi con' + this.state.listSubCategory.length)
@@ -63,24 +42,23 @@ class ItemCategory extends Component {
             this.setState({ haveChild: false })
         }
     }
+    openChild = () => {
+        if (this.state.haveChild == true) {
+            this.setState({ openChild: !this.state.openChild })
+        } else {
+            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.id })
+        }
+    }
+    componentDidMount = () => {
+        this.getSubCategory();
+        this.checkChild();
+
+    }
     render() {
-        const { id, name, parent_id } = this.state
         return (
             <View>
                 <TouchableOpacity onPress={this.openChild} style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        {name == 'PG Beauty' ? (
-                            <SvgUri svgXmlData={PG_BEAUTY} />
-
-                        ) : null}
-                        {name == 'PG Fashion' ? (
-                            <SvgUri svgXmlData={PG_FASHION} />
-
-                        ) : null}
-                        {name == 'PG Beauty tool' ? (
-                            <SvgUri svgXmlData={PG_TOOL} />
-
-                        ) : null}
                     </View>
                     <View style={{ flex: 4, flexDirection: 'row' }}>
                         <Text style={styles.text}>{name}</Text>
@@ -102,25 +80,18 @@ class ItemCategory extends Component {
                     <FlatList
                         data={this.state.listSubCategory}
                         renderItem={({ item }) =>
-                            <ItemCategory
-                                id={item.id}
-                                name={item.name}
-                                listChild={this.state.listChild}
-                                navigation={this.state.navigation} />
-                            // <TouchableOpacity onPress={() =>  this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: item.id })} style={{ flexDirection: 'row', alignItems: 'center', height: 60}}>
-                            //     <View style={{ flex: 1 }}></View>
-                            //     <View style={{ flex: 4 }}>
-                            //         <Text style={styles.text}>{item.name}</Text>
-                            //     </View>
-                            //     <View style={{ flex: 1 }}></View>
-                            // </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: item.id })} style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
+                                <View style={{ flex: 1 }}></View>
+                                <View style={{ flex: 4 }}>
+                                    <Text style={styles.text}>{item.name}</Text>
+                                </View>
+                                <View style={{ flex: 1 }}></View>
+                            </TouchableOpacity>
                         }
                         keyExtractor={(item, index) => index.toString()}
                     />
                 ) : null}
             </View>
-
-
         );
     }
 }
@@ -156,4 +127,4 @@ const styles = StyleSheet.create({
         fontFamily: STRING.FONT_NORMAL
     }
 })
-export default ItemCategory;
+export default ItemSubCategory;

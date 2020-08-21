@@ -20,7 +20,10 @@ const API = {
     RETAILER: 'pgbeautyshop',
     CUSTOMERS: '/customers',
     ORDERS: '/orders',
-    PROVINCES: '/provinces'
+    PROVINCES: '/provinces',
+    NEWS: '/news',
+    LIKE: '/like/',
+    COMMENT: '/comment/'
 
 }
 export {API}

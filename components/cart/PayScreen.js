@@ -79,6 +79,7 @@ class PayScreen extends Component {
         console.log('chieu dai' + this.state.listTransfer.length);
         if (this.state.code == null || this.state.code == '') {
             this.state.customer.name = this.state.name;
+            this.state.customer.contactNumber = this.state.phone;
             this.state.customer.address = this.state.userAddress;
             this.state.customer.comment = this.state.comment;
         } else {
@@ -134,14 +135,14 @@ class PayScreen extends Component {
                     }
                 }).catch(err => {
                     this.setState({ loadingDialog: false })
-                    Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.ACCEPT }])
+                    Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.response.data.responseStatus.message), [{ text: STRING.ACCEPT }])
                     console.log('loi' + JSON.stringify(err))
                 })
             }
         }).catch(err => {
             this.setState({ loadingDialog: false })
             console.log(JSON.stringify(err));
-            Alert.alert(STRING.NOTIFICATION, STRING.ORDER_FAILED, [{ text: STRING.ACCEPT }])
+            Alert.alert(STRING.NOTIFICATION, JSON.stringify(err.response.data.responseStatus.message), [{ text: STRING.ACCEPT }])
         })
     }
     format(n) {

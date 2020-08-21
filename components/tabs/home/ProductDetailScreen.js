@@ -48,7 +48,7 @@ class ProductDetailScreen extends Component {
             sold: '74',
             color: ['#FF3358', '#FB4911', '#C80078'],
             status: '1',
-            ammount: '',
+            ammount: null,
             delivery: 'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
             description: '',
             tradeMark: '',
@@ -70,34 +70,35 @@ class ProductDetailScreen extends Component {
             loadingDialog: false,
             deviceId: '',
             total: '',
-            noImages : [IMAGE.NO_IMAGE]
+            noImages: [IMAGE.NO_IMAGE]
         };
     }
     componentDidMount = () => {
         const { navigation } = this.props;
         navigation.addListener('focus', async () => {
-            this.setState({rate:this.genRand(4.5,5,1)});
+            this.setState({ rate: this.genRand(4.5, 5, 1) });
             this.loadDetail(this.state.id);
             this.loadOrder();
             // this.getlistSameType();
         })
 
     }
-    genRand(min, max, decimalPlaces) {  
-        var Rand = Math.random()*(max-min) + min;
+    genRand(min, max, decimalPlaces) {
+        var Rand = Math.random() * (max - min) + min;
         var power = Math.pow(10, decimalPlaces);
-        return Math.floor(Rand*power) / power;
+        return Math.floor(Rand * power) / power;
     }
     loadDetail = (id) => {
         this.setState({ loadingDialog: true })
         let imagesProduct = [];
-        
+
         axios.get(API.URL + API.PRODUCTS + '/' + id).then(response => {
             console.log(response.data.success.category_id);
             console.log(parseInt(response.data.success.base_price));
             console.log(response.data.success.images.length);
             for (let i = 0; i < response.data.success.images.length; i++) {
                 imagesProduct.push(response.data.success.images[i].url);
+                console.log(imagesProduct.length);
             }
             this.setState({
                 total: response.data.success.base_price,
@@ -109,12 +110,13 @@ class ProductDetailScreen extends Component {
             }, () => {
                 this.getlistSameType()
             });
-            if (imagesProduct.length > 0) {
-                console.log(imagesProduct.length);
-                this.setState({ images: imagesProduct })
-            } else {
+            if (imagesProduct.length == 0) {
                 console.log(imagesProduct.length);
                 this.setState({ images: this.state.noImages })
+            } else {
+
+                console.log(imagesProduct.length);
+                this.setState({ images: imagesProduct })
             }
             this.setState({ loadingDialog: false })
         }).catch(error => {
@@ -139,10 +141,14 @@ class ProductDetailScreen extends Component {
         })
     }
     plus = () => {
-        this.setState({ loadingDialog: true })
-        let quantity = this.state.amountOrder + 1;
-        let total = this.state.product.base_price * quantity;
-        this.setState({ amountOrder: quantity, total: total, loadingDialog: false });
+            if (this.state.amountOrder < this.state.ammount) {
+                let quantity = this.state.amountOrder + 1;
+                let total = this.state.product.base_price * quantity;
+                this.setState({ amountOrder: quantity, total: total});
+            }
+
+
+
     }
     sub = () => {
         this.setState({ loadingDialog: true })
@@ -239,9 +245,9 @@ class ProductDetailScreen extends Component {
             <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <ScrollView ref='_scrollView' style={styles.background}>
-                    <View style={{ height: 250 }}>
+                    <View style={{ height: 375 }}>
                         <SliderBox
-                            sliderBoxHeight={250}
+                            sliderBoxHeight={375}
                             autoplay={true}
                             images={this.state.images}
                         />
@@ -257,7 +263,7 @@ class ProductDetailScreen extends Component {
                                     <SvgUri svgXmlData={BASKET} />
                                     {this.state.isHave ? (
                                         <View style={styles.basket_number}>
-                                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, fontFamily:STRING.FONT_NORMAL }}>{this.state.listUserOrder.length}</Text>
                                         </View>
                                     ) : null}
                                 </View>
@@ -275,13 +281,13 @@ class ProductDetailScreen extends Component {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
-                                    <Text style={{ color: COLOR.WHITE, fontSize: 10 }}>{this.state.sale}</Text>
+                                    <Text style={{ color: COLOR.WHITE, fontSize: 10, fontFamily:STRING.FONT_NORMAL }}>{this.state.sale}</Text>
                                 </ImageBackground>
                             </View>
                         </View>
                         <View style={styles.title}>
                             <Text style={styles.price_text}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
-                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                            <Text style={styles.old_price}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 4, flexDirection: 'row' }}>
@@ -298,7 +304,7 @@ class ProductDetailScreen extends Component {
 
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11 }}>{STRING.VIEWS} {this.state.views}</Text>
+                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, fontFamily:STRING.FONT_NORMAL }}>{STRING.VIEWS} {this.state.views}</Text>
                             </View>
                         </View>
                         <View style={{ borderColor: COLOR.LINE, borderTopWidth: 0.5, marginVertical: 8 }}></View>
@@ -331,14 +337,14 @@ class ProductDetailScreen extends Component {
                         ) : (
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 3 }}>
-                                        <Text style={{ fontSize: 14 }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
+                                        <Text style={{ fontSize: 14, fontFamily:STRING.FONT_NORMAL }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
                                     </View>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
                                         <TouchableOpacity onPress={this.sub}>
                                             <SvgUri svgXmlData={BTN_SUB} />
                                         </TouchableOpacity>
                                         <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
-                                            <Text style={{ textAlign: 'center' }}>{this.state.amountOrder}</Text>
+                                            <Text style={{ textAlign: 'center', fontFamily:STRING.FONT_NORMAL }}>{this.state.amountOrder}</Text>
                                         </View>
                                         <TouchableOpacity onPress={this.plus} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
                                             <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
@@ -353,13 +359,13 @@ class ProductDetailScreen extends Component {
                     <View style={styles.content}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <SvgUri svgXmlData={CAR} />
-                            <Text style={{ fontSize: 14, marginLeft: 11, color: COLOR.TEXTBODY }}>{STRING.DELIVERY}</Text>
+                            <Text style={{ fontSize: 14, marginLeft: 11, color: COLOR.TEXTBODY, fontFamily:STRING.FONT_NORMAL }}>{STRING.DELIVERY}</Text>
                         </View>
-                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 6, marginRight: 26, paddingVertical: 3, lineHeight: 25 }}>{this.state.delivery}</Text>
+                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 6, marginRight: 26, paddingVertical: 3, lineHeight: 25, fontFamily:STRING.FONT_NORMAL }}>{this.state.delivery}</Text>
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     <View style={styles.content}>
-                        <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600' }}>{STRING.DESCRIPTION}</Text>
+                        <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600', fontFamily:STRING.FONT_NORMAL }}>{STRING.DESCRIPTION}</Text>
                         <HTMLView
                             value={this.state.product.description}
                         />
@@ -367,7 +373,7 @@ class ProductDetailScreen extends Component {
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     {/* Thông số */}
                     <View style={styles.content}>
-                        <Text>{STRING.PRODUCT_SPECIFICATION}</Text>
+                        <Text style={styles.made_in_title}>{STRING.PRODUCT_SPECIFICATION}</Text>
                         <View style={styles.made_in}>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.made_in_title}>{STRING.TRADE_MARK}</Text>
@@ -447,7 +453,7 @@ class ProductDetailScreen extends Component {
                 {this.state.ammount == '0' ? null : (
                     <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
                         <View style={{ flex: 1, justifyContent: 'center' }}>
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20 }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20, fontFamily:STRING.FONT_NORMAL }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
@@ -456,49 +462,49 @@ class ProductDetailScreen extends Component {
                         </View>
                     </View>
                 )}
-                    < Dialog
+                < Dialog
                     onDismiss={() => {
-                    this.setState({ warningAmountDialog: false });
-                }}
+                        this.setState({ warningAmountDialog: false });
+                    }}
                     width={0.9}
                     visible={this.state.warningAmountDialog}
                     dialogTitle={
-                    <DialogTitle
-                        title={STRING.WARNING}
-                        hasTitleBar={false}
-                        align="center"
-                    />
-                }
-                    footer={
-                    <DialogFooter>
-                        <DialogButton
-                            text={STRING.ACCEPT}
-                            bordered
-                            onPress={() => {
-                                this.setState({ warningAmountDialog: false });
-                            }}
-                            key="button-1"
+                        <DialogTitle
+                            title={STRING.WARNING}
+                            hasTitleBar={false}
+                            align="center"
                         />
-                    </DialogFooter>
-                }
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text={STRING.ACCEPT}
+                                bordered
+                                onPress={() => {
+                                    this.setState({ warningAmountDialog: false });
+                                }}
+                                key="button-1"
+                            />
+                        </DialogFooter>
+                    }
                 >
                     <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>{STRING.CHOOSE_QUANTITY}</Text>
-                </DialogContent>
+                        <Text>{STRING.CHOOSE_QUANTITY}</Text>
+                    </DialogContent>
                 </Dialog>
-            <Dialog
-                dialogStyle={{ backgroundColor: 'transparent' }}
-                onDismiss={() => {
-                    this.setState({ loadingDialog: false });
-                }}
-                height={400}
-                width={0.9}
-                visible={this.state.loadingDialog}
-            >
-                <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <ActivityIndicator color={COLOR.PRIMARY} size='large' />
-                </DialogContent>
-            </Dialog>
+                <Dialog
+                    dialogStyle={{ backgroundColor: 'transparent' }}
+                    onDismiss={() => {
+                        this.setState({ loadingDialog: false });
+                    }}
+                    height={400}
+                    width={0.9}
+                    visible={this.state.loadingDialog}
+                >
+                    <DialogContent style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color={COLOR.PRIMARY} size='large' />
+                    </DialogContent>
+                </Dialog>
             </SafeAreaView >
         );
     }
@@ -547,7 +553,8 @@ const styles = StyleSheet.create({
     },
     tag: {
         fontSize: 14,
-        color: COLOR.LINK
+        color: COLOR.LINK,
+        fontFamily:STRING.FONT_NORMAL
     },
     title: {
         flexDirection: 'row',
@@ -555,11 +562,13 @@ const styles = StyleSheet.create({
     },
     title_text: {
         color: COLOR.TEXTBODY,
-        fontSize: 16
+        fontSize: 16,
+        fontFamily:STRING.FONT_SEMI_BOLD
     },
     price_text: {
         color: COLOR.PRIMARY,
-        fontSize: 16
+        fontSize: 16,
+        fontFamily:STRING.FONT_NORMAL
     },
     item: {
         backgroundColor: 'red',
@@ -575,11 +584,13 @@ const styles = StyleSheet.create({
     },
     made_in_title: {
         color: COLOR.DESCRIPTION,
-        fontSize: 14
+        fontSize: 14,
+        fontFamily:STRING.FONT_NORMAL
     },
     made_in_text: {
         color: COLOR.TEXTBODY,
-        fontWeight: '600'
+        fontWeight: '600', 
+        fontFamily:STRING.FONT_NORMAL
     },
     made_in: {
         flexDirection: 'row',
@@ -608,5 +619,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginBottom: 10
     },
+    old_price:{ 
+        color: COLOR.PLACEHODER, 
+        fontSize: 12, 
+        textDecorationLine: 'line-through', 
+        marginLeft: 16,
+        fontFamily:STRING.FONT_NORMAL
+    }
 })
 export default ProductDetailScreen;
