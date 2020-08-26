@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "831047656507",
+    "firebase_url": "https://pg-beauty-f1ed1.firebaseio.com",
+    "project_id": "pg-beauty-f1ed1",
+    "storage_bucket": "pg-beauty-f1ed1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831047656507:android:b42c57a45c8c5b45d5e81e",
+        "android_client_info": {
+          "package_name": "com.pg_beauty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831047656507-r6tgggh3eosmnsv2j7o30m9l4h0qi0kg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pg_beauty",
+            "certificate_hash": "2f31dc536f1ae5b59a7275b5781e736293235db3"
+          }
+        },
+        {
+          "client_id": "831047656507-9dcapmtkr1k7bsmkbt138ji3s5c9bmh9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF7XaPg3QCLXfAp8lSbt3JUMsNfa0Q9V0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831047656507-9dcapmtkr1k7bsmkbt138ji3s5c9bmh9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

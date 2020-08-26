@@ -19,7 +19,7 @@ const IMAGE = {
     ICON_SEARCH: require('../images/search.svg'),
     ICON_SCAN: require('../images/scan.svg'),
     ICON_PG_BEAUTY: require('../images/pg_beauty.svg'),
-    ICON_PG_TOOL: require('../images/pg_tool.svg'),
+    ICON_PG_TOOL: require('../images/tool.svg'),
     ICON_PG_FASHION: require('../images/pg_fashion.svg'),
     ANH_DEMO_1: require('../images/demo1.png'),
     ANH_DEMO_2: require('../images/demo2.png'),
@@ -27,7 +27,16 @@ const IMAGE = {
     ICON_RECTANGLE: require('../images/Rectangle.svg'),
     ANH_DEMO_3: require('../images/anh_demo4.png'),
     TAB_BG: require('../images/tab.png'),
-    TAB_ACTIVE_BG: require('../images/tab_active.png')
+    TAB_ACTIVE_BG: require('../images/tab_active.png'),
+    NO_NOTI: require('../images/no_noti.png'),
+    BG_AVATAR: require('../images/bg_avatar.png'),
+    ANH_DEMO_6: require('../images/anh_demo6.png'),
+    ICON_SALE_BG: require('../images/sale_bg.png'),
+    ORDER: require('../images/order.png'),
+    BTN_ADD: require ('../images/btn_add.png'),
+    NO_IMAGE: require('../images/no_image.png'),
+    DELIVERY: require('../images/delivery.png'),
+    ICON_APP: require('../images/Appicon.png')
 
 }
 

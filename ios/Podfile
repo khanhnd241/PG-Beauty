@@ -77,6 +77,15 @@ target 'PG_Beauty' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  # add the Firebase pod for Google Analytics
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
   target 'PG_BeautyTests' do
     inherit! :complete
     # Pods for testing
@@ -92,13 +101,6 @@ target 'PG_Beauty' do
   post_install do |installer|
     flipper_post_install(installer)
   end
-end
 
-target 'PG_Beauty-tvOS' do
-  # Pods for PG_Beauty-tvOS
 
-  target 'PG_Beauty-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
 end

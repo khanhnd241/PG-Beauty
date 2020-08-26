@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>831047656507-qaprhk7r3af6lmg0domvaukh6dncu260.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.831047656507-qaprhk7r3af6lmg0domvaukh6dncu260</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>831047656507-r6tgggh3eosmnsv2j7o30m9l4h0qi0kg.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBQzUHo4uYJdm5OLUmzrHJnsIX4cVwjr3E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>831047656507</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.etstech.ios.PG-Beauty</string>
+	<key>PROJECT_ID</key>
+	<string>pg-beauty-f1ed1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pg-beauty-f1ed1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:831047656507:ios:e6ae96a281bc767ed5e81e</string>
+	<key>DATABASE_URL</key>
+	<string>https://pg-beauty-f1ed1.firebaseio.com</string>
+</dict>
+</plist>

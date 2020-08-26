@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity, StatusBar } from "react-native";
 import SvgUri from 'react-native-svg-uri';
 import { IMAGE } from '../../constants/images'
-import { STRING } from '../../constants/string'
+import { STRING } from '../../constants/string';
+import {BACK} from '../../constants/images/back'
 class ForgotPassScreen extends Component {
     constructor(props) {
         super(props);
@@ -15,7 +16,7 @@ class ForgotPassScreen extends Component {
             <SafeAreaView>
                 <StatusBar backgroundColor='#BE1E2D' />
                 <TouchableOpacity style={{ padding: 16 }} onPress={() => this.props.navigation.goBack()}>
-                    <SvgUri source={IMAGE.ICON_BACK} />
+                    <SvgUri svgXmlData={BACK} />
                 </TouchableOpacity>
                 <View style={styles.container}>
                     <Text style={styles.text}>{STRING.FORGOT_PASSWORD_TITLE}</Text>
@@ -51,7 +52,6 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     text: {
-        fontFamily: 'Nunito',
         fontSize: 28,
         marginTop: 40,
         fontWeight: 'bold'
