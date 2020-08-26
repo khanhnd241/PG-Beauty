@@ -46,7 +46,7 @@ class ItemSubCategory extends Component {
         if (this.state.haveChild == true) {
             this.setState({ openChild: !this.state.openChild })
         } else {
-            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.id })
+            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: this.state.name, category_id: this.state.id })
         }
     }
     componentDidMount = () => {
@@ -80,7 +80,7 @@ class ItemSubCategory extends Component {
                     <FlatList
                         data={this.state.listSubCategory}
                         renderItem={({ item }) =>
-                            <TouchableOpacity onPress={() => this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: item.id })} style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
+                            <TouchableOpacity onPress={() => this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: item.name, category_id: item.id })} style={{ flexDirection: 'row', alignItems: 'center', height: 60 }}>
                                 <View style={{ flex: 1 }}></View>
                                 <View style={{ flex: 4 }}>
                                     <Text style={styles.text}>{item.name}</Text>

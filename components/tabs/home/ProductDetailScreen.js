@@ -141,11 +141,11 @@ class ProductDetailScreen extends Component {
         })
     }
     plus = () => {
-            if (this.state.amountOrder < this.state.ammount) {
-                let quantity = this.state.amountOrder + 1;
-                let total = this.state.product.base_price * quantity;
-                this.setState({ amountOrder: quantity, total: total});
-            }
+        if (this.state.amountOrder < this.state.ammount) {
+            let quantity = this.state.amountOrder + 1;
+            let total = this.state.product.base_price * quantity;
+            this.setState({ amountOrder: quantity, total: total });
+        }
 
 
 
@@ -244,34 +244,31 @@ class ProductDetailScreen extends Component {
         return (
             <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
+
                 <ScrollView ref='_scrollView' style={styles.background}>
-                    <View style={{ height: 375 }}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{flex:1, alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%'}}>
+                            <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
+                        </TouchableOpacity>
+                        <View style={{flex:4}}></View>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{flex:1, height: '100%', width: '100%', alignItems:'center'}}>
+                            <View style={styles.basket}>
+                                <SvgUri svgXmlData={BASKET} />
+                                {this.state.isHave ? (
+                                    <View style={styles.basket_number}>
+                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11, fontFamily: STRING.FONT_NORMAL }}>{this.state.listUserOrder.length}</Text>
+                                    </View>
+                                ) : null}
+                            </View>
+
+                        </TouchableOpacity>
+                    </View>
+                    <View>
                         <SliderBox
-                            sliderBoxHeight={375}
+                            sliderBoxHeight={400}
                             autoplay={true}
                             images={this.state.images}
                         />
-                    </View>
-
-                    <View style={{ position: 'absolute', top: 0 }}>
-                        <View style={styles.header}>
-                            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ alignItems: 'center', justifyContent: 'center', height: 45, width: 45 }}>
-                                <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ height: 45, width: 45, position: 'absolute', right: 15 }}>
-                                <View style={styles.basket}>
-                                    <SvgUri svgXmlData={BASKET} />
-                                    {this.state.isHave ? (
-                                        <View style={styles.basket_number}>
-                                            <Text style={{ color: COLOR.PRIMARY, fontSize: 11, fontFamily:STRING.FONT_NORMAL }}>{this.state.listUserOrder.length}</Text>
-                                        </View>
-                                    ) : null}
-                                </View>
-
-                            </TouchableOpacity>
-
-
-                        </View>
                     </View>
                     <View style={styles.content}>
                         <Text style={styles.tag}>{STRING.TAG} {this.state.category.name}</Text>
@@ -281,7 +278,7 @@ class ProductDetailScreen extends Component {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
-                                    <Text style={{ color: COLOR.WHITE, fontSize: 10, fontFamily:STRING.FONT_NORMAL }}>{this.state.sale}</Text>
+                                    <Text style={{ color: COLOR.WHITE, fontSize: 10, fontFamily: STRING.FONT_NORMAL }}>{this.state.sale}</Text>
                                 </ImageBackground>
                             </View>
                         </View>
@@ -304,7 +301,7 @@ class ProductDetailScreen extends Component {
 
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, fontFamily:STRING.FONT_NORMAL }}>{STRING.VIEWS} {this.state.views}</Text>
+                                <Text style={{ color: COLOR.PLACEHOLDER, fontSize: 11, fontFamily: STRING.FONT_NORMAL }}>{STRING.VIEWS} {this.state.views}</Text>
                             </View>
                         </View>
                         <View style={{ borderColor: COLOR.LINE, borderTopWidth: 0.5, marginVertical: 8 }}></View>
@@ -337,14 +334,14 @@ class ProductDetailScreen extends Component {
                         ) : (
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 3 }}>
-                                        <Text style={{ fontSize: 14, fontFamily:STRING.FONT_NORMAL }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
+                                        <Text style={{ fontSize: 14, fontFamily: STRING.FONT_NORMAL }}>{STRING.AMOUNT} <Text style={{ color: COLOR.GREEN }}>({STRING.STILL} {this.state.ammount})</Text> </Text>
                                     </View>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginRight: 15 }}>
                                         <TouchableOpacity onPress={this.sub}>
                                             <SvgUri svgXmlData={BTN_SUB} />
                                         </TouchableOpacity>
                                         <View style={{ width: 25, justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}>
-                                            <Text style={{ textAlign: 'center', fontFamily:STRING.FONT_NORMAL }}>{this.state.amountOrder}</Text>
+                                            <Text style={{ textAlign: 'center', fontFamily: STRING.FONT_NORMAL }}>{this.state.amountOrder}</Text>
                                         </View>
                                         <TouchableOpacity onPress={this.plus} style={{ borderWidth: 0.5, borderColor: COLOR.PRIMARY, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
                                             <View style={{ width: 0.5, height: 13, backgroundColor: COLOR.PRIMARY, position: 'absolute', left: 9 }} />
@@ -359,13 +356,13 @@ class ProductDetailScreen extends Component {
                     <View style={styles.content}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <SvgUri svgXmlData={CAR} />
-                            <Text style={{ fontSize: 14, marginLeft: 11, color: COLOR.TEXTBODY, fontFamily:STRING.FONT_NORMAL }}>{STRING.DELIVERY}</Text>
+                            <Text style={{ fontSize: 14, marginLeft: 11, color: COLOR.TEXTBODY, fontFamily: STRING.FONT_NORMAL }}>{STRING.DELIVERY}</Text>
                         </View>
-                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 6, marginRight: 26, paddingVertical: 3, lineHeight: 25, fontFamily:STRING.FONT_NORMAL }}>{this.state.delivery}</Text>
+                        <Text style={{ color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 6, marginRight: 26, paddingVertical: 3, lineHeight: 25, fontFamily: STRING.FONT_NORMAL }}>{this.state.delivery}</Text>
                     </View>
                     <View style={{ backgroundColor: COLOR.GRAY, height: 8, marginTop: 16, marginBottom: 6 }} />
                     <View style={styles.content}>
-                        <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600', fontFamily:STRING.FONT_NORMAL }}>{STRING.DESCRIPTION}</Text>
+                        <Text style={{ fontSize: 14, marginBottom: 6, color: COLOR.TEXTBODY, fontWeight: '600', fontFamily: STRING.FONT_NORMAL }}>{STRING.DESCRIPTION}</Text>
                         <HTMLView
                             value={this.state.product.description}
                         />
@@ -395,7 +392,7 @@ class ProductDetailScreen extends Component {
                                 <Text style={styles.made_in_title}>{STRING.SPECIES}</Text>
                             </View>
                             <View style={{ flex: 2 }}>
-                                <Text style={styles.made_in_text}>{this.state.species}</Text>
+                                <Text style={styles.made_in_text}>{this.state.category.name}</Text>
                             </View>
                         </View>
                     </View>
@@ -453,7 +450,7 @@ class ProductDetailScreen extends Component {
                 {this.state.ammount == '0' ? null : (
                     <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 56, backgroundColor: COLOR.WHITE, flexDirection: 'row' }}>
                         <View style={{ flex: 1, justifyContent: 'center' }}>
-                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20, fontFamily:STRING.FONT_NORMAL }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
+                            <Text style={{ color: COLOR.PRIMARY, fontSize: 16, marginLeft: 20, fontFamily: STRING.FONT_NORMAL }}>{this.format(parseInt(this.state.total))} {STRING.CURRENCY}</Text>
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <TouchableOpacity onPress={this.order} style={{ backgroundColor: COLOR.PRIMARY, borderRadius: 40, height: 48, width: deviceWidth / 2 - 28, alignItems: 'center', justifyContent: 'center' }}>
@@ -519,11 +516,8 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.WHITE
     },
     header: {
-        opacity: 0.8,
         backgroundColor: COLOR.PRIMARY,
-        position: 'absolute',
-        top: 0,
-        width: deviceWidth,
+        // width: deviceWidth,
         height: 45,
         flexDirection: 'row'
     },
@@ -554,7 +548,7 @@ const styles = StyleSheet.create({
     tag: {
         fontSize: 14,
         color: COLOR.LINK,
-        fontFamily:STRING.FONT_NORMAL
+        fontFamily: STRING.FONT_NORMAL
     },
     title: {
         flexDirection: 'row',
@@ -563,12 +557,12 @@ const styles = StyleSheet.create({
     title_text: {
         color: COLOR.TEXTBODY,
         fontSize: 16,
-        fontFamily:STRING.FONT_SEMI_BOLD
+        fontFamily: STRING.FONT_SEMI_BOLD
     },
     price_text: {
         color: COLOR.PRIMARY,
         fontSize: 16,
-        fontFamily:STRING.FONT_NORMAL
+        fontFamily: STRING.FONT_NORMAL
     },
     item: {
         backgroundColor: 'red',
@@ -585,12 +579,12 @@ const styles = StyleSheet.create({
     made_in_title: {
         color: COLOR.DESCRIPTION,
         fontSize: 14,
-        fontFamily:STRING.FONT_NORMAL
+        fontFamily: STRING.FONT_NORMAL
     },
     made_in_text: {
         color: COLOR.TEXTBODY,
-        fontWeight: '600', 
-        fontFamily:STRING.FONT_NORMAL
+        fontWeight: '600',
+        fontFamily: STRING.FONT_NORMAL
     },
     made_in: {
         flexDirection: 'row',
@@ -619,12 +613,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginBottom: 10
     },
-    old_price:{ 
-        color: COLOR.PLACEHODER, 
-        fontSize: 12, 
-        textDecorationLine: 'line-through', 
+    old_price: {
+        color: COLOR.PLACEHODER,
+        fontSize: 12,
+        textDecorationLine: 'line-through',
         marginLeft: 16,
-        fontFamily:STRING.FONT_NORMAL
+        fontFamily: STRING.FONT_NORMAL
     }
 })
 export default ProductDetailScreen;

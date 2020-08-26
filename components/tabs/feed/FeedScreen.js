@@ -42,8 +42,9 @@ class FeedScreen extends Component {
             isLoading: false,
             isHave: false,
             listUserOrder: [],
-            isLoadingList: false
-
+            isLoadingList: false,
+            endLikePost: false,
+            endCommentPost: false
         };
     }
     openPostLike = () => {
@@ -64,24 +65,29 @@ class FeedScreen extends Component {
     loadPostComment = () => {
         axios.get(API.URL + API.NEWS, {
             params: {
-                order_by: 'comments_count',
+                order_by: 'id',
                 page: this.state.pageComment,
                 orientation: 'DESC'
             }
         }).then(response => {
+            if (response.data.success.data.length == 0) {
+                this.setState({ endCommentPost: true })
+            }
             this.setState({
-                listPostComment: response.data.success.data,
-                isLoading: false
+                listPostComment: this.state.listPostComment.concat(response.data.success.data),
+                isLoading: false,
+                isLoadingList: false
             });
         }).catch(error => {
             // console.log(JSON.stringify(error.response.data.error));
             this.setState({
-                isLoading: false
+                isLoading: false,
+                isLoadingList: false
             });
         })
     }
     loadPostLike = () => {
-        console.log('load post like')
+        console.log('load post like' + this.state.pageLike)
         axios.get(API.URL + API.NEWS, {
             params: {
                 order_by: 'like',
@@ -89,14 +95,19 @@ class FeedScreen extends Component {
                 orientation: 'DESC'
             }
         }).then(response => {
+            if (response.data.success.data.length == 0) {
+                this.setState({ endLikePost: true })
+            }
             this.setState({
-                listPostLike: response.data.success.data,
+                listPostLike: this.state.listPostLike.concat(response.data.success.data),
                 isLoading: false,
+                isLoadingList: false
             });
         }).catch(error => {
             // console.log(JSON.stringify(error.response.data.error));
             this.setState({
-                isLoading: false
+                isLoading: false,
+                isLoadingList: false
             });
         })
     }
@@ -123,7 +134,7 @@ class FeedScreen extends Component {
                             this.checkOrder();
                         })
                     } else {
-                        console.log('list order' + listOrder);
+                        // console.log('list order' + listOrder);
                         this.setState({ listUserOrder: JSON.parse(listOrder) })
                         console.log('length order hien tai' + this.state.listUserOrder.length);
                         this.checkOrder();
@@ -143,118 +154,95 @@ class FeedScreen extends Component {
         }
     }
     loadMoreLike = () => {
-        if (this.state.end == false) {
+        if (this.state.endLikePost == false) {
             let page = this.state.pageLike + 1
-            console.log('goi api lan nua')
+            console.log('goi api lan nua' + page)
             this.setState({
-                pageLike: page
+                pageLike: page,
+                isLoadingList: true
             }, this.loadPostLike);
         }
 
     }
     loadMoreComment = () => {
-        if (this.state.end == false) {
+        if (this.state.endCommentPost == false) {
             let page = this.state.pageComment + 1
             console.log('goi api lan nua')
             this.setState({
-                pageComment: page
+                pageComment: page,
+                isLoadingList: true
             }, this.loadPostComment);
         }
 
     }
     handleFooter = () => {
+        // console.log('footer day');
         return (
-            this.state.isLoadingList ? (
+            this.state.isLoadingList ?
                 <View style={styles.loader}>
                     <ActivityIndicator color={COLOR.PRIMARY} size='large' />
-                </View>
-            )
-                :
-                (
-                    <View style={styles.loader}>
-                        <TouchableOpacity onPress={this.loadPostLike} style={{ flex: 1, alignItems: 'center', backgroundColor: COLOR.PRIMARY, padding: 5, borderRadius: 3 }}>
-                            <Text style={{ color: COLOR.WHITE }}>{STRING.VIEW_MORE}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-
+                </View> :
+                null
         )
     }
     render() {
         return (
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={styles.screen}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
-                <View style={styles.header}>
-                    <View style={{ flex: 1 }} />
-                    <View style={styles.title}>
-                        <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
-                    </View>
-                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
-                        <View>
-                            <SvgUri svgXmlData={BASKET} />
-                            {this.state.isHave ? (
-                                <View style={styles.basket_number}>
-                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
-                                </View>
-                            ) : null}
+                <View style={styles.background}>
+                    <View style={styles.header}>
+                        <View style={{ flex: 1 }} />
+                        <View style={styles.title}>
+                            <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
                         </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 8, paddingBottom: 8 }}>
-                    <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.openPostLike}>
-                        {this.state.likePost ? (
-                            <ImageBackground source={IMAGE.TAB_ACTIVE_BG} style={styles.tab_active}>
-                                <Text style={styles.text_active}>{STRING.POSTS_LIKE}</Text>
-
-                            </ImageBackground>
-                        ) : (
-                                <ImageBackground source={IMAGE.TAB_BG} style={styles.tab}>
-                                    <Text style={styles.text}>{STRING.POSTS_LIKE}</Text>
-                                </ImageBackground>
-                            )}
-
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.openPostReview}>
-                        {this.state.likePost ? (
-                            <ImageBackground source={IMAGE.TAB_BG} style={styles.tab}>
-                                <Text style={styles.text}>{STRING.POSTS_REVIEW}</Text>
-                            </ImageBackground>
-                        ) : (
-                                <ImageBackground source={IMAGE.TAB_ACTIVE_BG} style={styles.tab_active}>
-                                    <Text style={styles.text_active}>{STRING.POSTS_REVIEW}</Text>
-                                </ImageBackground>
-                            )}
-                    </TouchableOpacity>
-                    <View style={{ flex: 1 }} />
-                </View>
-                {this.state.isLoading ? (
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ActivityIndicator size='large' color={COLOR.PRIMARY} />
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
+                            <View>
+                                <SvgUri svgXmlData={BASKET} />
+                                {this.state.isHave ? (
+                                    <View style={styles.basket_number}>
+                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 11 }}>{this.state.listUserOrder.length}</Text>
+                                    </View>
+                                ) : null}
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                ) : (
-                        <View style={styles.content}>
+                    <View style={{ flexDirection: 'row',paddingTop:8, paddingBottom: 8, backgroundColor:COLOR.GRAY }}>
+                        <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.openPostLike}>
                             {this.state.likePost ? (
-                                <FlatList
-                                    data={this.state.listPostLike}
-                                    renderItem={({ item }) =>
-                                        <ItemFeed
-                                            navigation={this.props.navigation}
-                                            id={item.id}
-                                            photo={item.photo}
-                                            title={item.title}
-                                            createdAt={item.created_at}
-                                            content={item.content}
-                                            likeCount={item.like}
-                                            commentsCount={item.comments_count} />
-                                    }
-                                    onEndReached={this.loadMoreLike}
-                                    onEndReachedThreshold={0.1}
-                                    ListFooterComponent={this.handleFooter}
-                                    keyExtractor={(item, index) => index.toString()}
-                                />
+                                <ImageBackground source={IMAGE.TAB_ACTIVE_BG} style={styles.tab_active}>
+                                    <Text style={styles.text_active}>{STRING.POSTS_LIKE}</Text>
+
+                                </ImageBackground>
                             ) : (
+                                    <ImageBackground source={IMAGE.TAB_BG} style={styles.tab}>
+                                        <Text style={styles.text}>{STRING.POSTS_LIKE}</Text>
+                                    </ImageBackground>
+                                )}
+
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={this.openPostReview}>
+                            {this.state.likePost ? (
+                                <ImageBackground source={IMAGE.TAB_BG} style={styles.tab}>
+                                    <Text style={styles.text}>{STRING.POSTS_REVIEW}</Text>
+                                </ImageBackground>
+                            ) : (
+                                    <ImageBackground source={IMAGE.TAB_ACTIVE_BG} style={styles.tab_active}>
+                                        <Text style={styles.text_active}>{STRING.POSTS_REVIEW}</Text>
+                                    </ImageBackground>
+                                )}
+                        </TouchableOpacity>
+                        <View style={{ flex: 1 }} />
+                    </View>
+                    {this.state.isLoading ? (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator size='large' color={COLOR.PRIMARY} />
+                        </View>
+                    ) : (
+                            <View style={styles.content}>
+                                {this.state.likePost ? (
                                     <FlatList
-                                        data={this.state.listPostComment}
+                                        style={{ marginBottom: 130 }}
+                                        data={this.state.listPostLike}
                                         renderItem={({ item }) =>
                                             <ItemFeed
                                                 navigation={this.props.navigation}
@@ -266,20 +254,53 @@ class FeedScreen extends Component {
                                                 likeCount={item.like}
                                                 commentsCount={item.comments_count} />
                                         }
-                                        // onEndReached={this.loadMoreComment}
-                                        // onEndReachedThreshold={0.5}
-                                        // ListFooterComponent={this.handleFooter}
-                                        // keyExtractor={(item, index) => index.toString()}
+                                        onEndReached={this.loadMoreLike}
+                                        onEndReachedThreshold={0.1}
+                                        ListFooterComponent={this.handleFooter}
+                                        keyExtractor={(item, index) => index.toString()}
                                     />
-                                )}
-                        </View>
-                    )}
+                                ) : (
+                                        <View>
+                                            <FlatList
+                                                style={{ marginBottom: 130 }}
+                                                data={this.state.listPostComment}
+                                                renderItem={({ item }) =>
+                                                    <ItemFeed
+                                                        navigation={this.props.navigation}
+                                                        id={item.id}
+                                                        photo={item.photo}
+                                                        title={item.title}
+                                                        createdAt={item.created_at}
+                                                        content={item.content}
+                                                        likeCount={item.like}
+                                                        commentsCount={item.comments_count} />
+                                                }
+                                                onEndReached={this.loadMoreComment}
+                                                onEndReachedThreshold={0.5}
+                                                ListFooterComponent={this.handleFooter}
+                                                keyExtractor={(item, index) => index.toString()}
+                                            />
+                                        </View>
+
+                                    )}
+                            </View>
+                        )}
+
+                </View>
 
             </SafeAreaView>
         );
     }
 }
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: COLOR.PRIMARY
+    },
+    background: {
+        backgroundColor: COLOR.WHITE,
+        flex: 1
+    },
     header: {
         backgroundColor: COLOR.PRIMARY,
         height: 46,
@@ -312,12 +333,14 @@ const styles = StyleSheet.create({
     text_active: {
         color: COLOR.PRIMARY,
         fontSize: 12,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: STRING.FONT_NORMAL
     },
     text: {
         color: COLOR.DESCRIPTION,
         fontSize: 12,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: STRING.FONT_NORMAL
     },
     avatar: {
         width: 60,
@@ -368,12 +391,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     loader: {
-        marginTop: 10,
-        alignItems: 'center',
-        marginBottom: 10,
-        backgroundColor: 'black',
-        width: 100,
-        height: 100
+        alignSelf: 'center',
     }
 
 })

@@ -140,13 +140,16 @@ class CartDetailScreen extends Component {
         this.sumProduct()
     }
     sum = (index) => {
-        this.state.listProducts[index].quantity++;
-        if (this.state.userId == null || this.state.userId == '') {
-            AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listProducts));
-        } else {
-            AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+        if (this.state.listProducts[index].quantity < this.state.listProducts[index].on_hand) {
+            this.state.listProducts[index].quantity++;
+            if (this.state.userId == null || this.state.userId == '') {
+                AsyncStorage.setItem(this.state.deviceId, JSON.stringify(this.state.listProducts));
+            } else {
+                AsyncStorage.setItem(this.state.userId, JSON.stringify(this.state.listProducts));
+            }
+            this.sumProduct()
         }
-        this.sumProduct()
+
     }
     render() {
         return (

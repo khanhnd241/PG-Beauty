@@ -14,7 +14,9 @@ import ImageView from 'react-native-image-view';
 import { ICON_AVATAR } from '../../../constants/images/icon_avatar';
 import axios from 'axios';
 import { API } from '../../../constants/api';
-import moment from 'moment'
+import moment from 'moment';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 let deviceWidth = Dimensions.get('window').width;
 function ItemComment({ userName, content }) {
     // const [users, setUser] = useState(JSON.stringify(user));
@@ -148,7 +150,11 @@ class FeedDetailScreen extends Component {
                 })
             })
     }
+    // scrollToEnd = () => {
+    //     this.scrollView.scrollTo({x: 0, y: 500, animated: true}); 
+    // }
     componentDidMount = () => {
+        // this.scrollToEnd();
         let imageView = [];
         let image = {
             source: {
@@ -257,8 +263,8 @@ class FeedDetailScreen extends Component {
             <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
                 <StatusBar backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.header}>
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }} >
-                        <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                        <TouchableOpacity style={{width:'100%', height:'100%', alignItems:'center', justifyContent:'center' }} onPress={() => { this.props.navigation.goBack() }}>
                             <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                         </TouchableOpacity>
                     </View>
@@ -322,7 +328,7 @@ class FeedDetailScreen extends Component {
                                         </TouchableOpacity>
                                     )}
 
-                                <TouchableOpacity onPress={() => { this.secondTextInput.focus()}} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                                <TouchableOpacity onPress={() => { this.secondTextInput.focus() }} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                                     <SvgUri svgXmlData={COMMENT} />
                                     <Text style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>{STRING.COMMENT_1}</Text>
                                 </TouchableOpacity>
@@ -332,6 +338,7 @@ class FeedDetailScreen extends Component {
                                 </TouchableOpacity> */}
                             </View>
                             <FlatList
+                                // inverted={true}
                                 style={{ marginBottom: 60 }}
                                 extraData={this.state.refesh}
                                 data={this.state.listComment}

@@ -22,7 +22,7 @@ class ListProductsScreen extends Component {
         };
     }
     componentDidMount = () => {
-        console.log(this.state.categoryId);
+        console.log('title' + this.state.title);
         if (this.state.order_by == 'same_type') {
             console.log('load san pham cung loai' + this.state.categoryId);
             this.setState({ isLoading: true }, this.loadListSameType);

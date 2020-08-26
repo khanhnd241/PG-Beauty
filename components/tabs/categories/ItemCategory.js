@@ -38,7 +38,7 @@ class ItemCategory extends Component {
         if (this.state.haveChild == true) {
             this.setState({ openChild: !this.state.openChild })
         } else {
-            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: this.state.id })
+            this.state.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: this.state.name, category_id: this.state.id })
         }
     }
     getSubCategory = () => {
