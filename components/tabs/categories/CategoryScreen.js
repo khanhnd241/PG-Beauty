@@ -43,7 +43,7 @@ class CategoryScreen extends Component {
             end: false,
             loadingDialog: false,
             isHave: false,
-            listUserOrder:[]
+            listUserOrder: []
         };
     }
     componentDidMount = () => {
@@ -171,6 +171,7 @@ class CategoryScreen extends Component {
 
                     <View>
                         <FlatList
+                            style={{ marginBottom: 50 }}
                             data={this.state.listCategories}
                             renderItem={({ item }) =>
                                 <ItemCategory
