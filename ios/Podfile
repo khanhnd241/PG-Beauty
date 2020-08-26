@@ -82,6 +82,10 @@ target 'PG_Beauty' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   # add the Firebase pod for Google Analytics
   pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
   target 'PG_BeautyTests' do
     inherit! :complete
     # Pods for testing
