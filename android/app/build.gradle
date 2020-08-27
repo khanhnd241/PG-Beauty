@@ -186,6 +186,22 @@ android {
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
+        variant.outputs.all {
+            def appName = "PGBeauty"
+            def version = "v"
+            def buildType = variant.variantData.variantConfiguration.buildType.name
+            def date = new Date()
+            def formattedDate = date.format('yyMMddHHmm')
+            def newName
+            newName = "${appName}_${version}${defaultConfig.versionCode}_${formattedDate}"
+            if (buildType == 'debug') {
+                newName = "${newName}_debug.apk"
+            } else {
+                newName = "${newName}_release.apk"
+            }
+            outputFileName = newName
+        }
+
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // https://developer.android.com/studio/build/configure-apk-splits.html
@@ -195,7 +211,6 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
-
         }
     }
 }
