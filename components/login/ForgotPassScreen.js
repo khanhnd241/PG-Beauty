@@ -14,7 +14,7 @@ class ForgotPassScreen extends Component {
     render() {
         return (
             <SafeAreaView>
-                <StatusBar backgroundColor='#BE1E2D' />
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <TouchableOpacity style={{ padding: 16 }} onPress={() => this.props.navigation.goBack()}>
                     <SvgUri svgXmlData={BACK} />
                 </TouchableOpacity>

@@ -149,7 +149,7 @@ class LoginScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.background}>
-                <StatusBar backgroundColor={COLOR.PRIMARY} />
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <TouchableOpacity style={styles.btn_close} onPress={() => this.props.navigation.goBack()}>
                     <SvgUri svgXmlData={CLOSE} />
                 </TouchableOpacity>

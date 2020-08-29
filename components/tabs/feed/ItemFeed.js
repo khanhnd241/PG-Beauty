@@ -29,7 +29,7 @@ class ItemFeed extends Component {
         super(props);
         const { id, photo, title, createdAt, content, likeCount, commentsCount, navigation } = this.props;
         this.state = {
-            navigation:navigation,
+            navigation: navigation,
             id: id,
             photo: photo,
             title: title,
@@ -40,7 +40,8 @@ class ItemFeed extends Component {
             likeCount: likeCount,
             isLike: false,
             isViewImage: false,
-            rate:''
+            rate: '',
+            token:''
         };
     }
     genRand(min, max, decimalPlaces) {
@@ -49,8 +50,10 @@ class ItemFeed extends Component {
         return Math.floor(Rand * power) / power;
     }
     componentDidMount = () => {
-       
-        this.setState({rate:this.genRand(4.5,5,1), createdAt:this.props.createdAt},()=> {
+        AsyncStorage.getItem('token', (err, token) => {
+            this.setState({token:token})
+        })
+        this.setState({ rate: this.genRand(4.5, 5, 1), createdAt: this.props.createdAt }, () => {
             this.formatDate();
         })
     }
@@ -58,37 +61,36 @@ class ItemFeed extends Component {
         let today = new Date();
         let createdAt = moment(this.state.createdAt).format('YYYY-MM-DD');
         let subDate = Date.parse(today) - Date.parse(createdAt);
-        if(subDate < 60000) {
+        if (subDate < 60000) {
             return STRING.FEW_SECOND_AGO
         }
-        if(60000 < subDate && subDate < 3600000) {
+        if (60000 < subDate && subDate < 3600000) {
             let minutes = Math.floor(subDate / 60000);
             return minutes + STRING.MINUTES_AGO
         }
-        if(3600000 < subDate && subDate < 86400000) {
+        if (3600000 < subDate && subDate < 86400000) {
             let hours = Math.floor(subDate / 3600000);
             return hours + STRING.HOURS_AGO;
         }
-        if(subDate > 86400000) {
+        if (subDate > 86400000) {
             let createdAt = moment(this.state.createdAt).format('DD-MM-YYYY');
             return createdAt
         }
     }
     likePost = () => {
         console.log('id bai biet' + this.state.id)
-        AsyncStorage.getItem('token', (err, token) => {
-            if(token == null || token == '') {
+            if (this.state.token == null || this.state.token == '') {
                 Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT)
             } else {
                 if (this.state.isLike == false) {
                     let data = {}
-                    this.setState({isLike: true,likeCount: this.state.likeCount + 1},() => {
+                    this.setState({ isLike: true, likeCount: this.state.likeCount + 1 }, () => {
                         const config = {
                             headers: {
-                                Authorization: `Bearer ${token}`
+                                Authorization: `Bearer ${this.state.token}`
                             }
                         };
-                        axios.post(API.URL + API.LIKE + this.state.id,data, config).then(response => {
+                        axios.post(API.URL + API.LIKE + this.state.id, data, config).then(response => {
                             console.log(response.data);
                             Alert.alert(STRING.NOTIFI, JSON.stringify(response.data.success), [{ text: STRING.ACCEPT }]);
                         }).catch(error => {
@@ -98,11 +100,18 @@ class ItemFeed extends Component {
                     })
                 } else {
                     setIsLike(false);
-                    this.setState({likeCount: this.state.likeCount - 1})
+                    this.setState({ likeCount: this.state.likeCount - 1 })
                 }
             }
-        })
-        
+
+    }
+    navigateToDetail = () => {
+        if (this.state.token == null || this.state.token == '') {
+            Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT)
+        } else {
+            this.state.navigation.navigate('FeedDetailScreen', { id: this.state.id, likeCount: this.state.likeCount, commentsCount: this.state.commentsCount, rate: this.state.rate })
+        }
+
     }
     render() {
         const { id, photo, title, createdAt, content, likeCount, commentsCount, rate } = this.state;
@@ -110,10 +119,10 @@ class ItemFeed extends Component {
             <View>
                 <View style={styles.item_container}>
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{flex:1}}>
-                        <Image source={IMAGE.ICON_APP} style={styles.avatar} />
+                        <View style={{ flex: 1 }}>
+                            <Image source={IMAGE.ICON_APP} style={styles.avatar} />
                         </View>
-                        <View style={{ flexDirection: 'column', flex:4 }}>
+                        <View style={{ flexDirection: 'column', flex: 4 }}>
                             <Text style={styles.item_title}>{title}</Text>
                             <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
                                 <Rating
@@ -124,7 +133,7 @@ class ItemFeed extends Component {
                                     imageSize={15}
                                     tintColor={COLOR.WHITE}
                                     ratingColor={COLOR.PRIMARY}
-                                    style={{ backgroundColor: COLOR.WHITE}}
+                                    style={{ backgroundColor: COLOR.WHITE }}
                                 />
                                 <Text style={styles.item_timeline}>{this.formatDate()}</Text>
                             </View>
@@ -156,18 +165,18 @@ class ItemFeed extends Component {
                             {this.state.isLike ? (
                                 <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                                     <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
-                                    <Text style={{ marginLeft: 8, color: COLOR.PRIMARY, fontFamily:STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
+                                    <Text style={{ marginLeft: 8, color: COLOR.PRIMARY, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
                                 </TouchableOpacity>
                             ) : (
                                     <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                                         <SvgUri svgXmlData={LIKE} />
-                                        <Text style={{ marginLeft: 8, fontFamily:STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
+                                        <Text style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
                                     </TouchableOpacity>
                                 )}
 
-                            <TouchableOpacity onPress={() => this.state.navigation.navigate('FeedDetailScreen', { id: id, likeCount: likeCount, commentsCount: commentsCount, rate: rate })} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={this.navigateToDetail} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }} >
                                 <SvgUri svgXmlData={COMMENT} />
-                                <Text style={{ marginLeft: 8, fontFamily:STRING.FONT_NORMAL }}>{STRING.COMMENT_1}</Text>
+                                <Text style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>{STRING.COMMENT_1}</Text>
                             </TouchableOpacity>
                             {/* <TouchableOpacity style={{ flex: 1, alignItems: 'center', flexDirection: 'row-reverse' }}>
                             <Text style={{ marginLeft: 8 }}>{STRING.SHARE}</Text>
@@ -244,13 +253,13 @@ const styles = StyleSheet.create({
     text_content: {
         color: COLOR.DESCRIPTION,
         fontSize: 13,
-        fontFamily:STRING.FONT_NORMAL,
-        lineHeight:20
+        fontFamily: STRING.FONT_NORMAL,
+        lineHeight: 20
     },
     item_title: {
         color: COLOR.TEXTBODY,
         fontSize: 14,
-        fontFamily:STRING.FONT_BOLD
+        fontFamily: STRING.FONT_BOLD
     },
     item_timeline: {
         marginLeft: 5,
@@ -259,7 +268,7 @@ const styles = StyleSheet.create({
     },
     text_comment: {
         color: COLOR.PLACEHODER,
-        fontFamily:STRING.FONT_NORMAL,
+        fontFamily: STRING.FONT_NORMAL,
         fontSize: 12,
         padding: 2
     },
