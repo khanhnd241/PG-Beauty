@@ -18,20 +18,53 @@ class ListProductsScreen extends Component {
             listProduct: [],
             isLoading: false,
             page: 1,
-            categoryId: category_id
+            categoryId: category_id,
+            end: false,
+
         };
     }
     componentDidMount = () => {
         console.log('title' + this.state.title);
-        if (this.state.order_by == 'same_type') {
-            console.log('load san pham cung loai' + this.state.categoryId);
-            this.setState({ isLoading: true }, this.loadListSameType);
-        } else {
-            console.log('load san pham moi');
-            this.setState({ isLoading: true }, this.loadListNewProduct);
+        switch (this.state.order_by) {
+            case 'same_type':
+                console.log('load san pham cung loai' + this.state.categoryId);
+                this.setState({ isLoading: true }, this.loadListSameType);
+                break;
+            case 'category':
+                console.log('load san pham cung loai' + this.state.categoryId);
+                this.setState({ isLoading: true }, this.loadCategory);
+                break;
+            default:
+                console.log('load san pham moi');
+                this.setState({ isLoading: true }, this.loadListNewProduct);
+                break;
         }
     }
+    loadCategory = () => {
+        console.log('goi api')
+        axios.get(API.URL + API.CATEGORIES + '/' + this.state.categoryId, {
+            params: {
+                with_product: 'true',
+                page: this.state.page
+            }
+        }).then(response => {
+            if (response.data.success.products.data.length == 0) {
+                this.setState({ end: true, isLoading: false })
+            } else {
+                this.setState({
+                    listProduct: this.state.listProduct.concat(response.data.success.products.data),
+                    isLoading: false
+                });
+                console.log('chieu dai san pham cua danh muc' + this.state.listProduct.length);
+            }
 
+        }).catch(error => {
+            console.log(JSON.stringify(error.response.data.error));
+            this.setState({
+                isLoading: false
+            });
+        })
+    }
     loadListNewProduct = () => {
         axios.get(API.URL + API.PRODUCTS, {
             params: {
@@ -40,10 +73,15 @@ class ListProductsScreen extends Component {
                 orientation: 'DESC'
             }
         }).then(response => {
-            this.setState({
-                listProduct: this.state.listProduct.concat(response.data.success.data),
-                isLoading: false
-            });
+            if (response.data.success.data.length == 0) {
+                this.setState({ end: true, isLoading: false })
+            } else {
+                this.setState({
+                    listProduct: this.state.listProduct.concat(response.data.success.data),
+                    isLoading: false
+                });
+            }
+
             console.log(this.state.listProduct.length);
         }).catch(error => {
             console.log(JSON.stringify(error.response.data.error));
@@ -57,7 +95,7 @@ class ListProductsScreen extends Component {
         }).then(response => {
             console.log('chieu dai 1 api' + response.data.success.data.length);
             if (response.data.success.data.length == 0) {
-                this.setState({ end: true,isLoading: false })
+                this.setState({ end: true, isLoading: false })
             } else {
                 this.setState({
                     listProduct: this.state.listProduct.concat(response.data.success.data),
@@ -72,13 +110,22 @@ class ListProductsScreen extends Component {
     loadMore = () => {
         if (this.state.end == false) {
             console.log('goi api lan nua')
-            this.setState({ page: this.state.page + 1, isLoading: true });
-            if (this.state.order_by == 'same_type') {
-                console.log('load them san pham cung loai');
-                this.loadListSameType();
-            } else {
-                this.loadListNewProduct();
-            }
+            this.setState({ page: this.state.page + 1, isLoading: true }, () => {
+                switch (this.state.order_by) {
+                    case 'same_type':
+                        console.log('load san pham cung loai' + this.state.categoryId);
+                        this.loadListSameType();
+                        break;
+                    case 'category':
+                        console.log('load danh muc' + this.state.categoryId);
+                        this.loadCategory();
+                        break;
+                    default:
+                        console.log('load san pham moi');
+                        this.loadListNewProduct();
+                        break;
+                }
+            });
         }
 
     }

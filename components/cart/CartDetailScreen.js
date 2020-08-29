@@ -154,6 +154,7 @@ class CartDetailScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <ScrollView style={styles.background}>
                     <View style={styles.header}>
                         <View style={{ flex: 1 }}></View>

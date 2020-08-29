@@ -57,7 +57,7 @@ class FeedDetailScreen extends Component {
             content: '',
             avatar: IMAGE.ANH_DEMO_1,
             likeCount: likeCount,
-            commentsCount: commentsCount,
+            commentsCount: parseInt(commentsCount),
             userName: '',
             refesh: false,
             listComment: [
@@ -129,23 +129,21 @@ class FeedDetailScreen extends Component {
                     if (token == null || token == '') {
                         Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT)
                     } else {
-                        this.setState({ isLike: true, likeCount: this.state.likeCount + 1 }, () => {
-                            const config = {
-                                headers: {
-                                    Authorization: `Bearer ${token}`
-                                }
-                            };
-                            axios.post(API.URL + API.COMMENT + this.state.id, data, config).then(response => {
-                                console.log(response.data);
-                                Alert.alert(STRING.NOTIFI, JSON.stringify(response.data.success), [{ text: STRING.ACCEPT }]);
-                                this.state.listComment.push(comment);
-                                this.setState({ refesh: true });
-                                this.reload();
-                            }).catch(error => {
-                                Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
-                                console.log(JSON.stringify(error.response));
-                            });
-                        })
+                        const config = {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        };
+                        axios.post(API.URL + API.COMMENT + this.state.id, data, config).then(response => {
+                            console.log(response.data);
+                            Alert.alert(STRING.NOTIFI, JSON.stringify(response.data.success), [{ text: STRING.ACCEPT }]);
+                            this.state.listComment.push(comment);
+                            this.setState({ refesh: true, commentsCount: this.state.commentsCount + 1 });
+                            this.reload();
+                        }).catch(error => {
+                            Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [{ text: STRING.ACCEPT }]);
+                            console.log(JSON.stringify(error.response));
+                        });
                     }
                 })
             })
@@ -260,129 +258,132 @@ class FeedDetailScreen extends Component {
         ];
         const { image, title, rate, time, content, commentsCount, avatar, likeCount, user } = this.state
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
-                <StatusBar backgroundColor={COLOR.PRIMARY} />
-                <View style={styles.header}>
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
-                        <TouchableOpacity style={{width:'100%', height:'100%', alignItems:'center', justifyContent:'center' }} onPress={() => { this.props.navigation.goBack() }}>
-                            <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.title}>
-                        <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-
-                    </View>
-                </View>
-                <ScrollView>
-                    <View style={styles.item_container}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 1 }}>
-                                <Image source={IMAGE.ICON_APP} style={styles.avatar} />
-                            </View>
-                            <View style={{ flexDirection: 'column', flex: 4 }}>
-                                <Text style={styles.item_title}>{title}</Text>
-                                <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
-                                    <Rating
-                                        readonly
-                                        type='custom'
-                                        startingValue={rate}
-                                        ratingCount={5}
-                                        imageSize={15}
-                                        tintColor={COLOR.WHITE}
-                                        ratingColor={COLOR.PRIMARY}
-                                        style={{ backgroundColor: COLOR.WHITE, marginLeft: 2 }}
-                                    />
-                                    <Text style={styles.item_timeline}>{this.formatDate()}</Text>
-                                </View>
-
-                            </View>
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLOR.PRIMARY }}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
+                <View style={{ flex: 1, backgroundColor: COLOR.WHITE }}>
+                    <View style={styles.header}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                            <TouchableOpacity style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} onPress={() => { this.props.navigation.goBack() }}>
+                                <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ marginTop: 10 }}>
-                            <Text style={styles.text_content}>
-                                {content}
-                            </Text>
-                            <PhotoGrid width={deviceWidth - 20} source={image} ratio={0.5} onPressImage={uri => { this.setState({ isViewImage: true }) }} />
-                            <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                    <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
-                                    <Text style={styles.text_comment}>{likeCount}</Text>
+                        <View style={styles.title}>
+                            <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+
+                        </View>
+                    </View>
+                    <ScrollView>
+                        <View style={styles.item_container}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Image source={IMAGE.ICON_APP} style={styles.avatar} />
                                 </View>
-                                <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'center' }}>
-                                    <Text style={styles.text_comment}>{STRING.COMMENT_2}</Text>
-                                    <Text style={styles.text_comment}>{commentsCount}</Text>
+                                <View style={{ flexDirection: 'column', flex: 4 }}>
+                                    <Text style={styles.item_title}>{title}</Text>
+                                    <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center' }}>
+                                        <Rating
+                                            readonly
+                                            type='custom'
+                                            startingValue={rate}
+                                            ratingCount={5}
+                                            imageSize={15}
+                                            tintColor={COLOR.WHITE}
+                                            ratingColor={COLOR.PRIMARY}
+                                            style={{ backgroundColor: COLOR.WHITE, marginLeft: 2 }}
+                                        />
+                                        <Text style={styles.item_timeline}>{this.formatDate()}</Text>
+                                    </View>
+
                                 </View>
                             </View>
-                            <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
-                            <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
-                                {this.state.isLike ? (
-                                    <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 5 }}>
+                            <View style={{ marginTop: 10 }}>
+                                <Text style={styles.text_content}>
+                                    {content}
+                                </Text>
+                                <PhotoGrid width={deviceWidth - 20} source={image} ratio={0.5} onPressImage={uri => { this.setState({ isViewImage: true }) }} />
+                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                         <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
-                                        <Text style={{ marginLeft: 7, color: COLOR.PRIMARY, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
-                                    </TouchableOpacity>
-                                ) : (
+                                        <Text style={styles.text_comment}>{likeCount}</Text>
+                                    </View>
+                                    <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'center' }}>
+                                        <Text style={styles.text_comment}>{STRING.COMMENT_2}</Text>
+                                        <Text style={styles.text_comment}>{commentsCount}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }} />
+                                <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
+                                    {this.state.isLike ? (
                                         <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 5 }}>
-                                            <SvgUri svgXmlData={LIKE} />
-                                            <Text style={{ marginLeft: 7, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
+                                            <SvgUri svgXmlData={LIKE} fill={COLOR.PRIMARY} />
+                                            <Text style={{ marginLeft: 7, color: COLOR.PRIMARY, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
                                         </TouchableOpacity>
-                                    )}
+                                    ) : (
+                                            <TouchableOpacity onPress={this.likePost} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', marginLeft: 5 }}>
+                                                <SvgUri svgXmlData={LIKE} />
+                                                <Text style={{ marginLeft: 7, fontFamily: STRING.FONT_NORMAL }}>{STRING.LIKE}</Text>
+                                            </TouchableOpacity>
+                                        )}
 
-                                <TouchableOpacity onPress={() => { this.secondTextInput.focus() }} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                                    <SvgUri svgXmlData={COMMENT} />
-                                    <Text style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>{STRING.COMMENT_1}</Text>
-                                </TouchableOpacity>
-                                {/* <TouchableOpacity style={{ flex: 1, alignItems: 'center', flexDirection: 'row-reverse' }}>
+                                    <TouchableOpacity onPress={() => { this.secondTextInput.focus() }} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                                        <SvgUri svgXmlData={COMMENT} />
+                                        <Text style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>{STRING.COMMENT_1}</Text>
+                                    </TouchableOpacity>
+                                    {/* <TouchableOpacity style={{ flex: 1, alignItems: 'center', flexDirection: 'row-reverse' }}>
                                     <Text style={{ marginLeft: 8 }}>{STRING.SHARE}</Text>
                                     <SvgUri svgXmlData={SHARE} />
                                 </TouchableOpacity> */}
-                            </View>
-                            <FlatList
-                                // inverted={true}
-                                style={{ marginBottom: 60 }}
-                                extraData={this.state.refesh}
-                                data={this.state.listComment}
-                                renderItem={({ item }) => {
-                                    return (
-                                        <ItemComment
-                                            content={item.content}
-                                            userName={item.user_name} />
-                                    )
-                                }
+                                </View>
+                                <FlatList
+                                    // inverted={true}
+                                    style={{ marginBottom: 60 }}
+                                    extraData={this.state.refesh}
+                                    data={this.state.listComment}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <ItemComment
+                                                content={item.content}
+                                                userName={item.user_name} />
+                                        )
+                                    }
 
-                                }
-                            />
-                        </View>
-                    </View>
-                </ScrollView>
-                <View style={{ backgroundColor: COLOR.WHITE, flex: 1, position: 'absolute', bottom: 0, width: deviceWidth }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, height: 40 }}>
-                        <View style={{ flex: 1, alignItems: 'center' }}>
-                            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: COLOR.GRAY, alignItems: 'center', justifyContent: 'center' }}>
-                                <SvgUri svgXmlData={ICON_AVATAR} />
+                                    }
+                                />
                             </View>
                         </View>
-                        <TextInput
-                            ref={(input) => { this.secondTextInput = input; }}
-                            onChangeText={(value) => this.setState({ comment: value })}
-                            style={styles.input}
-                            placeholder={STRING.WRITE_COMMENT}
-                            autoFocus={this.state.isComment}
-                            value={this.state.comment}
-                        />
-                        <TouchableOpacity onPress={this.sendComment} style={{ flex: 1, alignItems: 'center' }}>
-                            <Text style={{ fontFamily: STRING.FONT_SEMI_BOLD }}>{STRING.SEND}</Text>
-                        </TouchableOpacity>
+                    </ScrollView>
+                    <View style={{ backgroundColor: COLOR.WHITE, flex: 1, position: 'absolute', bottom: 0, width: deviceWidth }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, height: 40 }}>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: COLOR.GRAY, alignItems: 'center', justifyContent: 'center' }}>
+                                    <SvgUri svgXmlData={ICON_AVATAR} />
+                                </View>
+                            </View>
+                            <TextInput
+                                ref={(input) => { this.secondTextInput = input; }}
+                                onChangeText={(value) => this.setState({ comment: value })}
+                                style={styles.input}
+                                placeholder={STRING.WRITE_COMMENT}
+                                autoFocus={this.state.isComment}
+                                value={this.state.comment}
+                            />
+                            <TouchableOpacity onPress={this.sendComment} style={{ flex: 1, alignItems: 'center' }}>
+                                <Text style={{ fontFamily: STRING.FONT_SEMI_BOLD }}>{STRING.SEND}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-                {/* <ImageView
+                    {/* <ImageView
                     onClose={() => { this.setState({ isViewImage: false }) }}
                     images={images}
                     imageIndex={0}
                     isVisible={this.state.isViewImage}
                     renderFooter={(currentImage) => (<View><Text>My footer</Text></View>)}
                 /> */}
+                </View>
             </SafeAreaView>
+
         );
     }
 }

@@ -151,6 +151,7 @@ class PayScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />

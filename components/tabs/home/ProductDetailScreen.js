@@ -106,7 +106,8 @@ class ProductDetailScreen extends Component {
                 categoryId: response.data.success.category_id,
                 ammount: response.data.success.on_hand,
                 views: response.data.success.views,
-                category: response.data.success.category
+                category: response.data.success.category,
+                tradeMark: response.data.success.trade_mark_name
             }, () => {
                 this.getlistSameType()
             });
@@ -376,7 +377,7 @@ class ProductDetailScreen extends Component {
                                 <Text style={styles.made_in_title}>{STRING.TRADE_MARK}</Text>
                             </View>
                             <View style={{ flex: 2 }}>
-                                <Text style={styles.made_in_text}>{this.state.category.name}</Text>
+                                <Text style={styles.made_in_text}>{this.state.tradeMark}</Text>
                             </View>
                         </View>
                         <View style={styles.made_in}>

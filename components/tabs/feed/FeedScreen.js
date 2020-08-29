@@ -188,7 +188,7 @@ class FeedScreen extends Component {
     render() {
         return (
             <SafeAreaView style={styles.screen}>
-                <StatusBar backgroundColor={COLOR.PRIMARY} />
+                <StatusBar barStyle='light-content' backgroundColor={COLOR.PRIMARY} />
                 <View style={styles.background}>
                     <View style={styles.header}>
                         <View style={{ flex: 1 }} />
