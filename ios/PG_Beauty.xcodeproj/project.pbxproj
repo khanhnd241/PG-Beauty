@@ -28,8 +28,8 @@
 		C67454ED4AE74CAD994C6B55 /* Nunito-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A8C0CC322AD84FD892F86214 /* Nunito-ExtraLight.ttf */; };
 		EB6F520686C54DA99C893CAD /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E8AA5D899E949FF93D8CFA2 /* Nunito-Black.ttf */; };
 		ED630F19F6CC46888B1F6E21 /* Nunito-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 58372FC3610E487B9E795BEC /* Nunito-BoldItalic.ttf */; };
-		FA03D06824F4C4E20093A335 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FA03D06724F4C4E20093A335 /* main.jsbundle */; };
-		FA22393224C7DD8700B35DFD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA22393124C7DD8700B35DFD /* GoogleService-Info.plist */; };
+		FAB7243B24FC0BD100ED3BD6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAB7243A24FC0BD100ED3BD6 /* GoogleService-Info.plist */; };
+		FAE5502D24FD775F00C1F4BD /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE5502C24FD775F00C1F4BD /* main.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,11 +90,12 @@
 		E47DCD3F5C054FFEBFED5A34 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FA03D06724F4C4E20093A335 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		FA22393124C7DD8700B35DFD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA3D25CA24C208C4006A9B50 /* PG_BeautyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PG_BeautyRelease.entitlements; path = PG_Beauty/PG_BeautyRelease.entitlements; sourceTree = "<group>"; };
+		FAB7243724FBB23D00ED3BD6 /* PG Beauty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "PG Beauty.entitlements"; path = "PG_Beauty/PG Beauty.entitlements"; sourceTree = "<group>"; };
+		FAB7243A24FC0BD100ED3BD6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAC3AED324D0748D002E4519 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Nunito-Bold.ttf"; path = "../Nunito-Bold.ttf"; sourceTree = "<group>"; };
 		FAC3AED424D074A1002E4519 /* Nunito-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Nunito-Regular.ttf"; path = "../Nunito-Regular.ttf"; sourceTree = "<group>"; };
+		FAE5502C24FD775F00C1F4BD /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		FB01819703E24DE28F016786 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,7 +150,7 @@
 		13B07FAE1A68108700A75B9A /* PG_Beauty */ = {
 			isa = PBXGroup;
 			children = (
-				FA22393124C7DD8700B35DFD /* GoogleService-Info.plist */,
+				FAB7243724FBB23D00ED3BD6 /* PG Beauty.entitlements */,
 				FA3D25CA24C208C4006A9B50 /* PG_BeautyRelease.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -157,7 +158,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				FA03D06724F4C4E20093A335 /* main.jsbundle */,
+				FAE5502C24FD775F00C1F4BD /* main.jsbundle */,
 			);
 			name = PG_Beauty;
 			sourceTree = "<group>";
@@ -220,6 +221,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				FAB7243A24FC0BD100ED3BD6 /* GoogleService-Info.plist */,
 				FAC3AED224D0738C002E4519 /* fonts */,
 				13B07FAE1A68108700A75B9A /* PG_Beauty */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -349,9 +351,8 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				FA22393224C7DD8700B35DFD /* GoogleService-Info.plist in Resources */,
-				FA03D06824F4C4E20093A335 /* main.jsbundle in Resources */,
 				EB6F520686C54DA99C893CAD /* Nunito-Black.ttf in Resources */,
+				FAE5502D24FD775F00C1F4BD /* main.jsbundle in Resources */,
 				BBE052A68B1E46C4803BD120 /* Nunito-BlackItalic.ttf in Resources */,
 				7FB11C1CD86C490397CFA4C6 /* Nunito-Bold.ttf in Resources */,
 				ED630F19F6CC46888B1F6E21 /* Nunito-BoldItalic.ttf in Resources */,
@@ -359,6 +360,7 @@
 				47E692E683684236AF9E0A9C /* Nunito-ExtraBoldItalic.ttf in Resources */,
 				C67454ED4AE74CAD994C6B55 /* Nunito-ExtraLight.ttf in Resources */,
 				3CA60A98C3BB4C90B5E75343 /* Nunito-ExtraLightItalic.ttf in Resources */,
+				FAB7243B24FC0BD100ED3BD6 /* GoogleService-Info.plist in Resources */,
 				9F00E4B4F19149A9B01CD96A /* Nunito-Italic.ttf in Resources */,
 				4C5B19DB4BF1477C8555FD02 /* Nunito-Light.ttf in Resources */,
 				B313048222264C4F9F5D8769 /* Nunito-LightItalic.ttf in Resources */,
@@ -646,6 +648,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "PG_Beauty/PG Beauty.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = FXNZRF8QQ8;
@@ -664,7 +668,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.etstech.ios.PG-Beauty";
 				PRODUCT_NAME = "PG Beauty";
-				PROVISIONING_PROFILE_SPECIFIER = "PG Beauty Provisioning Profile Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "PG Beauty Provisioning Profile Dev2";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -678,9 +682,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PG_Beauty/PG_BeautyRelease.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = FXNZRF8QQ8;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = PG_Beauty/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.1;
@@ -691,7 +697,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.etstech.ios.PG-Beauty";
 				PRODUCT_NAME = "PG Beauty";
-				PROVISIONING_PROFILE_SPECIFIER = "PG Beauty Provisioning Profile Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "PG Beauty Provisioning Profile Dev2";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

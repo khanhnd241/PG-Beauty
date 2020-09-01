@@ -8,18 +8,18 @@ import CategoryScreen from './components/tabs/categories/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
-import {HOME} from './constants/images/home';
-import {HOME_ACTIVE} from './constants/images/home_active';
-import {FEED} from './constants/images/feed';
-import {FEED_ACTIVE} from './constants/images/feed_active';
-import {CATEGORY} from './constants/images/category';
-import {CATEGORY_ACTIVE} from './constants/images/category_active';
-import {NOTIFICATION} from './constants/images/notification';
-import {NOTIFICATION_ACTIVE} from './constants/images/notification_active';
-import {ACCOUNT} from './constants/images/account';
-import {ACCOUNT_ACTIVE} from './constants/images/account_active';
-import {COLOR} from './constants/colors';
-import {fcmService} from './components/firebase/FCMService';
+import { HOME } from './constants/images/home';
+import { HOME_ACTIVE } from './constants/images/home_active';
+import { FEED } from './constants/images/feed';
+import { FEED_ACTIVE } from './constants/images/feed_active';
+import { CATEGORY } from './constants/images/category';
+import { CATEGORY_ACTIVE } from './constants/images/category_active';
+import { NOTIFICATION } from './constants/images/notification';
+import { NOTIFICATION_ACTIVE } from './constants/images/notification_active';
+import { ACCOUNT } from './constants/images/account';
+import { ACCOUNT_ACTIVE } from './constants/images/account_active';
+import { COLOR } from './constants/colors';
+import { fcmService } from './components/firebase/FCMService';
 import LocalNotificationService from './components/firebase/LocalNotificationService'
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
@@ -36,7 +36,7 @@ function TabNavigator(props) {
             iconName = focused ? FEED_ACTIVE : FEED;
           } else if (route.name === 'Danh mục') {
             iconName = focused ? CATEGORY_ACTIVE : CATEGORY;
-          } 
+          }
           else if (route.name === 'Thông báo') {
             iconName = focused ? NOTIFICATION_ACTIVE : NOTIFICATION;
           } else if (route.name === 'Tôi') {
@@ -50,7 +50,7 @@ function TabNavigator(props) {
         activeTintColor: COLOR.PRIMARY,
         inactiveTintColor: COLOR.PLACEHODER,
         tabStyle: {
-          backgroundColor:COLOR.WHITE
+          backgroundColor: COLOR.WHITE
         }
       }}
     >
@@ -69,38 +69,39 @@ export default class App extends Component {
   }
   componentDidMount = () => {
     fcmService.registerAppWithFCM();
-    fcmService.register(onRegister, onNotification, onOpenNotification);
-    LocalNotificationService.configure(onOpenNotification);
-    function onRegister(token) {
-      console.log("[App] onRegister: ",token);
-    }
-
-    function onNotification(notify) {
-      console.log("[App] onNotification: ", notify);
-      const options = {
-        soundName: 'default',
-        playSound: true
-      }
-      LocalNotificationService.showNotification(
-        0,
-        notify.title,
-        notify.body,
-        notify,
-        options
-      )
-    }
-    function onOpenNotification(notify) {
-      console.log('[App] onOpenNotification: ', notify)
-      alert('Open Notification: ' + notify.body)
-    }
+    fcmService.register(this.onRegister, this.onNotification, this.onOpenNotification);
+    LocalNotificationService.configure(this.onOpenNotification);
     return () => {
       console.log('[App] unRegister')
       fcmService.unRegister()
       LocalNotificationService.unregister()
     }
   }
+  onRegister(token) {
+    console.log("[App] onRegister: ", token);
+  }
+
+  onNotification(notify) {
+    // console.log("[App] onNotification: ", notify.body);
+    const options = {
+      soundName: 'default',
+      playSound: true
+    }
+    LocalNotificationService.showNotification(
+      0,
+      notify.title,
+      notify.body,
+      notify,
+      options
+    )
+  }
+  onOpenNotification(notify) {
+    console.log('[App] onOpenNotification: mo thong bao + ', notify)
+    // alert('Open Notification: ' + notify.body)
+  }
+
   render() {
-    return(
+    return (
       <TabNavigator />
     )
   }
