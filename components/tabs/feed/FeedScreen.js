@@ -65,7 +65,7 @@ class FeedScreen extends Component {
     loadPostComment = () => {
         axios.get(API.URL + API.NEWS, {
             params: {
-                order_by: 'id',
+                order_by: 'comment_cnt',
                 page: this.state.pageComment,
                 orientation: 'DESC'
             }
@@ -252,7 +252,7 @@ class FeedScreen extends Component {
                                                 createdAt={item.created_at}
                                                 content={item.content}
                                                 likeCount={item.like}
-                                                commentsCount={item.comments_count} />
+                                                commentsCount={item.comment_cnt} />
                                         }
                                         onEndReached={this.loadMoreLike}
                                         onEndReachedThreshold={0.1}
@@ -273,7 +273,7 @@ class FeedScreen extends Component {
                                                         createdAt={item.created_at}
                                                         content={item.content}
                                                         likeCount={item.like}
-                                                        commentsCount={item.comments_count} />
+                                                        commentsCount={item.comment_cnt} />
                                                 }
                                                 onEndReached={this.loadMoreComment}
                                                 onEndReachedThreshold={0.5}

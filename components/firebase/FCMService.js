@@ -66,8 +66,8 @@ class FCMService {
             console.log('[FCM Service] onNotificationApp caused app to open');
             if(remoteMessage) {
                 console.log('remote message background + ', remoteMessage);
-                let notification = remoteMessage.notification;
-                onOpenNotification(notification);
+                // let notification = remoteMessage.notification;
+                onOpenNotification(remoteMessage.notification);
             }
         })
         // when app is opened from a quit state
@@ -77,8 +77,8 @@ class FCMService {
 
             if(remoteMessage) {
                 console.log('remote message quit state + ', remoteMessage);
-                let notification = remoteMessage.notification;
-                onOpenNotification(notification);
+                // let notification = remoteMessage.notification;
+                onOpenNotification(remoteMessage.notification);
             }
         });
         //Foreground state messages

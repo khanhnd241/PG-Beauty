@@ -38,7 +38,7 @@ class CartDetailScreen extends Component {
     sumProduct = () => {
         let tong = 0;
         for (let i = 0; i < this.state.listProducts.length; i++) {
-            tong = tong + this.state.listProducts[i].base_price * this.state.listProducts[i].quantity;
+            tong = tong + this.state.listProducts[i].newPrice * this.state.listProducts[i].quantity;
         }
         this.setState({ total: tong - this.state.discount, loadingDialog: false });
         console.log('tong' + tong);
@@ -227,8 +227,10 @@ class CartDetailScreen extends Component {
                                                 <View style={{ flex: 4 }}>
                                                     <Text>{item.full_name}</Text>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
-                                                        <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                        <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.newPrice))} {STRING.CURRENCY}</Text>
+                                                        {item.sale_percent !== 0 ? (
+                                                            <Text style={{ color: COLOR.PLACEHODER, fontSize: 12, textDecorationLine: 'line-through', marginLeft: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                        ) : null}
                                                     </View>
 
                                                 </View>

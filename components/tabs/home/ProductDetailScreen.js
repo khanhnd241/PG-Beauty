@@ -40,7 +40,7 @@ class ProductDetailScreen extends Component {
             product: {},
             tag: '',
             title: '',
-            sale: '-30%',
+            sale: 0,
             newPrice: '',
             oldPrice: '',
             rate: '5',
@@ -52,7 +52,7 @@ class ProductDetailScreen extends Component {
             delivery: 'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
             description: '',
             tradeMark: '',
-            madeIn: 'Pháp',
+            madeIn: '',
             species: 'son lì',
             basketNumber: '3',
             index: null,
@@ -70,7 +70,8 @@ class ProductDetailScreen extends Component {
             loadingDialog: false,
             deviceId: '',
             total: '',
-            noImages: [IMAGE.NO_IMAGE]
+            noImages: [IMAGE.NO_IMAGE],
+            newPrice: null
         };
     }
     componentDidMount = () => {
@@ -107,9 +108,12 @@ class ProductDetailScreen extends Component {
                 ammount: response.data.success.on_hand,
                 views: response.data.success.views,
                 category: response.data.success.category,
-                tradeMark: response.data.success.trade_mark_name
+                tradeMark: response.data.success.trade_mark_name,
+                madeIn: response.data.success.attributes[0].value,
+                // sale: parseInt(response.data.success.sale_percent)
             }, () => {
-                this.getlistSameType()
+                this.getlistSameType();
+                this.getPrice();
             });
             if (imagesProduct.length == 0) {
                 console.log(imagesProduct.length);
@@ -175,6 +179,7 @@ class ProductDetailScreen extends Component {
         if (this.state.amountOrder == 0) {
             this.setState({ warningAmountDialog: true, loadingDialog: false })
         } else {
+            productOrder.newPrice = this.state.newPrice;
             productOrder.quantity = this.state.amountOrder;
             this.state.listUserOrder.push(productOrder);
             this.setState({ loadingDialog: true }, () => {
@@ -241,6 +246,10 @@ class ProductDetailScreen extends Component {
     format(n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+    getPrice = () => {
+        let newPrice = this.state.product.base_price * (100 - this.state.sale) / 100;
+        this.setState({ newPrice: newPrice })
+    }
     render() {
         return (
             <SafeAreaView style={styles.screen}>
@@ -248,11 +257,11 @@ class ProductDetailScreen extends Component {
 
                 <ScrollView ref='_scrollView' style={styles.background}>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{flex:1, alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%'}}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.goBack() }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
                             <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
                         </TouchableOpacity>
-                        <View style={{flex:4}}></View>
-                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{flex:1, height: '100%', width: '100%', alignItems:'center'}}>
+                        <View style={{ flex: 4 }}></View>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, height: '100%', width: '100%', alignItems: 'center' }}>
                             <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
@@ -277,15 +286,20 @@ class ProductDetailScreen extends Component {
                             <View style={{ flex: 6 }}>
                                 <Text style={styles.title_text}>{this.state.product.full_name}</Text>
                             </View>
-                            <View style={{ flex: 1 }}>
-                                <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
-                                    <Text style={{ color: COLOR.WHITE, fontSize: 10, fontFamily: STRING.FONT_NORMAL }}>{this.state.sale}</Text>
-                                </ImageBackground>
-                            </View>
+                            {this.state.sale !== 0 ? (
+                                <View style={{ flex: 1 }}>
+                                    <ImageBackground style={{ width: 30, height: 30.5, alignItems: 'center', justifyContent: 'center' }} source={IMAGE.ICON_SALE_BG}>
+                                        <Text style={{ color: COLOR.WHITE, fontSize: 10, fontFamily: STRING.FONT_NORMAL }}>{this.state.sale}%</Text>
+                                    </ImageBackground>
+                                </View>
+                            ) : null}
+
                         </View>
                         <View style={styles.title}>
-                            <Text style={styles.price_text}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
-                            <Text style={styles.old_price}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                            <Text style={styles.price_text}>{this.format(parseInt(this.state.newPrice))} {STRING.CURRENCY}</Text>
+                            {this.state.sale !== 0 ? (
+                                <Text style={styles.old_price}>{this.format(parseInt(this.state.product.base_price))} {STRING.CURRENCY}</Text>
+                            ) : null}
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 4, flexDirection: 'row' }}>
@@ -416,7 +430,7 @@ class ProductDetailScreen extends Component {
                                         price={item.base_price}
                                         point={5}
                                         views={item.views}
-                                        sale={'-10%'}
+                                        sale={parseInt(item.sale_percent)}
                                     />
                                 </TouchableOpacity>
                             }
@@ -440,7 +454,7 @@ class ProductDetailScreen extends Component {
                                         price={item.base_price}
                                         point={5}
                                         views={item.views}
-                                        sale={'-10%'}
+                                        sale={parseInt(item.sale_percent)}
                                     />
                                 </TouchableOpacity>
                             }
