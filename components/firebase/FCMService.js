@@ -1,5 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
+import { lessThan } from 'react-native-reanimated';
 
 class FCMService {
     register = (onRegister, onNotification, onOpenNotification) => {
@@ -9,10 +10,10 @@ class FCMService {
 
     registerAppWithFCM = async () => {
         if (Platform.OS === 'ios') {
-
+            await messaging().registerDeviceForRemoteMessages();
+            await messaging().setAutoInitEnabled(true);
         }
-        await messaging().registerDeviceForRemoteMessages();
-        await messaging().setAutoInitEnabled(true);
+        
 
     }
 
@@ -61,10 +62,11 @@ class FCMService {
 
     createNotificationListeners = (onRegister, onNotification, onOpenNotification) => {
         // when app is running, but in the background
-        messaging().onNotificationOpenedApp(remotMessage => {
+        messaging().onNotificationOpenedApp(remoteMessage => {
             console.log('[FCM Service] onNotificationApp caused app to open');
-            if(remotMessage) {
-                const notification = remotMessage.notification;
+            if(remoteMessage) {
+                console.log('remote message background + ', remoteMessage);
+                let notification = remoteMessage.notification;
                 onOpenNotification(notification);
             }
         })
@@ -74,7 +76,8 @@ class FCMService {
             console.log('[FCM Service] getInitialNotification Notification caused app to open');
 
             if(remoteMessage) {
-                const notification = remoteMessage.notification;
+                console.log('remote message quit state + ', remoteMessage);
+                let notification = remoteMessage.notification;
                 onOpenNotification(notification);
             }
         });
@@ -83,11 +86,11 @@ class FCMService {
             console.log('[FCM Service] A new FCM message arrived! ',remotMessage);
             if(remotMessage) {
                 let notification = null;
-                if(Platform.OS === 'ios') {
-                    notification = remotMessage.data.notification;
-                } else {
+                // if(Platform.OS === 'ios') {
+                //     notification = remotMessage.notification;
+                // } else {
                     notification = remotMessage.notification;
-                }
+                // }
                 onNotification(notification);
             }
         })
