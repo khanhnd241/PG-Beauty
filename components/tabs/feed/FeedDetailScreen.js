@@ -179,7 +179,9 @@ class FeedDetailScreen extends Component {
                     content: json.success.content,
                     image: image,
                     title: json.success.title,
-                    createdAt: json.success.created_at
+                    createdAt: json.success.created_at,
+                    commentsCount: parseInt(json.success.comment_cnt),
+                    likeCount: parseInt(json.success.like)
                 })
             })
             .catch((error) => {

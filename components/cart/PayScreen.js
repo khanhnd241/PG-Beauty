@@ -188,7 +188,7 @@ class PayScreen extends Component {
                                             <View style={{ flex: 4 }}>
                                                 <Text>{item.full_name}</Text>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.base_price))} {STRING.CURRENCY}</Text>
+                                                    <Text style={{ color: COLOR.PRIMARY, fontSize: 16 }}>{this.format(parseInt(item.newPrice))} {STRING.CURRENCY}</Text>
                                                     <Text style={{ color: COLOR.TEXTBODY, fontSize: 14, marginLeft: 16 }}>x{item.quantity}</Text>
                                                 </View>
 

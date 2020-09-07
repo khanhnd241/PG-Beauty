@@ -163,7 +163,7 @@ class ListProductsScreen extends Component {
                                     price={item.base_price}
                                     point={5}
                                     views={item.views}
-                                    sale={'-10%'}
+                                    sale={parseInt(item.sale_percent)}
                                     sell={50} />
                             </TouchableOpacity>
                         }

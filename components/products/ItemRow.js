@@ -12,7 +12,9 @@ const height = Dimensions.get('window').height;
 class ItemRow extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            newPrice: null
+        };
     }
 
     format(n) {
@@ -24,7 +26,12 @@ class ItemRow extends Component {
         return Math.floor(Rand * power) / power;
     }
     componentDidMount = () => {
-        this.setState({point:this.genRand(4.5,5,1)})
+        this.setState({ point: this.genRand(4.5, 5, 1) });
+        this.getPrice();
+    }
+    getPrice = () => {
+        let newPrice = this.props.price * (100 - this.props.sale) / 100;
+        this.setState({ newPrice: newPrice })
     }
     render() {
         const { image, name, price, point, views, sell, sale } = this.props
@@ -33,14 +40,17 @@ class ItemRow extends Component {
             <View style={styles.container_items}>
                 <View style={{ flex: 1 }}>
                     <ImageBackground source={imageUri.length != 0 ? { uri: imageUri } : IMAGE.NO_IMAGE} style={{ height: 111, marginTop: 7 }}>
-                        <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                            <SvgUri svgXmlData={RECTANGLE} />
-                            <Text style={{ color: 'white', position: 'absolute', top: 5, left: 2, fontSize: 9, fontFamily: STRING.FONT_NORMAL }}>{sale}</Text>
-                        </View>
+                        {sale !== 0 ? (
+                            <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                                <SvgUri svgXmlData={RECTANGLE} />
+                                <Text style={{ color: 'white', position: 'absolute', top: 5, left: 5, fontSize: 9, fontFamily: STRING.FONT_NORMAL }}>{sale}</Text>
+                            </View>
+                        ) : null}
+
                     </ImageBackground>
                     <View>
                         <Text style={{ color: COLOR.DESCRIPTION, fontSize: 14, height: 71, fontFamily: STRING.FONT_NORMAL }}>{name}</Text>
-                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16, fontFamily: STRING.FONT_SEMI_BOLD }}>{this.format(parseInt(price))} {STRING.CURRENCY}</Text>
+                        <Text style={{ color: COLOR.TEXTBODY, fontWeight: '600', fontSize: 16, fontFamily: STRING.FONT_SEMI_BOLD }}>{this.format(parseInt(this.state.newPrice))} {STRING.CURRENCY}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                             <SvgUri svgXmlData={STAR} />
                             <Text style={{ color: COLOR.PRIMARY, fontSize: 11, marginLeft: 3, fontFamily: STRING.FONT_NORMAL }}>{this.state.point}</Text>
