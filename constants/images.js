@@ -36,7 +36,12 @@ const IMAGE = {
     BTN_ADD: require ('../images/btn_add.png'),
     NO_IMAGE: require('../images/no_image.png'),
     DELIVERY: require('../images/delivery.png'),
-    ICON_APP: require('../images/Appicon.png')
+    ICON_APP: require('../images/Appicon.png'),
+    FOREN_1: require('../images/foren_1.png'),
+    FOREN_2: require('../images/foren_2.png'),
+    FOREN_3: require('../images/foren_3.png'),
+    FOREN_4: require('../images/foren_4.png'),
+    FOREN_5: require('../images/foren_5.png')
 
 }
 
