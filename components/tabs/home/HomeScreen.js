@@ -141,6 +141,11 @@ class HomeScreen extends Component {
                 </View>
         )
     }
+    navigateToActive = () => {
+        this.setState({bannerDialog: false});
+        this.props.navigation.navigate('GuaranteeForeoScreen',{title:STRING.ACTIVE_GUARANTEE_FOREO})
+
+    }
     render() {
         return (
             <SafeAreaView style={styles.screen}>
@@ -160,7 +165,7 @@ class HomeScreen extends Component {
                             <View style={{ flex: 1, alignItems: 'center' }} />
                         </View>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 50 }}>
-                            <View onPress={() => { this.props.navigation.navigate('CartDetailScreen') }} style={styles.basket}>
+                            <View style={styles.basket}>
                                 <SvgUri svgXmlData={BASKET} />
                                 {this.state.isHave ? (
                                     <View style={styles.basket_number}>
@@ -177,15 +182,15 @@ class HomeScreen extends Component {
                             images={this.state.images}
                         />
                         <View style={styles.tools}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category', title: 'PG Beauty', category_id:'1218106' })} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category', title: 'PG Beauty', category_id: '1218106' })} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_BEAUTY} />
                                 <Text style={styles.tool_text}>{STRING.PG_BEAUTY}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category',category_id:'1218126', title: 'PG Beauty tools' })} style={styles.icon_tool} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category', category_id: '1218126', title: 'PG Beauty tools' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_TOOL} />
                                 <Text style={styles.tool_text}>{STRING.PG_BEAUTY_TOOL}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category', title: 'PG Fashion', category_id:'1218125' })} style={styles.icon_tool} style={styles.icon_tool}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'category', title: 'PG Fashion', category_id: '1218125' })} style={styles.icon_tool} style={styles.icon_tool}>
                                 <SvgUri svgXmlData={PG_FASHION} />
                                 <Text style={styles.tool_text}>{STRING.PG_FASHION}</Text>
                             </TouchableOpacity>
@@ -252,7 +257,7 @@ class HomeScreen extends Component {
                         <View style={styles.flex_direction_row}>
                             <Text style={styles.title_list}>{STRING.NEW_PRODUCT}</Text>
                         </View>
-                        <View style={{paddingLeft:5}}>
+                        <View style={{ paddingLeft: 5 }}>
                             <FlatList
                                 numColumns={2}
                                 data={this.state.listNewProducts}
@@ -298,8 +303,11 @@ class HomeScreen extends Component {
                             <TouchableOpacity onPress={() => this.setState({ bannerDialog: false })} style={{ flexDirection: 'row-reverse', marginBottom: 25 }}>
                                 <SvgUri svgXmlData={BTN_CLOSE} />
                             </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Image style={{ width: deviceWidth - 20 }} source={IMAGE.DELIVERY} />
+                            <View style={{ backgroundColor: COLOR.WHITE, alignItems:'center', paddingVertical:5 }}>
+                                <Text style={{fontFamily:STRING.FONT_SEMI_BOLD}}>{STRING.ACTIVE_GUARANTEE_FOREO}</Text>
+                            </View>
+                            <TouchableOpacity onPress={this.navigateToActive}>
+                                <Image style={{ width: deviceWidth - 20 }} source={IMAGE.FOREN_4} />
                             </TouchableOpacity>
                         </DialogContent>
                     </Dialog>

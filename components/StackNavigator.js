@@ -19,7 +19,7 @@ import HistoryScreen from '../components/tabs/account/HistoryScreen';
 import OrderDetailScreen from '../components/tabs/account/OrderDetailScreen';
 import SearchProductsScreen from '../components/tabs/home/SearchProductsScreen';
 import InfoDetailScreen from '../components/tabs/account/InfoDetailScreen'
-
+import GuaranteeForeoScreen from '../components/tabs/account/GuaranteeForeoScreen'
 const navOptionHandler = () => ({
     headerShown: false
 })
@@ -51,7 +51,7 @@ class StackNavigator extends Component {
                     <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} options={navOptionHandler} />
                     <Stack.Screen name="SearchProductsScreen" component={SearchProductsScreen} options={navOptionHandler} />
                     <Stack.Screen name="InfoDetailScreen" component={InfoDetailScreen} options={navOptionHandler} />
-                    
+                    <Stack.Screen name="GuaranteeForeoScreen" component={GuaranteeForeoScreen} options={navOptionHandler} />
                 </Stack.Navigator>
             </NavigationContainer>
         );

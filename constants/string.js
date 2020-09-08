@@ -147,7 +147,36 @@ const STRING = {
     MINUTES_AGO: ' phút trước',
     HOURS_AGO: ' giờ trước',
     MUST_LOGIN_TO_LIKE_AND_COMMENT: 'Bạn cần đăng nhập để có thể thích và bình luận bài viết!',
-    SEARCH_RESULT: 'Kết quả tìm kiếm'
+    SEARCH_RESULT: 'Kết quả tìm kiếm',
+    ACTIVE_GUARANTEE_FOREO: 'HƯỚNG DẪN ACTIVE VÀ BẢO HÀNH FOREO',
+    INTRO_FOREO: 'Máy rửa mặt FOREO LUNA 3 VÀ MINI 3, cần được active và đăng kí bảo hành qua Foreo App cho lần đầu tiên. Sau đó khi dùng máy chỉ cần bật nút nguồn và sử dụng.',
+    STEP_1: 'B1: Đầu tiên các bạn down “FOREO FOR YOU” app về máy điện thoại của bạn. Lưu ý máy điện thoại IOS 12.0 trở lên và Adroid từ 6.0 trở lên.',
+    STEP_2:'B2: Tạo tài khoản Foreo',
+    STEP_2_DETAIL: '>>>TRƯỜNG HỢP 1: NẾU BẠN ĐÃ LẬP TÀI KHOẢN FOREO TRƯỚC ĐÓ RỒI, Bạn chỉ cần đăng nhập vào bằng cách điền thông tin như chỉ dẫn: Email + Password + ấn LOG IN >>>TRƯỜNG HỢP 2: NẾU BẠN CHƯA CÓ TK FOREO, bạn click vào "Create Account" để tạo tài khoản - Các bước tạo tài khoản mới ở bước tiếp theo ',
+    STEP_2_1: '1. Điền hết các thông tin ở bước tạo tài khoản',
+    STEP_2_2: '2. Ấn “Got it” để Foreo gửi mã kích hoạt Tk vào email của bạn',
+    STEP_2_3: '3. Mở email sẽ thấy thư của Foreo gửi mã kích hoạt, gồm 4 số và nhập vào. ',
+    STEP_2_4: '4. Chọn các model để active và đăng kí bảo hành.',
+    STEP_3: 'B3: ACTIVE VÀ ĐĂNG KÍ BẢO HÀNH CHO MÁY.',
+    STEP_3_1: '5. Bạn sẽ ấn và giữ vào nút nguồn 5s (Bạn nên giữ lâu hơn 5s, không nên ấn vào rồi bỏ tay ra luôn, để cho tới khi màn hình hiện lên thông tin về máy là được). ',
+    STEP_3_2: '6. Đăng kí bảo hành: bạn điền các thông tin: “Purchase Date – ngày mua – chọn ngày bạn kích hoạt máy. Upload proof of purchase – bạn không cần điền. Where did you buy your product –nơi mua hàng - bạn chọn “Duty Free”. Sau đó ấn “REGISTER DEVICE”.',
+    STEP_4: 'B4: Cài đặt chế độ cho máy',
+    STEP_4_1: '7. Chế độ dùng thử của hãng, họ cài mức rung 8 và time 60s. Nhưng mức rung này khá mạnh, các bạn sẽ cài đặt lại chế độ nhé.',
+    STEP_4_2: '8. Cài chế độ: bạn chọn nút setting hình bánh răng.',
+    STEP_4_3: '9. Intensity “mức rung”, bạn nên chọn 5-6 là mức thông thường, người nào mới sử dụng thì lên dùng 3-4 sau đó có thể tăng dần lên. Time = 60s là thời gian tiêu chuẩn tốt nhất cho 1 lần rửa mặt.',
+    STEP_4_4: '10. Sử dụng chế độ glow, bạn chọn sang glow, chế độ này mặc đinh mức rung là 16, và time chỉ 30s. Không nên sử dụng nhiều mức này, chỉ lên 1 tuần dung 2-3 lần',
+    FOREO_AFTER_ACTIVE: '- Sau khi ACTIVE VÀ ĐĂNG KÍ BẢO HÀNH xong, bạn thoát App ra và bật nút nguồn sử dụng khi cần rửa mặt. Máy rửa mặt sẽ chạy theo chu trình bạn đã cài đặt. Khi bạn muốn sử dụng chế độ glow cho mini 3, bạn chỉ cần mở máy, sau đó ấn 2 lần liên tiếp nút nguồn là được. Khi máy chạy ở chế độ “GLOW BOOSTE” Máy sẽ nháy và sáng đèn ở dưới, chạy ở mức 16 và 30s sẽ dừng lại.',
+    FOREO_NOTE: '- Note: trường hợp khi đang kí màn hình thông báo lỗi, bạn chỉ cần thoát App ra và đăng nhập lại là được nhé. Khi cài xong và không cần sử dụng tới App thì nên thoát App ra để khỏi bị lỗi khi App nâng cấp',
+    LUNA_3: 'ĐỐI VỚI LUNA 3: (KHI SỬ DỤNG CHẾ ĐỘ MASSAGE)',
+    LUNA_3_1: '- Luna 3 có thêm chức năng massage, và được hãng cài đặt chế độ massge, hướng dẫn cách massge chi tiết trong APP. Khi sử dụng muốn sử dụng chế độ massge.',
+    LUNA_3_2: '- Bạn đăng nhập Tk vào, Click nút “3”-(START) – Bạn sẽ click dòng chữ “15”- Go to massage treatments”. Và sẽ làm massage theo các vùng như hướng dẫn nha.',
+    LUNA_2: 'ĐỐI VỚI LUNA MINI 2',
+    LUNA_2_1: '- Đối với mini 2, thì bạn vẫn làm bước tạo tài khoản như trên, còn bước đăng kí bảo hành, bạn chọn đúng model và nhập serial number vào và ấn đăng kí là được nhé',
+    LUNA_2_2: '- Đăng kí mini 2, Bạn chọn model máy mini 2, và màn hình sẽ hiện ra như sau.',
+    LUNA_2_3: 'Cách 1: Bạn sẽ scan seri number dưới đấy máy, bắt đầu bằng chữ F',
+    LUNA_2_4: 'Cách 2: Bạn có thể nhập seri number',
+    LUNA_2_5: 'Sau đó ấn verify device là đăng kí thành công máy mini 2 nhé.'
+
 }
 
 export  {STRING}

@@ -68,6 +68,10 @@ class InfoScreen extends Component {
                         <Text style={styles.item_text}>{STRING.INTRODUCE_PG_BEAUTY}</Text>
                     </TouchableOpacity>
                     <View style={{ borderColor: COLOR.GRAY, borderTopWidth: 0.5 }} />
+                    <TouchableOpacity style={styles.item} onPress={() => this.props.navigation.navigate('GuaranteeForeoScreen',{title:STRING.ACTIVE_GUARANTEE_FOREO})}>
+                        <Text style={styles.item_text}>{STRING.ACTIVE_GUARANTEE_FOREO}</Text>
+                    </TouchableOpacity>
+                    <View style={{ borderColor: COLOR.GRAY, borderTopWidth: 0.5 }} />
                     <View style={{ flex: 1, flexDirection: 'row', paddingLeft: 16, paddingVertical: 15 }}>
                         <View style={{ flex: 6 }}>
                             <Text style={styles.item_text}>{STRING.VERSION}</Text>

@@ -66,39 +66,39 @@ class NotificationScreen extends Component {
             noNotiPromotion: false,
             noNotiForYou: false,
             listPromotion: [
-                {
-                    title: 'Khuyến mãi tháng hè',
-                    content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
-                    timeLine: '1 ngày trước'
-                },
-                {
-                    title: 'Giảm giá toàn bộ sản phẩm 50%',
-                    content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
-                    timeLine: '1 ngày trước'
-                },
-                {
-                    title: 'Khuyến mãi tháng hè',
-                    content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
-                    timeLine: '1 ngày trước'
-                }
+                // {
+                //     title: 'Khuyến mãi tháng hè',
+                //     content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
+                //     timeLine: '1 ngày trước'
+                // },
+                // {
+                //     title: 'Giảm giá toàn bộ sản phẩm 50%',
+                //     content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
+                //     timeLine: '1 ngày trước'
+                // },
+                // {
+                //     title: 'Khuyến mãi tháng hè',
+                //     content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
+                //     timeLine: '1 ngày trước'
+                // }
 
             ],
             listForYou: [
-                {
-                    title: 'Xác nhận đơn hàng',
-                    content: 'Cảm ơn bạn đã tin tưởng và đặt hàng tại PG Beauty. Chúng tôi sẽ giao hàng trước ngày 20-07-2020',
-                    timeLine: '1 ngày trước'
-                },
-                {
-                    title: 'Giảm giá toàn bộ sản phẩm 50%',
-                    content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
-                    timeLine: '1 ngày trước'
-                },
-                {
-                    title: 'Khuyến mãi tháng hè',
-                    content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
-                    timeLine: '1 ngày trước'
-                }
+                // {
+                //     title: 'Xác nhận đơn hàng',
+                //     content: 'Cảm ơn bạn đã tin tưởng và đặt hàng tại PG Beauty. Chúng tôi sẽ giao hàng trước ngày 20-07-2020',
+                //     timeLine: '1 ngày trước'
+                // },
+                // {
+                //     title: 'Giảm giá toàn bộ sản phẩm 50%',
+                //     content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
+                //     timeLine: '1 ngày trước'
+                // },
+                // {
+                //     title: 'Khuyến mãi tháng hè',
+                //     content: 'Tặng áo phông cute khi mua siêu phẩm kem lót CHANEL ( >2400k)',
+                //     timeLine: '1 ngày trước'
+                // }
 
             ]
         };
@@ -243,7 +243,8 @@ const styles = StyleSheet.create({
     text_no_noti: {
         marginTop: 24,
         fontSize: 13,
-        color: COLOR.DESCRIPTION
+        color: COLOR.DESCRIPTION,
+        fontFamily:STRING.FONT_NORMAL
     },
     item_container: {
         backgroundColor: COLOR.WHITE,
