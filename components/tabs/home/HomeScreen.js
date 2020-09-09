@@ -35,10 +35,7 @@ class HomeScreen extends Component {
         })
         this.state = {
             images: [
-                "https://source.unsplash.com/1024x768/?nature",
-                "https://source.unsplash.com/1024x768/?water",
-                "https://source.unsplash.com/1024x768/?girl",
-                "https://source.unsplash.com/1024x768/?tree" // Network image
+                IMAGE.BANNER
             ],
             listDeal: [],
             listSellingProduct: [],
@@ -142,8 +139,8 @@ class HomeScreen extends Component {
         )
     }
     navigateToActive = () => {
-        this.setState({bannerDialog: false});
-        this.props.navigation.navigate('GuaranteeForeoScreen',{title:STRING.ACTIVE_GUARANTEE_FOREO})
+        this.setState({ bannerDialog: false });
+        this.props.navigation.navigate('GuaranteeForeoScreen', { title: STRING.ACTIVE_GUARANTEE_FOREO })
 
     }
     render() {
@@ -178,6 +175,7 @@ class HomeScreen extends Component {
                     {/* banner và tool */}
                     <View>
                         <SliderBox
+                            // resizeMode='contain'
                             autoplay={true}
                             images={this.state.images}
                         />
@@ -303,8 +301,8 @@ class HomeScreen extends Component {
                             <TouchableOpacity onPress={() => this.setState({ bannerDialog: false })} style={{ flexDirection: 'row-reverse', marginBottom: 25 }}>
                                 <SvgUri svgXmlData={BTN_CLOSE} />
                             </TouchableOpacity>
-                            <View style={{ backgroundColor: COLOR.WHITE, alignItems:'center', paddingVertical:5 }}>
-                                <Text style={{fontFamily:STRING.FONT_SEMI_BOLD}}>{STRING.ACTIVE_GUARANTEE_FOREO}</Text>
+                            <View style={{ backgroundColor: COLOR.WHITE, alignItems: 'center', paddingVertical: 5 }}>
+                                <Text style={{ fontFamily: STRING.FONT_SEMI_BOLD }}>{STRING.ACTIVE_GUARANTEE_FOREO}</Text>
                             </View>
                             <TouchableOpacity onPress={this.navigateToActive}>
                                 <Image style={{ width: deviceWidth - 20 }} source={IMAGE.FOREN_4} />
