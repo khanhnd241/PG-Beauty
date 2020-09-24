@@ -19,7 +19,8 @@ class ItemRow extends Component {
     super(props);
     this.state = {
       newPrice: null,
-      point: null
+      point: null,
+      salePercent: null,
     };
   }
 
@@ -36,8 +37,13 @@ class ItemRow extends Component {
     this.getPrice();
   };
   getPrice = () => {
-    let newPrice = (this.props.price * (100 - this.props.sale)) / 100;
-    this.setState({newPrice: newPrice});
+    if (this.props.sale === 0) {
+      this.setState({newPrice: this.props.price});
+    } else {
+      let newPrice = this.props.price - this.props.sale;
+      let salePercent = Math.trunc((this.props.sale / this.props.price) * 100);
+      this.setState({newPrice: newPrice, salePercent: salePercent});
+    }
   };
   render() {
     const {image, name, price, point, views, sell, sale} = this.props;
@@ -52,7 +58,7 @@ class ItemRow extends Component {
             {sale !== 0 && (
               <View style={styles.sale}>
                 <SvgUri svgXmlData={RECTANGLE} />
-                <Text style={styles.textSale}>{sale}</Text>
+                <Text style={styles.textSale}>{this.state.salePercent}%</Text>
               </View>
             )}
           </ImageBackground>

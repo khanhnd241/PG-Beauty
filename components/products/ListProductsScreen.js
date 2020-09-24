@@ -45,14 +45,40 @@ class ListProductsScreen extends Component {
         console.log('load san pham cung loai' + this.state.categoryId);
         this.setState({isLoading: true}, this.loadCategory);
         break;
+      case 'deal_now':
+        this.setState({isLoading: true}, this.loadDealNow);
+        break;
       default:
-        console.log('load san pham moi');
         this.setState({isLoading: true}, this.loadListNewProduct);
         break;
     }
   };
+  loadDealNow = () => {
+    axios
+      .get(API.URL + API.PRODUCTS, {
+        params: {
+          order_by: 'sale_percent',
+          page: this.state.page,
+          orientation: 'DESC',
+        },
+      })
+      .then((response) => {
+        if (response.data.success.data.length == 0) {
+          this.setState({end: true, isLoading: false});
+        } else {
+          this.setState({
+            listProduct: this.state.listProduct.concat(
+              response.data.success.data,
+            ),
+            isLoading: false,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error.response.data.error));
+      });
+  };
   loadCategory = () => {
-    console.log('goi api');
     axios
       .get(API.URL + API.CATEGORIES + '/' + this.state.categoryId, {
         params: {
@@ -61,7 +87,7 @@ class ListProductsScreen extends Component {
         },
       })
       .then((response) => {
-        if (response.data.success.products.data.length == 0) {
+        if (response.data.success.products.data.length === 0) {
           this.setState({end: true, isLoading: false});
         } else {
           this.setState({
@@ -70,9 +96,6 @@ class ListProductsScreen extends Component {
             ),
             isLoading: false,
           });
-          console.log(
-            'chieu dai san pham cua danh muc' + this.state.listProduct.length,
-          );
         }
       })
       .catch((error) => {
@@ -114,7 +137,7 @@ class ListProductsScreen extends Component {
       .get(API.URL + API.PRODUCTS, {
         params: {
           category_id: this.state.categoryId,
-          page: this.state.page
+          page: this.state.page,
         },
       })
       .then((response) => {
@@ -147,6 +170,8 @@ class ListProductsScreen extends Component {
             console.log('load danh muc' + this.state.categoryId);
             this.loadCategory();
             break;
+          case 'deal_now':
+            this.loadDealNow();
           default:
             console.log('load san pham moi');
             this.loadListNewProduct();
@@ -195,7 +220,6 @@ class ListProductsScreen extends Component {
                   point={5}
                   views={item.views}
                   sale={parseInt(item.sale_percent)}
-                  sell={50}
                 />
               </TouchableOpacity>
             )}
