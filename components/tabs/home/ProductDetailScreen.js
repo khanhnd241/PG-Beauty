@@ -1,10 +1,10 @@
+/* eslint-disable radix */
 import React, {Component, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   FlatList,
   ImageBackground,
@@ -23,24 +23,18 @@ import {COLOR} from '../../../constants/colors';
 import {BACK_BLACK} from '../../../constants/images/back_black';
 import {SliderBox} from 'react-native-image-slider-box';
 import {BTN_SUB} from '../../../constants/images/btn_sub';
-import {RECTANGLE} from '../../../constants/images/rectangle';
 import {Rating, AirbnbRating} from 'react-native-ratings';
-import {STAR} from '../../../constants/images/star';
 import {BASKET} from '../../../constants/images/basket';
-import {BTN_ADD} from '../../../constants/images/btn_add';
 import {CAR} from '../../../constants/images/car';
 import axios from 'axios';
 import {API} from '../../../constants/api';
-import {ORDER} from '../../../constants/images/order';
 import HTMLView from 'react-native-htmlview';
 import ItemRow from '../../products/ItemRow';
-import {PLUS} from '../../../constants/images/plus';
 import Dialog, {
   DialogTitle,
   DialogContent,
   DialogFooter,
   DialogButton,
-  SlideAnimation,
 } from 'react-native-popup-dialog';
 const deviceWidth = Dimensions.get('window').width;
 
@@ -55,7 +49,6 @@ class ProductDetailScreen extends Component {
       tag: '',
       title: '',
       sale: 0,
-      newPrice: '',
       oldPrice: '',
       rate: '5',
       views: '',
@@ -104,52 +97,66 @@ class ProductDetailScreen extends Component {
     return Math.floor(Rand * power) / power;
   }
   loadDetail = (id) => {
+    console.log('idddddddddddddd ' + API.URL + API.PRODUCTS + '/' + id);
     this.setState({loadingDialog: true});
     let imagesProduct = [];
 
     axios
       .get(API.URL + API.PRODUCTS + '/' + id)
       .then((response) => {
-        console.log(response.data.success.category_id);
-        console.log(parseInt(response.data.success.base_price));
-        console.log(response.data.success.images.length);
         for (let i = 0; i < response.data.success.images.length; i++) {
           imagesProduct.push(response.data.success.images[i].url);
-          console.log(imagesProduct.length);
+        }
+        if (
+          response.data.success.sale_percent !== 0 &&
+          response.data.success.sale_percent !== null &&
+          response.data.success.sale_percent !== undefined
+        ) {
+          let newPrice =
+            response.data.success.base_price -
+            response.data.success.sale_percent;
+          this.setState({total: newPrice, newPrice: newPrice});
+        } else {
+          this.setState({
+            total: response.data.success.base_price,
+            newPrice: response.data.success.base_price,
+          });
+        }
+        if (response.data.success.attributes.length > 0) {
+          this.setState({madeIn: response.data.success.attributes[0].value});
         }
         this.setState(
           {
-            total: response.data.success.base_price,
             product: response.data.success,
             categoryId: response.data.success.category_id,
             ammount: response.data.success.on_hand,
             views: response.data.success.views,
             category: response.data.success.category,
             tradeMark: response.data.success.trade_mark_name,
-            madeIn: response.data.success.attributes[0].value,
-            // sale: parseInt(response.data.success.sale_percent)
+
+            sale: Math.trunc(
+              (parseInt(response.data.success.sale_percent) /
+                parseInt(response.data.success.base_price)) *
+                100,
+            ),
           },
           () => {
             this.getlistSameType();
-            this.getPrice();
           },
         );
-        if (imagesProduct.length == 0) {
-          console.log(imagesProduct.length);
+        if (imagesProduct.length === 0) {
           this.setState({images: this.state.noImages});
         } else {
-          console.log(imagesProduct.length);
           this.setState({images: imagesProduct});
         }
         this.setState({loadingDialog: false});
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response.data.error));
+        console.log(JSON.stringify(error));
         this.setState({loadingDialog: false});
       });
   };
   getlistSameType = () => {
-    console.log('getlistSameType');
     axios
       .get(API.URL + API.PRODUCTS, {
         params: {
@@ -157,7 +164,6 @@ class ProductDetailScreen extends Component {
         },
       })
       .then((response) => {
-        // console.log(response.data.success);
         this.setState({
           listSameType: response.data.success.data,
           loadingDialog: false,
@@ -170,7 +176,7 @@ class ProductDetailScreen extends Component {
   plus = () => {
     if (this.state.amountOrder < this.state.ammount) {
       let quantity = this.state.amountOrder + 1;
-      let total = this.state.product.base_price * quantity;
+      let total = this.state.newPrice * quantity;
       this.setState({amountOrder: quantity, total: total});
     }
   };
@@ -178,13 +184,12 @@ class ProductDetailScreen extends Component {
     this.setState({loadingDialog: true});
     if (this.state.amountOrder > 1) {
       let quantity = this.state.amountOrder - 1;
-      let total = this.state.product.base_price * quantity;
+      let total = this.state.newPrice * quantity;
       this.setState({amountOrder: quantity, total: total});
     }
     this.setState({loadingDialog: false});
   };
   checkOrder = () => {
-    console.log('check length' + this.state.listUserOrder.length);
     if (this.state.listUserOrder.length >= 1) {
       this.setState({isHave: true, loadingDialog: false});
     } else {
@@ -194,7 +199,7 @@ class ProductDetailScreen extends Component {
   };
   order = () => {
     let productOrder = this.state.product;
-    if (this.state.amountOrder == 0) {
+    if (this.state.amountOrder === 0) {
       this.setState({warningAmountDialog: true, loadingDialog: false});
     } else {
       productOrder.newPrice = this.state.newPrice;
@@ -203,7 +208,6 @@ class ProductDetailScreen extends Component {
       this.setState({loadingDialog: true}, () => {
         AsyncStorage.getItem('id', (err, result) => {
           if (result == null || result == '') {
-            console.log('chua dang nhap ' + this.state.listUserOrder);
             this.setState({loadingDialog: false});
             AsyncStorage.setItem(
               this.state.deviceId,
@@ -211,10 +215,6 @@ class ProductDetailScreen extends Component {
             );
             this.loadOrder();
           } else {
-            console.log(' dang nhap roi');
-            console.log(
-              'length order sau do' + this.state.listUserOrder.length,
-            );
             AsyncStorage.setItem(
               this.state.userId,
               JSON.stringify(this.state.listUserOrder),
@@ -231,9 +231,7 @@ class ProductDetailScreen extends Component {
   loadOrder = () => {
     this.setState({loadingDialog: true});
     AsyncStorage.getItem('id', (err, result) => {
-      console.log('id day' + result);
       if (result == null || result == '') {
-        console.log('chua dang nhap');
         AsyncStorage.getItem('deviceId', (err, deviceId) => {
           this.setState({deviceId: deviceId});
           AsyncStorage.getItem(deviceId, (err, listOrder) => {
@@ -243,7 +241,6 @@ class ProductDetailScreen extends Component {
           });
         });
       } else {
-        console.log('da dang nhap');
         this.setState({userId: result});
         AsyncStorage.getItem(result, (err, listOrder) => {
           if (JSON.parse(listOrder) == null || JSON.parse(listOrder) == '') {
@@ -254,11 +251,7 @@ class ProductDetailScreen extends Component {
               this.checkOrder();
             });
           } else {
-            console.log('list order' + JSON.parse(listOrder));
             this.setState({listUserOrder: JSON.parse(listOrder)});
-            console.log(
-              'length order hien tai' + this.state.listUserOrder.length,
-            );
             this.checkOrder();
           }
         });
@@ -269,11 +262,6 @@ class ProductDetailScreen extends Component {
   format(n) {
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
-  getPrice = () => {
-    let newPrice =
-      (this.state.product.base_price * (100 - this.state.sale)) / 100;
-    this.setState({newPrice: newPrice});
-  };
   render() {
     return (
       <SafeAreaView style={styles.screen}>
