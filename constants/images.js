@@ -43,8 +43,8 @@ const IMAGE = {
     FOREN_4: require('../images/foren_4.png'),
     FOREN_5: require('../images/foren_5.png'),
     BANNER: require('../images/banner.png'),
-    BANNER_2: require('../images/banner2.jpg'),
-    POPUP: require('../images/popup.jpg')
+    BANNER_2: require('../images/banner2.png'),
+    POPUP: require('../images/popup.png')
 
 }
 

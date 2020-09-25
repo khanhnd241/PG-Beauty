@@ -329,7 +329,7 @@ class HomeScreen extends Component {
             </View>
             <FlatList
               horizontal={true}
-              data={this.state.listDeal}
+              data={this.state.listNewProducts}
               renderItem={({item}) => (
                 <TouchableOpacity
                   onPress={() =>
