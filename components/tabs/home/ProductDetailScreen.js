@@ -57,7 +57,7 @@ class ProductDetailScreen extends Component {
       status: '1',
       ammount: null,
       delivery:
-        'Miễn Phí Vận Chuyển khi đơn đạt giá trị tối thiểu hoặc bán kính <3km. Bán kính >3km nội thành HN 25k',
+        'Chính sách giao hàng :\n - Free ship đối với đơn hàng 2 sp bất kì ( không áp dụng đối với sp đã giảm giá). Đối với khu vực nội thành phí ship là 20-30k/đơn hàng. Khu vực ngoại thành và ship tỉnh phí ship là 30-35k ',
       description: '',
       tradeMark: '',
       madeIn: '',
@@ -97,7 +97,6 @@ class ProductDetailScreen extends Component {
     return Math.floor(Rand * power) / power;
   }
   loadDetail = (id) => {
-    console.log('idddddddddddddd ' + API.URL + API.PRODUCTS + '/' + id);
     this.setState({loadingDialog: true});
     let imagesProduct = [];
 
@@ -608,6 +607,7 @@ class ProductDetailScreen extends Component {
                     order_by: 'same_type',
                     title: 'Sản phẩm cùng loại',
                     category_id: this.state.categoryId,
+                    navigation: this.props.navigation
                   })
                 }>
                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>

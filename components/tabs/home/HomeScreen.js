@@ -90,8 +90,14 @@ class HomeScreen extends Component {
         },
       })
       .then((response) => {
+        let listDeal = [];
+        for (let i = 0; i < response.data.success.data.length; i++) {
+          if (response.data.success.data[i].sale_percent !== 0) {
+            listDeal.push(response.data.success.data[i]);
+          }
+        }
         this.setState({
-          listDeal: this.state.listDeal.concat(response.data.success.data),
+          listDeal: listDeal,
           isLoading: false,
         });
       })
@@ -389,7 +395,7 @@ class HomeScreen extends Component {
             onDismiss={() => {
               this.setState({loadingDialog: false});
             }}
-            height={400}
+            height={height}
             width={0.9}
             visible={this.state.loadingDialog}>
             <DialogContent

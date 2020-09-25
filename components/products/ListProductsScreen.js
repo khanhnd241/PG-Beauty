@@ -35,19 +35,18 @@ class ListProductsScreen extends Component {
     };
   }
   componentDidMount = () => {
-    console.log('title' + this.state.title);
     switch (this.state.order_by) {
       case 'same_type':
-        console.log('load san pham cung loai' + this.state.categoryId);
         this.setState({isLoading: true}, this.loadListSameType);
         break;
       case 'category':
-        console.log('load san pham cung loai' + this.state.categoryId);
         this.setState({isLoading: true}, this.loadCategory);
         break;
       case 'deal_now':
         this.setState({isLoading: true}, this.loadDealNow);
         break;
+      case 'selling_product':
+        this.setState({isLoading: true}, this.loadListNewProduct);
       default:
         this.setState({isLoading: true}, this.loadListNewProduct);
         break;
@@ -63,15 +62,26 @@ class ListProductsScreen extends Component {
         },
       })
       .then((response) => {
+        let listDeal = [];
         if (response.data.success.data.length == 0) {
           this.setState({end: true, isLoading: false});
         } else {
-          this.setState({
-            listProduct: this.state.listProduct.concat(
-              response.data.success.data,
-            ),
-            isLoading: false,
-          });
+          for (let i = 0; i < response.data.success.data.length; i++) {
+            if (response.data.success.data[i].sale_percent !== 0) {
+              listDeal.push(response.data.success.data[i]);
+            }
+          }
+          this.setState(
+            {
+              listProduct: this.state.listProduct.concat(listDeal),
+              isLoading: false,
+            },
+            () => {
+              if (listDeal.length === 0) {
+                this.setState({end: true, isLoading: false});
+              }
+            },
+          );
         }
       })
       .catch((error) => {
@@ -115,7 +125,7 @@ class ListProductsScreen extends Component {
         },
       })
       .then((response) => {
-        if (response.data.success.data.length == 0) {
+        if (response.data.success.current_page === response.data.success.last_page) {
           this.setState({end: true, isLoading: false});
         } else {
           this.setState({
@@ -125,8 +135,6 @@ class ListProductsScreen extends Component {
             isLoading: false,
           });
         }
-
-        console.log('length product' + this.state.listProduct.length);
       })
       .catch((error) => {
         console.log(JSON.stringify(error.response.data.error));
@@ -172,6 +180,7 @@ class ListProductsScreen extends Component {
             break;
           case 'deal_now':
             this.loadDealNow();
+            break;
           default:
             console.log('load san pham moi');
             this.loadListNewProduct();
