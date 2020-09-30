@@ -20,7 +20,6 @@ import OrderDetailScreen from '../components/tabs/account/OrderDetailScreen';
 import SearchProductsScreen from '../components/tabs/home/SearchProductsScreen';
 import InfoDetailScreen from '../components/tabs/account/InfoDetailScreen';
 import GuaranteeForeoScreen from '../components/tabs/account/GuaranteeForeoScreen';
-import codePush from 'react-native-code-push';
 const navOptionHandler = () => ({
   headerShown: false,
 });
@@ -130,8 +129,4 @@ class StackNavigator extends Component {
     );
   }
 }
-const codePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_START,
-  installMode: codePush.InstallMode.IMMEDIATE,
-};
-export default codePush(codePushOptions)(StackNavigator);
+export default StackNavigator;
