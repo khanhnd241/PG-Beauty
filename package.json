@@ -1,6 +1,6 @@
 {
   "name": "PG_Beauty",
-  "version": "0.0.1",
+  "version": "1.4.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

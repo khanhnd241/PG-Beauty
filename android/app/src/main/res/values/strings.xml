@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PG Beauty</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">cKovOlPTtxcAG0R7iny4GVyS_2WMssK4XLnjH</string>
 </resources>
