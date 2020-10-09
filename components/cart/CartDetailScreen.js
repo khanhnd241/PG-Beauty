@@ -56,14 +56,15 @@ class CartDetailScreen extends Component {
           this.state.listProducts[i].quantity;
     }
     this.setState({total: tong - this.state.discount, loadingDialog: false});
-    console.log('tong' + tong);
   };
 
   deleteProduct = (index) => {
     this.setState({loadingDialog: true});
     // let listProducts = this.state.listProducts;
     this.state.listProducts.splice(index, 1);
-    // listProducts.splice(index, 1);
+    if (this.state.listProducts.length === 0) {
+      this.setState({isHave: false});
+    }
     // this.reload();
     // this.rerenderList(listProducts);
     this.reload();
@@ -103,15 +104,11 @@ class CartDetailScreen extends Component {
   };
   loadOrder = () => {
     AsyncStorage.getItem('id', (err, result) => {
-      console.log('id day' + result);
       if (result == null || result == '') {
         AsyncStorage.getItem('deviceId', (err, deviceId) => {
           this.setState({deviceId: deviceId});
           AsyncStorage.getItem(deviceId, (err, listOrder) => {
             this.setState({listProducts: JSON.parse(listOrder)});
-            console.log(
-              'length order hien tai' + this.state.listProducts.length,
-            );
             if (this.state.listProducts.length > 0) {
               this.setState({isHave: true});
             } else {
@@ -124,7 +121,6 @@ class CartDetailScreen extends Component {
         this.setState({userId: result});
         AsyncStorage.getItem(result, (err, listOrder) => {
           this.setState({listProducts: JSON.parse(listOrder)});
-          console.log('length order hien tai' + this.state.listProducts.length);
           if (this.state.listProducts.length > 0) {
             this.setState({isHave: true});
           } else {
@@ -410,7 +406,7 @@ class CartDetailScreen extends Component {
                     style={{
                       flex: 1,
                       flexDirection: 'row-reverse',
-                      marginBottom:10
+                      marginBottom: 10,
                     }}>
                     <Text style={{fontSize: 14, color: COLOR.TEXTBODY}}>
                       {this.format(parseInt(this.state.total))}{' '}

@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   AsyncStorage,
   Image,
+  RefreshControl,
 } from 'react-native';
 import {IMAGE} from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
@@ -37,7 +38,6 @@ import Dialog, {DialogContent} from 'react-native-popup-dialog';
 import DeviceInfo from 'react-native-device-info';
 let deviceWidth = Dimensions.get('window').width - 10;
 const height = Dimensions.get('window').height;
-
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -57,6 +57,7 @@ class HomeScreen extends Component {
       isHave: false,
       loadingDialog: false,
       bannerDialog: true,
+      refresh: false,
     };
   }
   loadListNewProduct = () => {
@@ -106,7 +107,9 @@ class HomeScreen extends Component {
       });
   };
   componentDidMount = () => {
-    this.setState({isLoading: true}, this.loadListNewProduct);
+    this.setState({isLoading: true}, () => {
+      this.loadListNewProduct();
+    });
     this.setState({isLoading: true}, this.loadListDealNow);
   };
   loadOrder = () => {
@@ -175,11 +178,33 @@ class HomeScreen extends Component {
       title: STRING.ACTIVE_GUARANTEE_FOREO,
     });
   };
+  onRefresh = () => {
+    this.setState(
+      {
+        page: 1,
+        refreshing: true,
+        listNewProducts: [],
+        listDeal: [],
+        isLoading: true,
+      },
+      () => {
+        this.loadListNewProduct();
+        this.loadListDealNow();
+      },
+    );
+  };
   render() {
     return (
       <SafeAreaView style={styles.screen}>
         <StatusBar barStyle="light-content" backgroundColor={COLOR.PRIMARY} />
-        <ScrollView style={styles.background}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={this.onRefresh}
+            />
+          }
+          style={styles.background}>
           <View style={styles.header}>
             <View style={{flex: 0.5}} />
             <View style={styles.inputHeader}>

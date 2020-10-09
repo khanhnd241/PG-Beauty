@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  ImageBackground,
+  RefreshControl,
   ScrollView,
   Dimensions,
   StatusBar,
@@ -32,9 +32,16 @@ class ListProductsScreen extends Component {
       page: 1,
       categoryId: category_id,
       end: false,
+      refresh: false,
     };
   }
   componentDidMount = () => {
+    this.props.navigation.addListener('focus', async () => {
+      this.onRefresh();
+    });
+    
+  };
+  loadListProduct = () => {
     switch (this.state.order_by) {
       case 'same_type':
         this.setState({isLoading: true}, this.loadListSameType);
@@ -51,6 +58,7 @@ class ListProductsScreen extends Component {
         this.setState({isLoading: true}, this.loadListNewProduct);
         break;
     }
+    this.setState({refresh: false});
   };
   loadDealNow = () => {
     axios
@@ -109,7 +117,9 @@ class ListProductsScreen extends Component {
         }
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response.data.error));
+        if (__DEV__) {
+          console.log(JSON.stringify(error.response.data.error));
+        }
         this.setState({
           isLoading: false,
         });
@@ -125,7 +135,9 @@ class ListProductsScreen extends Component {
         },
       })
       .then((response) => {
-        if (response.data.success.current_page === response.data.success.last_page) {
+        if (
+          response.data.success.current_page === response.data.success.last_page
+        ) {
           this.setState({end: true, isLoading: false});
         } else {
           this.setState({
@@ -137,7 +149,9 @@ class ListProductsScreen extends Component {
         }
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response.data.error));
+        if (__DEV__) {
+          console.log(JSON.stringify(error.response.data.error));
+        }
       });
   };
   loadListSameType = () => {
@@ -149,7 +163,6 @@ class ListProductsScreen extends Component {
         },
       })
       .then((response) => {
-        console.log('chieu dai 1 api' + response.data.success.data.length);
         if (response.data.success.data.length == 0) {
           this.setState({end: true, isLoading: false});
         } else {
@@ -162,16 +175,16 @@ class ListProductsScreen extends Component {
         }
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response.data.error));
+        if (__DEV__) {
+          console.log(JSON.stringify(error.response.data.error));
+        }
       });
   };
   loadMore = () => {
     if (this.state.end === false) {
-      console.log('goi api lan nua' + this.state.page);
       this.setState({page: this.state.page + 1, isLoading: true}, () => {
         switch (this.state.order_by) {
           case 'same_type':
-            console.log('load san pham cung loai' + this.state.categoryId);
             this.loadListSameType();
             break;
           case 'category':
@@ -196,6 +209,24 @@ class ListProductsScreen extends Component {
       </View>
     ) : null;
   };
+  onRefresh = () => {
+    const {order_by, title, category_id} = this.props.route.params;
+    this.setState(
+      {
+        order_by: order_by,
+        title: title,
+        listProduct: [],
+        isLoading: false,
+        page: 1,
+        categoryId: category_id,
+        end: false,
+        refresh: true,
+      },
+      () => {
+        this.loadListProduct();
+      },
+    );
+  };
   render() {
     return (
       <SafeAreaView style={styles.screen}>
@@ -213,6 +244,12 @@ class ListProductsScreen extends Component {
         </View>
         <View style={styles.background}>
           <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refresh}
+                onRefresh={this.onRefresh}
+              />
+            }
             numColumns={2}
             data={this.state.listProduct}
             renderItem={({item}) => (

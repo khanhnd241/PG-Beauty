@@ -27,7 +27,6 @@ class ItemSubCategory extends Component {
         };
     }
     getSubCategory = () => {
-        console.log('chieu dai chuoi chau' + this.state.listChild.length)
         for (let i = 0; i < this.state.listChild.length; i++) {
             if (this.state.id == this.state.listChild[i].parent_id) {
                 this.state.listSubCategory.push(this.state.listChild[i]);
@@ -35,7 +34,6 @@ class ItemSubCategory extends Component {
         }
     }
     checkChild = () => {
-        console.log('check chuoi con' + this.state.listSubCategory.length)
         if (this.state.listSubCategory.length > 0) {
             this.setState({ haveChild: true })
         } else {
