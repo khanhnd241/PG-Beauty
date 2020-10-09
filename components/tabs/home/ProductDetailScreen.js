@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,7 @@ import axios from 'axios';
 import {API} from '../../../constants/api';
 import HTMLView from 'react-native-htmlview';
 import ItemRow from '../../products/ItemRow';
+import {CART} from '../../../constants/images/cart';
 import Dialog, {
   DialogTitle,
   DialogContent,
@@ -85,8 +86,9 @@ class ProductDetailScreen extends Component {
   componentDidMount = () => {
     const {navigation} = this.props;
     navigation.addListener('focus', async () => {
+      let {id} = this.props.route.params;
       this.setState({rate: this.genRand(4.5, 5, 1)});
-      this.loadDetail(this.state.id);
+      this.loadDetail(id);
       this.loadOrder();
       // this.getlistSameType();
     });
@@ -151,7 +153,9 @@ class ProductDetailScreen extends Component {
         this.setState({loadingDialog: false});
       })
       .catch((error) => {
-        console.log(JSON.stringify(error));
+        if (__DEV__) {
+          console.log(JSON.stringify(error));
+        }
         this.setState({loadingDialog: false});
       });
   };
@@ -169,7 +173,9 @@ class ProductDetailScreen extends Component {
         });
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response.data.error));
+        if (__DEV__) {
+          console.log(JSON.stringify(error.response.data.error));
+        }
       });
   };
   plus = () => {
@@ -607,7 +613,7 @@ class ProductDetailScreen extends Component {
                     order_by: 'same_type',
                     title: 'Sản phẩm cùng loại',
                     category_id: this.state.categoryId,
-                    navigation: this.props.navigation
+                    navigation: this.props.navigation,
                   })
                 }>
                 <Text style={styles.see_all}>{STRING.SEE_ALL}</Text>
@@ -715,7 +721,8 @@ class ProductDetailScreen extends Component {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Image source={IMAGE.ORDER} />
+                {/* <Image source={IMAGE.ORDER} /> */}
+                <SvgUri fill={COLOR.WHITE} svgXmlData={CART} />
               </TouchableOpacity>
             </View>
           </View>

@@ -62,7 +62,7 @@ class ItemColumn extends Component {
             )}
           </ImageBackground>
           <View style={{marginHorizontal: 7}}>
-            <Text style={styles.textName}>{name}</Text>
+            <Text numberOfLines={3} style={styles.textName}>{name}</Text>
             <Text style={styles.textCurrency}>
               {this.format(parseInt(this.state.newPrice))} {STRING.CURRENCY}
             </Text>
