@@ -84,7 +84,7 @@ class AccountScreen extends Component {
   logout = () => {
     this.setState({loadingDialog: true});
     AsyncStorage.multiRemove(
-      ['token', 'id', 'name', 'phone', 'code', 'password'],
+      ['token', 'id', 'name', 'phone', 'code', 'password', 'address'],
       (err) => {
         if (err) {
         } else {

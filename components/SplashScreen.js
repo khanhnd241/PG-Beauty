@@ -59,7 +59,7 @@ class SplashScreen extends Component {
       })
       .catch((error) => {
         AsyncStorage.multiRemove(
-          ['token', 'id', 'name', 'phone', 'code', 'password'],
+          ['token', 'id', 'name', 'phone', 'code', 'password', 'address'],
           (err) => {
             if (__DEV__) {
               console.log(err);

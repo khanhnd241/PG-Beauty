@@ -6,24 +6,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Button,
   AsyncStorage,
   ScrollView,
-  Dimensions,
   StatusBar,
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {STRING} from '../../constants/string';
 import {COLOR} from '../../constants/colors';
-import {IMAGE} from '../../constants/images';
 import {BACK_BLACK} from '../../constants/images/back_black';
-import {PLUS} from '../../constants/images/plus';
-import {SUB} from '../../constants/images/sub';
 import {EDIT} from '../../constants/images/edit';
 import SvgUri from 'react-native-svg-uri';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {API} from '../../constants/api';
 import axios from 'axios';
 import {Dropdown} from 'react-native-material-dropdown';
@@ -50,9 +43,11 @@ class OrderInfomationScreen extends Component {
       listDistrictsSelected: [],
       listWardsSelected: [],
       loadingDialog: false,
+      haveAddress: false,
+      userAddress: '',
     };
   }
-  componentDidMount = () => {
+  componentDidMount = async () => {
     this.setState({loadingDialog: true});
     AsyncStorage.getItem('name', (err, result) => {
       if (result != null) {
@@ -88,6 +83,10 @@ class OrderInfomationScreen extends Component {
         }
         this.setState({loadingDialog: false});
       });
+    let userAddress = await AsyncStorage.getItem('address');
+    if (userAddress) {
+      this.setState({haveAddress: true, userAddress: userAddress});
+    }
   };
   openDistricts = (value, index) => {
     this.setState({selectedCity: value});
@@ -118,6 +117,73 @@ class OrderInfomationScreen extends Component {
   };
   selecteWard = (value, index) => {
     this.setState({ward: value});
+  };
+  checkInfo = () => {
+    if (this.state.name.trim() === '' || this.state.phone.trim() === '') {
+      return false;
+    }
+    if (!this.state.haveAddress) {
+      if (
+        this.state.selectedCity.trim() === '' ||
+        this.state.district.trim() === '' ||
+        this.state.ward.trim() === '' ||
+        this.state.address.trim() === ''
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+  navigateToPay = () => {
+    if (this.checkInfo()) {
+      if (this.state.haveAddress) {
+        this.props.navigation.navigate('PayScreen', {
+          total: this.state.total,
+          discount: this.state.discount,
+          name: this.state.name,
+          phone: this.state.phone,
+          userAddress: this.state.userAddress,
+          comment: this.state.comment,
+        });
+      } else {
+        this.setState(
+          {
+            userAddress:
+              this.state.address +
+              ' ' +
+              this.state.ward +
+              ', ' +
+              this.state.district +
+              ', ' +
+              this.state.selectedCity,
+          },
+          () => {
+            this.props.navigation.navigate('PayScreen', {
+              total: this.state.total,
+              discount: this.state.discount,
+              name: this.state.name,
+              phone: this.state.phone,
+              userAddress: this.state.userAddress,
+              comment: this.state.comment,
+            });
+            AsyncStorage.setItem(
+              'address',
+              this.state.address +
+                ' ' +
+                this.state.ward +
+                ', ' +
+                this.state.district +
+                ', ' +
+                this.state.selectedCity,
+            );
+          },
+        );
+      }
+    } else {
+      Alert.alert(STRING.NOTIFICATION, STRING.REQUIRED_FIELD, [
+        {text: STRING.ACCEPT},
+      ]);
+    }
   };
   render() {
     return (
@@ -194,6 +260,8 @@ class OrderInfomationScreen extends Component {
               />
               <View style={{borderTopWidth: 0.5, borderColor: COLOR.LINE}} />
               <TextInput
+                maxLength={10}
+                keyboardType="numeric"
                 value={this.state.phone}
                 editable={this.state.isEdit}
                 onChangeText={(value) => this.setState({phone: value})}
@@ -202,40 +270,55 @@ class OrderInfomationScreen extends Component {
                 placeholder={STRING.PHONE}
               />
               <View style={{borderTopWidth: 0.5, borderColor: COLOR.LINE}} />
-              <Dropdown
-                label={STRING.CITY}
-                data={this.state.listCity}
-                onChangeText={(value, index, data) => {
-                  this.openDistricts(value, index);
-                }}
-              />
-              <Dropdown
-                label={STRING.DISTRICT}
-                data={this.state.listDistrictsSelected}
-                onChangeText={(value, index, data) => {
-                  this.openDWards(value, index);
-                }}
-              />
-              <Dropdown
-                label={STRING.WARD}
-                data={this.state.listWardsSelected}
-                onChangeText={(value, index, data) => {
-                  this.selecteWard(value, index);
-                }}
-              />
-              <TextInput
-                onChangeText={(value) => this.setState({address: value})}
-                style={styles.input}
-                placeholderTextColor={COLOR.PLACEHODER}
-                placeholder={STRING.ADDRESS}
-              />
+              {this.state.haveAddress ? (
+                <View style={{marginVertical: 10}}>
+                  <Text style={{fontFamily: STRING.FONT_BOLD, fontSize: 14}}>
+                    {STRING.SHIPPING_ADDRESS}
+                  </Text>
+                  <Text style={{fontFamily: STRING.FONT_NORMAL, fontSize: 14}}>
+                    {this.state.userAddress}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => this.setState({haveAddress: false})}>
+                    <Text style={styles.userAddress}>
+                      {STRING.CHANGE_ADDRESS}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View>
+                  <Dropdown
+                    label={STRING.CITY}
+                    data={this.state.listCity}
+                    onChangeText={(value, index, data) => {
+                      this.openDistricts(value, index);
+                    }}
+                  />
+                  <Dropdown
+                    label={STRING.DISTRICT}
+                    data={this.state.listDistrictsSelected}
+                    onChangeText={(value, index, data) => {
+                      this.openDWards(value, index);
+                    }}
+                  />
+                  <Dropdown
+                    label={STRING.WARD}
+                    data={this.state.listWardsSelected}
+                    onChangeText={(value, index, data) => {
+                      this.selecteWard(value, index);
+                    }}
+                  />
+                  <TextInput
+                    onChangeText={(value) => this.setState({address: value})}
+                    style={styles.input}
+                    placeholderTextColor={COLOR.PLACEHODER}
+                    placeholder={STRING.ADDRESS}
+                  />
+                </View>
+              )}
+
               <View style={{borderTopWidth: 0.5, borderColor: COLOR.LINE}} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 10,
-                  alignItems: 'center',
-                }}>
+              <View style={styles.note}>
                 <SvgUri svgXmlData={EDIT} />
                 <Text style={{color: COLOR.LINK, marginLeft: 5}}>
                   {STRING.NOTE_ORDER}
@@ -253,48 +336,8 @@ class OrderInfomationScreen extends Component {
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => {
-              if (
-                this.state.selectedCity.trim() == '' ||
-                this.state.name.trim() == '' ||
-                this.state.phone.trim() == '' ||
-                this.state.district.trim() == '' ||
-                this.state.ward.trim() == '' ||
-                this.state.address.trim() == ''
-              ) {
-                Alert.alert(STRING.NOTIFICATION, STRING.REQUIRED_FIELD, [
-                  {text: STRING.ACCEPT},
-                ]);
-              } else {
-                this.props.navigation.navigate('PayScreen', {
-                  selectedCity: this.state.selectedCity,
-                  total: this.state.total,
-                  discount: this.state.discount,
-                  name: this.state.name,
-                  phone: this.state.phone,
-                  district: this.state.district,
-                  ward: this.state.ward,
-                  address: this.state.address,
-                  comment: this.state.comment,
-                });
-              }
-            }}
-            style={{
-              backgroundColor: COLOR.PRIMARY,
-              borderRadius: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                color: COLOR.WHITE,
-                fontSize: 16,
-                textTransform: 'uppercase',
-              }}>
-              {STRING.CONTINUE}
-            </Text>
+          <TouchableOpacity onPress={this.navigateToPay} style={styles.btnNext}>
+            <Text style={styles.txtNext}>{STRING.CONTINUE}</Text>
           </TouchableOpacity>
         </View>
         <Dialog
@@ -320,6 +363,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.PRIMARY,
   },
   background: {
+    flex: 1,
     backgroundColor: COLOR.WHITE,
   },
   header: {
@@ -383,6 +427,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
     color: COLOR.PLACEHODER,
+  },
+  userAddress: {
+    textDecorationLine: 'underline',
+    textAlign: 'right',
+    color: COLOR.PRIMARY,
+    fontFamily: STRING.FONT_NORMAL,
+    fontSize: 14,
+  },
+  btnNext: {
+    backgroundColor: COLOR.PRIMARY,
+    borderRadius: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txtNext: {
+    color: COLOR.WHITE,
+    fontSize: 16,
+    textTransform: 'uppercase',
+  },
+  note: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
   },
 });
 export default OrderInfomationScreen;

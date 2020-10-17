@@ -62,7 +62,9 @@ class ItemFeed extends Component {
   }
   componentDidMount = () => {
     AsyncStorage.getItem('token', (err, token) => {
-      this.setState({token: token});
+      if (token) {
+        this.setState({token: token});
+      }
     });
     this.setState(
       {rate: this.genRand(4.5, 5, 1), createdAt: this.props.createdAt},
@@ -93,10 +95,10 @@ class ItemFeed extends Component {
     }
   };
   likePost = () => {
-    if (this.state.token == null || this.state.token == '') {
+    if (this.state.token === null || this.state.token === '') {
       Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT);
     } else {
-      if (this.state.isLike == false) {
+      if (this.state.isLike === false) {
         let data = {};
         this.setState(
           {isLike: true, likeCount: this.state.likeCount + 1},
@@ -125,21 +127,17 @@ class ItemFeed extends Component {
           },
         );
       } else {
-        this.setState({likeCount: this.state.likeCount - 1});
+        this.setState({likeCount: this.state.likeCount - 1, isLike: false});
       }
     }
   };
   navigateToDetail = () => {
-    if (this.state.token == null || this.state.token == '') {
-      Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT);
-    } else {
-      this.state.navigation.navigate('FeedDetailScreen', {
-        id: this.state.id,
-        likeCount: this.state.likeCount,
-        commentsCount: this.state.commentsCount,
-        rate: this.state.rate,
-      });
-    }
+    this.state.navigation.navigate('FeedDetailScreen', {
+      id: this.state.id,
+      likeCount: this.state.likeCount,
+      commentsCount: this.state.commentsCount,
+      rate: this.state.rate,
+    });
   };
   render() {
     const {
@@ -175,7 +173,7 @@ class ItemFeed extends Component {
                   imageSize={15}
                   tintColor={COLOR.WHITE}
                   ratingColor={COLOR.PRIMARY}
-                  style={{backgroundColor: COLOR.WHITE, marginLeft:2}}
+                  style={{backgroundColor: COLOR.WHITE, marginLeft: 2}}
                 />
                 <Text style={styles.item_timeline}>
                   {moment(this.state.createdAt).format('DD-MM-YYYY')}

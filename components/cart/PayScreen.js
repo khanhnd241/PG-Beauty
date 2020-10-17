@@ -34,14 +34,11 @@ class PayScreen extends Component {
   constructor(props) {
     super(props);
     const {
-      selectedCity,
       total,
       discount,
       name,
       phone,
-      district,
-      ward,
-      address,
+      userAddress,
       comment,
     } = this.props.route.params;
     this.state = {
@@ -51,7 +48,7 @@ class PayScreen extends Component {
       name: name,
       phone: phone,
       comment: comment,
-      userAddress: address + ' ' + ward + ' ' + district + ' ' + selectedCity,
+      userAddress: userAddress,
       listTransfer: [],
       customer: {},
       loadingDialog: false,
@@ -61,10 +58,8 @@ class PayScreen extends Component {
     };
   }
   componentDidMount = () => {
-    console.log('userAddress' + this.state.userAddress);
     AsyncStorage.getItem('code', (err, code) => {
       this.setState({code: code});
-      console.log('code' + this.state.code);
     });
     this.loadOrder();
   };
@@ -75,19 +70,13 @@ class PayScreen extends Component {
           this.setState({deviceId: deviceId});
           AsyncStorage.getItem(deviceId, (err, listOrder) => {
             this.setState({listProducts: JSON.parse(listOrder)});
-            console.log(
-              'length order hien tai' + this.state.listProducts.length,
-            );
             this.transfer();
           });
         });
       } else {
-        console.log('id day' + result);
         this.setState({userId: result});
         AsyncStorage.getItem(result, (err, listOrder) => {
-          console.log('list order' + JSON.parse(listOrder));
           this.setState({listProducts: JSON.parse(listOrder)});
-          console.log('length order hien tai' + this.state.listProducts.length);
           this.transfer();
         });
       }
@@ -99,9 +88,9 @@ class PayScreen extends Component {
       product.productId = this.state.listProducts[i].id;
       product.quantity = this.state.listProducts[i].quantity;
       product.price = this.state.listProducts[i].base_price;
+      product.discount = this.state.listProducts[i].sale_percent;
       this.state.listTransfer.push(product);
     }
-    console.log('chieu dai' + this.state.listTransfer.length);
     if (this.state.code == null || this.state.code == '') {
       this.state.customer.name = this.state.name;
       this.state.customer.contactNumber = this.state.phone;
@@ -126,7 +115,7 @@ class PayScreen extends Component {
         },
       })
       .then((response) => {
-        console.log(response.data.access_token);
+        // console.log(response.data.access_token);
         if (
           response.data.access_token == null ||
           response.data.access_token == ''
@@ -156,7 +145,6 @@ class PayScreen extends Component {
             .post(API.URL_API_KIOT + API.ORDERS, data, config)
             .then((res) => {
               this.setState({loadingDialog: false});
-              console.log('respone' + JSON.stringify(res.data));
               Alert.alert(STRING.NOTIFICATION, STRING.ORDER_SUCCESS, [
                 {text: STRING.ACCEPT},
               ]);
@@ -182,13 +170,17 @@ class PayScreen extends Component {
                 JSON.stringify(err.response.data.responseStatus.message),
                 [{text: STRING.ACCEPT}],
               );
-              console.log('loi' + JSON.stringify(err));
+              if (__DEV__) {
+                console.log(JSON.stringify(err));
+              }
             });
         }
       })
       .catch((err) => {
         this.setState({loadingDialog: false});
-        console.log(JSON.stringify(err));
+        if (__DEV__) {
+          console.log(JSON.stringify(err));
+        }
         Alert.alert(
           STRING.NOTIFICATION,
           JSON.stringify(err.response.data.responseStatus.message),
@@ -344,7 +336,7 @@ class PayScreen extends Component {
             <Text style={styles.title}>{STRING.TRANSPORTATION}</Text>
             <Text
               style={{color: COLOR.DESCRIPTION, fontSize: 13, marginTop: 5}}>
-              Vận chuyển giao hàng nhanh 
+              Vận chuyển giao hàng nhanh
             </Text>
           </View>
           <View
@@ -416,7 +408,7 @@ class PayScreen extends Component {
                 </Text>
               </View>
             </View>
-            <View style={{flex: 1, marginTop:10}}>
+            <View style={{flex: 1, marginTop: 10}}>
               <Text style={{fontSize: 14, color: COLOR.TEXTBODY}}>
                 {STRING.TOTAL_NOT_YET_SHIP}
               </Text>
