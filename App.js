@@ -1,12 +1,13 @@
 import React, {Component, useEffect} from 'react';
 import {
-  StatusBar,
+  AsyncStorage,
   View,
   SafeAreaView,
   Image,
   TouchableOpacity,
   Button,
   StyleSheet,
+
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IMAGE} from './constants/images';
@@ -29,6 +30,9 @@ import {ACCOUNT_ACTIVE} from './constants/images/account_active';
 import {COLOR} from './constants/colors';
 import {fcmService} from './components/firebase/FCMService';
 import LocalNotificationService from './components/firebase/LocalNotificationService';
+import axios from 'axios';
+import {API} from './constants/api';
+import DeviceInfo from 'react-native-device-info';
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -89,9 +93,20 @@ export default class App extends Component {
     };
   };
   onRegister(token) {
-    if (__DEV__) {
-      console.log('[App] onRegister: ', token);
-    }
+    AsyncStorage.getItem('device_token', (er, result) => {
+      if(result !== token) {
+        let data = {
+          device_token: token,
+          device_id: DeviceInfo.getUniqueId()
+        }
+        AsyncStorage.setItem('device_token', token);
+        axios.post(API.URL + API.DEVICE_TOKEN, data).then(res => console.log(res.data)).catch(err => console.log(err))
+        if (__DEV__) {
+          console.log('[App] onRegister: ', token);
+        }
+      }
+    })
+    
   }
 
   onNotification(notify) {
