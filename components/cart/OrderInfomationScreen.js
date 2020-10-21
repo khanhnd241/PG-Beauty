@@ -83,10 +83,12 @@ class OrderInfomationScreen extends Component {
         }
         this.setState({loadingDialog: false});
       });
-    let userAddress = await AsyncStorage.getItem('address');
-    if (userAddress) {
-      this.setState({haveAddress: true, userAddress: userAddress});
-    }
+    this.props.navigation.addListener('focus', async () => {
+      let userAddress = await AsyncStorage.getItem('address');
+      if (userAddress) {
+        this.setState({haveAddress: true, userAddress: userAddress});
+      }
+    });
   };
   openDistricts = (value, index) => {
     this.setState({selectedCity: value});
