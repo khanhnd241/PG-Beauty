@@ -347,6 +347,7 @@ class RegisterScreen extends Component {
         );
         AsyncStorage.setItem('name', response.data.success.name);
         AsyncStorage.setItem('phone', response.data.success.phone);
+        AsyncStorage.removeItem('address');
       })
       .catch((error) => {});
   };

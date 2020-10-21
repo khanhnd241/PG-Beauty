@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Button,
   StyleSheet,
-
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IMAGE} from './constants/images';
@@ -94,19 +93,21 @@ export default class App extends Component {
   };
   onRegister(token) {
     AsyncStorage.getItem('device_token', (er, result) => {
-      if(result !== token) {
+      if (result !== token) {
         let data = {
           device_token: token,
-          device_id: DeviceInfo.getUniqueId()
-        }
+          device_id: DeviceInfo.getUniqueId(),
+        };
         AsyncStorage.setItem('device_token', token);
-        axios.post(API.URL + API.DEVICE_TOKEN, data).then(res => console.log(res.data)).catch(err => console.log(err))
+        axios
+          .post(API.URL + API.DEVICE_TOKEN, data)
+          .then((res) => console.log(res.data))
+          .catch((err) => console.log(err));
         if (__DEV__) {
           console.log('[App] onRegister: ', token);
         }
       }
-    })
-    
+    });
   }
 
   onNotification(notify) {

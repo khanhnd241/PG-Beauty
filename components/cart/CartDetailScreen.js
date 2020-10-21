@@ -104,7 +104,7 @@ class CartDetailScreen extends Component {
   };
   loadOrder = () => {
     AsyncStorage.getItem('id', (err, result) => {
-      if (result == null || result == '') {
+      if (!result) {
         AsyncStorage.getItem('deviceId', (err, deviceId) => {
           this.setState({deviceId: deviceId});
           AsyncStorage.getItem(deviceId, (err, listOrder) => {
