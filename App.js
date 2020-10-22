@@ -101,38 +101,39 @@ export default class App extends Component {
 
         axios
           .post(API.URL + API.DEVICE_TOKEN, data)
-          .then((res) => console.log(res.data);
-        AsyncStorage.setItem('device_token', token);)
-      .catch((err) => console.log(err));
+          .then((res => {
+            AsyncStorage.setItem('device_token', token);
+          })
+            .catch((err) => console.log(err));
+        if (__DEV__) {
+          console.log('[App] onRegister: ', token);
+        }
+      }
+    });
+  }
+
+  onNotification(notify) {
+    // console.log("[App] onNotification: ", notify.body);
+    const options = {
+      soundName: 'default',
+      playSound: true,
+    };
+    LocalNotificationService.showNotification(
+      0,
+      notify.title,
+      notify.body,
+      notify,
+      options,
+    );
+  }
+  onOpenNotification(notify) {
     if (__DEV__) {
-      console.log('[App] onRegister: ', token);
+      console.log('[App] onOpenNotification: mo thong bao + ', notify);
     }
-  }
-});
+    // alert('Open Notification: ' + notify.body)
   }
 
-onNotification(notify) {
-  // console.log("[App] onNotification: ", notify.body);
-  const options = {
-    soundName: 'default',
-    playSound: true,
-  };
-  LocalNotificationService.showNotification(
-    0,
-    notify.title,
-    notify.body,
-    notify,
-    options,
-  );
-}
-onOpenNotification(notify) {
-  if (__DEV__) {
-    console.log('[App] onOpenNotification: mo thong bao + ', notify);
+  render() {
+    return <TabNavigator />;
   }
-  // alert('Open Notification: ' + notify.body)
-}
-
-render() {
-  return <TabNavigator />;
-}
 }
