@@ -93,7 +93,7 @@ export default class App extends Component {
   };
   onRegister(token) {
     AsyncStorage.getItem('device_token', (er, result) => {
-      if (result !== token) {
+      if (result && result !== token) {
         let data = {
           device_token: token,
           device_id: DeviceInfo.getUniqueId(),
