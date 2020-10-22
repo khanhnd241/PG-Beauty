@@ -98,13 +98,15 @@ export default class App extends Component {
           device_token: token,
           device_id: DeviceInfo.getUniqueId(),
         };
-
         axios
           .post(API.URL + API.DEVICE_TOKEN, data)
-          .then((res => {
+          .then((res) => {
+            if (__DEV__) {
+              console.log(res.data);
+            }
             AsyncStorage.setItem('device_token', token);
           })
-            .catch((err) => console.log(err));
+          .catch((err) => console.log(err));
         if (__DEV__) {
           console.log('[App] onRegister: ', token);
         }
