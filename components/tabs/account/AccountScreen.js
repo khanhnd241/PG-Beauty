@@ -70,10 +70,10 @@ class AccountScreen extends Component {
           this.setState({phone: result});
         });
         AsyncStorage.getItem('id', (err, result) => {
+          this.setState({id: result});
         });
         this.setState({isLogin: true, token: result});
       }
-      this.setState({id: result});
     });
     if (this.state.user.sex == '1') {
       this.setState({man: true});
@@ -82,9 +82,15 @@ class AccountScreen extends Component {
     }
   };
   logout = () => {
+    let listOrder = [];
     this.setState({loadingDialog: true});
+    AsyncStorage.getItem('deviceId', (err, deviceId) => {
+      if (deviceId) {
+        AsyncStorage.setItem(deviceId, JSON.stringify(listOrder));
+      }
+    });
     AsyncStorage.multiRemove(
-      ['token', 'id', 'name', 'phone', 'code', 'password'],
+      ['token', 'id', 'name', 'phone', 'code', 'password', 'address', this.state.id],
       (err) => {
         if (err) {
         } else {
@@ -169,7 +175,9 @@ class AccountScreen extends Component {
                 </Text>
               </View>
             </View> */}
-            <View style={{height: 10, backgroundColor: COLOR.GRAY, marginTop:10}} />
+            <View
+              style={{height: 10, backgroundColor: COLOR.GRAY, marginTop: 10}}
+            />
             {/* lich su mua hang */}
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate('HistoryScreen')}
@@ -462,6 +470,6 @@ const styles = StyleSheet.create({
     color: COLOR.WHITE,
     fontSize: 16,
   },
-  line:{borderTopWidth: 0.5, borderColor: COLOR.LINE}
+  line: {borderTopWidth: 0.5, borderColor: COLOR.LINE},
 });
 export default AccountScreen;

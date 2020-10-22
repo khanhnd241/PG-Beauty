@@ -176,7 +176,8 @@ const STRING = {
     LUNA_2_3: 'Cách 1: Bạn sẽ scan seri number dưới đấy máy, bắt đầu bằng chữ F',
     LUNA_2_4: 'Cách 2: Bạn có thể nhập seri number',
     LUNA_2_5: 'Sau đó ấn verify device là đăng kí thành công máy mini 2 nhé.',
-    TOTAL_NOT_YET_SHIP: '(*Tổng thanh toán chưa bao gồm phí giao hàng)'
+    TOTAL_NOT_YET_SHIP: '(*Tổng thanh toán chưa bao gồm phí giao hàng)',
+    CHANGE_ADDRESS: 'Thay đổi địa chỉ',
 }
 
 export  {STRING}

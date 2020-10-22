@@ -23,7 +23,8 @@ const API = {
     PROVINCES: '/provinces',
     NEWS: '/news',
     LIKE: '/like/',
-    COMMENT: '/comment/'
+    COMMENT: '/comment/',
+    DEVICE_TOKEN: '/device-token'
 
 }
 export {API}

@@ -58,32 +58,14 @@ class SplashScreen extends Component {
         console.log(response.data);
       })
       .catch((error) => {
-        AsyncStorage.getItem('phone', (err, phone) => {
-          if (phone != '' && phone != null) {
-            AsyncStorage.getItem('password', (err, password) => {
-              if (password != '' && password != null) {
-                axios
-                  .post(API.URL + API.LOGIN, {
-                    phone: phone,
-                    password: password,
-                  })
-                  .then((response) => {
-                    console.log(response.data);
-                    if (
-                      response.data.success.token != null ||
-                      response.data.success.token != ''
-                    ) {
-                      AsyncStorage.setItem(
-                        'token',
-                        response.data.success.token,
-                      );
-                    }
-                  })
-                  .catch((error) => {});
-              }
-            });
-          }
-        });
+        AsyncStorage.multiRemove(
+          ['token', 'id', 'name', 'phone', 'code', 'password', 'address'],
+          (err) => {
+            if (__DEV__) {
+              console.log(err);
+            } 
+          },
+        );
       });
   };
   render() {

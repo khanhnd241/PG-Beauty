@@ -1,6 +1,6 @@
-import React, {Component, useEffect} from 'react';
+import React, { Component, useEffect } from 'react';
 import {
-  StatusBar,
+  AsyncStorage,
   View,
   SafeAreaView,
   Image,
@@ -8,35 +8,38 @@ import {
   Button,
   StyleSheet,
 } from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {IMAGE} from './constants/images';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { IMAGE } from './constants/images';
 import HomeScreen from './components/tabs/home/HomeScreen';
 import FeedScreen from './components/tabs/feed/FeedScreen';
 import CategoryScreen from './components/tabs/categories/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
-import {HOME} from './constants/images/home';
-import {HOME_ACTIVE} from './constants/images/home_active';
-import {FEED} from './constants/images/feed';
-import {FEED_ACTIVE} from './constants/images/feed_active';
-import {CATEGORY} from './constants/images/category';
-import {CATEGORY_ACTIVE} from './constants/images/category_active';
-import {NOTIFICATION} from './constants/images/notification';
-import {NOTIFICATION_ACTIVE} from './constants/images/notification_active';
-import {ACCOUNT} from './constants/images/account';
-import {ACCOUNT_ACTIVE} from './constants/images/account_active';
-import {COLOR} from './constants/colors';
-import {fcmService} from './components/firebase/FCMService';
+import { HOME } from './constants/images/home';
+import { HOME_ACTIVE } from './constants/images/home_active';
+import { FEED } from './constants/images/feed';
+import { FEED_ACTIVE } from './constants/images/feed_active';
+import { CATEGORY } from './constants/images/category';
+import { CATEGORY_ACTIVE } from './constants/images/category_active';
+import { NOTIFICATION } from './constants/images/notification';
+import { NOTIFICATION_ACTIVE } from './constants/images/notification_active';
+import { ACCOUNT } from './constants/images/account';
+import { ACCOUNT_ACTIVE } from './constants/images/account_active';
+import { COLOR } from './constants/colors';
+import { fcmService } from './components/firebase/FCMService';
 import LocalNotificationService from './components/firebase/LocalNotificationService';
+import axios from 'axios';
+import { API } from './constants/api';
+import DeviceInfo from 'react-native-device-info';
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
   return (
     <Tab.Navigator
       initialRouteName="Trang chủ"
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused}) => {
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
           let iconName;
           if (route.name === 'Trang chủ') {
             iconName = focused ? HOME_ACTIVE : HOME;
@@ -89,9 +92,26 @@ export default class App extends Component {
     };
   };
   onRegister(token) {
-    if (__DEV__) {
-      console.log('[App] onRegister: ', token);
-    }
+    AsyncStorage.getItem('device_token', (er, result) => {
+      if (result !== token) {
+        let data = {
+          device_token: token,
+          device_id: DeviceInfo.getUniqueId(),
+        };
+        axios
+          .post(API.URL + API.DEVICE_TOKEN, data)
+          .then((res) => {
+            if (__DEV__) {
+              console.log(res.data);
+            }
+            AsyncStorage.setItem('device_token', token);
+          })
+          .catch((err) => console.log(err));
+        if (__DEV__) {
+          console.log('[App] onRegister: ', token);
+        }
+      }
+    });
   }
 
   onNotification(notify) {
