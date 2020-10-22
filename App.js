@@ -91,25 +91,31 @@ export default class App extends Component {
       LocalNotificationService.unregister();
     };
   };
-  onRegister(token) {
-    AsyncStorage.getItem('device_token', (er, result) => {
-      if (result && result !== token) {
-        let data = {
-          device_token: token,
-          device_id: DeviceInfo.getUniqueId(),
-        };
-        axios
-          .post(API.URL + API.DEVICE_TOKEN, data)
-          .then((res) => {
-            if (__DEV__) {
-              console.log(res.data);
-            }
-            AsyncStorage.setItem('device_token', token);
-          })
-          .catch((err) => console.log(err));
+  sendToken = (token) => {
+    let data = {
+      device_token: token,
+      device_id: DeviceInfo.getUniqueId(),
+    };
+    axios
+      .post(API.URL + API.DEVICE_TOKEN, data)
+      .then((res) => {
         if (__DEV__) {
-          console.log('[App] onRegister: ', token);
+          console.log(res.data);
         }
+        AsyncStorage.setItem('device_token', token);
+      })
+      .catch((err) => console.log(err));
+  }
+  onRegister(token) {
+    if (__DEV__) {
+      console.log('[App] onRegister: ', token);
+    }
+    AsyncStorage.getItem('device_token', (er, result) => {
+      if (!result) {
+        this.sendToken(token);
+      }
+      if (result && result !== token) {
+        this.sendToken(token);
       }
     });
   }
