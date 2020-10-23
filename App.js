@@ -32,6 +32,7 @@ import LocalNotificationService from './components/firebase/LocalNotificationSer
 import axios from 'axios';
 import { API } from './constants/api';
 import DeviceInfo from 'react-native-device-info';
+import {SendToken} from './repository/UserRepository';
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -91,31 +92,17 @@ export default class App extends Component {
       LocalNotificationService.unregister();
     };
   };
-  sendToken = (token) => {
-    let data = {
-      device_token: token,
-      device_id: DeviceInfo.getUniqueId(),
-    };
-    axios
-      .post(API.URL + API.DEVICE_TOKEN, data)
-      .then((res) => {
-        if (__DEV__) {
-          console.log(res.data);
-        }
-        AsyncStorage.setItem('device_token', token);
-      })
-      .catch((err) => console.log(err));
-  }
+  
   onRegister(token) {
     if (__DEV__) {
       console.log('[App] onRegister: ', token);
     }
     AsyncStorage.getItem('device_token', (er, result) => {
       if (!result) {
-        this.sendToken(token);
+       SendToken({token: token});
       }
       if (result && result !== token) {
-        this.sendToken(token);
+        SendToken({token: result});
       }
     });
   }
@@ -140,7 +127,7 @@ export default class App extends Component {
     }
     // alert('Open Notification: ' + notify.body)
   }
-
+  
   render() {
     return <TabNavigator />;
   }
