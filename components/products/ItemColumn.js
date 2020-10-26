@@ -55,10 +55,10 @@ class ItemColumn extends Component {
             source={imageUri.length != 0 ? {uri: imageUri} : IMAGE.NO_IMAGE}
             style={styles.image}>
             {sale !== 0 && (
-              <View style={styles.sale}>
-                <SvgUri svgXmlData={RECTANGLE} />
+              <ImageBackground source={IMAGE.ICON_SALE_BG} style={styles.sale}>
+                {/* <SvgUri svgXmlData={RECTANGLE} /> */}
                 <Text style={styles.textSale}>{this.state.salePercent}%</Text>
-              </View>
+              </ImageBackground>
             )}
           </ImageBackground>
           <View style={{marginHorizontal: 7}}>
@@ -88,17 +88,16 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   sale: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:30,
+    height:33,
   },
   textSale: {
     color: 'white',
-    position: 'absolute',
-    top: 5,
-    left: 5,
     fontSize: 9,
     fontFamily: STRING.FONT_NORMAL,
+    marginBottom:3
   },
   textName: {
     color: COLOR.DESCRIPTION,
