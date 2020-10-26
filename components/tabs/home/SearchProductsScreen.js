@@ -43,22 +43,19 @@ class SearchProductsScreen extends Component {
       noProduct: false,
       history: [],
       refreshHistory: false,
-      end: false,
       listNewProducts: [],
-      pageSearch: 1,
+      end: false,
     };
   }
   componentDidMount = () => {
     this.loadCategories();
     // this.loadMore();
     AsyncStorage.getItem('history', (err, history) => {
-      console.log(JSON.parse(history)[0]);
       this.setState({history: JSON.parse(history), refreshHistory: true});
     });
   };
   loadCategories = () => {
     if (this.state.page < 2) {
-      console.log('gọi api' + this.state.page);
       axios
         .get(API.URL + API.CATEGORIES, {
           params: {
@@ -66,7 +63,6 @@ class SearchProductsScreen extends Component {
           },
         })
         .then((response) => {
-          console.log(response.data.success.data);
           this.setState({
             listCategory: response.data.success.data.splice(15),
             // isLoading: false
@@ -77,14 +73,18 @@ class SearchProductsScreen extends Component {
         });
     }
   };
-  // loadMore = () => {
-  //     let page = this.state.page + 1
-  //     this.setState({
-  //         isLoading: true,
-  //         page: page
-  //     }, this.loadCategories);
-
-  // }
+  loadMore = () => {
+    if (this.state.end === false) {
+      let page = this.state.page + 1;
+      this.setState(
+        {
+          isLoading: true,
+          page: page,
+        },
+        this.search,
+      );
+    }
+  };
   checkTextChange = (text) => {
     setTimeout(() => {
       if (this.state.textSearch == text) {
@@ -92,8 +92,6 @@ class SearchProductsScreen extends Component {
       }
     }, 3000);
     setTimeout(() => {
-      console.log(this.state.isSearch);
-
       this.search();
     }, 4000);
   };
@@ -101,16 +99,57 @@ class SearchProductsScreen extends Component {
     this.setState({textSearch: text});
   };
   search = () => {
-    if (this.state.textSearch.trim() != '') {
-      this.setState({isLoading: true, focus: false});
-      axios
-        .get(API.URL + API.PRODUCTS, {
-          params: {
-            page: this.state.pageSearch,
-            s: this.state.textSearch,
-          },
-        })
-        .then((response) => {
+    console.log(this.state.page);
+    axios
+      .get(API.URL + API.PRODUCTS, {
+        params: {
+          s: this.state.textSearch,
+          page: this.state.page,
+        },
+      })
+      .then((response) => {
+        if (response.data.success.data.length === 0) {
+          if (this.state.page === 1) {
+            this.setState({noProduct: true});
+          }
+          this.setState({
+            isLoading: false,
+            textChange: '',
+            end: true,
+          });
+        } else {
+          this.setState({
+            listNewProducts: this.state.listNewProducts.concat(
+              response.data.success.data,
+            ),
+            isLoading: false,
+            refresh: true,
+            isSearch: false,
+            noProduct: false,
+            textChange: '',
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({
+          isLoading: false,
+          focus: false,
+          isSearch: false,
+          noProduct: true,
+          end: true,
+        });
+      });
+  };
+  handleSearch = () => {
+    this.setState(
+      {
+        page: 1,
+        focus: false,
+        listNewProducts: [],
+        end: false,
+      },
+      () => {
+        if (this.state.textSearch.trim() !== '') {
           AsyncStorage.getItem('history', (err, history) => {
             let historySearch = JSON.parse(history);
             if (historySearch.indexOf(this.state.textSearch) == -1) {
@@ -118,54 +157,96 @@ class SearchProductsScreen extends Component {
               AsyncStorage.setItem('history', JSON.stringify(historySearch));
             }
           });
-          if (response.data.success.data.length === 0) {
-            this.setState({
-              noProduct: true,
-              isLoading: false,
-              textChange: '',
-              end: true,
-            });
-          } else {
-            let page = this.state.pageSearch + 1;
-            this.setState({
-              listNewProducts: this.state.listNewProducts.concat(
-                response.data.success.data,
-              ),
-              isLoading: false,
-              refresh: true,
-              focus: false,
-              isSearch: false,
-              noProduct: false,
-              textChange: '',
-              pageSearch: page,
-            });
-          }
-        })
-        .catch((error) => {
-          this.setState({
-            isLoading: false,
-            focus: false,
-            isSearch: false,
-            noProduct: true,
-          });
-        });
-    }
-
-    handleSearch = () => {
-      while (this.state.end === false) {
-        this.search();
-      }
-    };
+          this.search();
+        }
+      },
+    );
   };
   format(n) {
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
   deleteHistory = () => {
-    console.log('xoa lich su');
     let historySearch = [];
     AsyncStorage.setItem('history', JSON.stringify(historySearch));
     this.setState({history: historySearch});
   };
+  renderHistory = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          this.setState({textSearch: item}, () => {
+            this.handleSearch();
+          });
+        }}
+        style={{
+          padding: 10,
+          borderTopColor: COLOR.GRAY,
+          borderTopWidth: 1,
+        }}>
+        <Text
+          style={{
+            fontFamily: STRING.FONT_NORMAL,
+            fontSize: 14,
+            color: COLOR.TEXTBODY,
+          }}>
+          {item}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+  renderProduct = ({item}) => {
+    const imageUri = item.primary_image != null ? item.primary_image : '';
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          this.props.navigation.navigate('ProductDetailScreen', {id: item.id})
+        }
+        style={{
+          flexDirection: 'row',
+          height: 50,
+          backgroundColor: COLOR.WHITE,
+          borderRadius: 2,
+          borderBottomColor: COLOR.GRAY,
+          borderBottomWidth: 1,
+          alignItems: 'center',
+        }}>
+        <Image
+          source={imageUri.length != 0 ? {uri: imageUri} : IMAGE.NO_IMAGE}
+          style={{
+            width: 40,
+            height: 30,
+            marginHorizontal: 12,
+          }}
+        />
+        <View>
+          <Text
+            style={{
+              fontFamily: STRING.FONT_NORMAL,
+              fontSize: 12,
+              color: COLOR.TEXTBODY,
+            }}>
+            {item.name}
+          </Text>
+          <Text
+            style={{
+              fontFamily: STRING.FONT_NORMAL,
+              fontSize: 12,
+              color: COLOR.PRIMARY,
+            }}>
+            {this.format(parseInt(item.base_price))} {STRING.CURRENCY}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  handleFooter = () => {
+    return this.state.isLoading ? (
+      <View style={styles.loader}>
+        <ActivityIndicator color={COLOR.PRIMARY} size="large" />
+      </View>
+    ) : null;
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.screen}>
@@ -182,7 +263,7 @@ class SearchProductsScreen extends Component {
                 <SvgUri svgXmlData={SEARCH} />
               </View>
               <TextInput
-                onEndEditing={this.search}
+                onEndEditing={this.handleSearch}
                 onChangeText={(text) => this.textChange(text)}
                 autoFocus={this.state.focus}
                 placeholder={STRING.SEARCH_INPUT}
@@ -255,30 +336,7 @@ class SearchProductsScreen extends Component {
                 <FlatList
                   data={this.state.history}
                   extraData={this.state.refreshHistory}
-                  renderItem={({item}) => {
-                    return (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({textSearch: item}, () => {
-                            this.search();
-                          });
-                        }}
-                        style={{
-                          padding: 10,
-                          borderTopColor: COLOR.GRAY,
-                          borderTopWidth: 1,
-                        }}>
-                        <Text
-                          style={{
-                            fontFamily: STRING.FONT_NORMAL,
-                            fontSize: 14,
-                            color: COLOR.TEXTBODY,
-                          }}>
-                          {item}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  }}
+                  renderItem={this.renderHistory}
                 />
               </View>
             )}
@@ -308,61 +366,12 @@ class SearchProductsScreen extends Component {
                     </Text>
                     <FlatList
                       data={this.state.listNewProducts}
-                      extraData={this.state.refresh}
-                      renderItem={({item}) => {
-                        const imageUri =
-                          item.primary_image != null ? item.primary_image : '';
-                        return (
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.props.navigation.navigate(
-                                'ProductDetailScreen',
-                                {id: item.id},
-                              )
-                            }
-                            style={{
-                              flexDirection: 'row',
-                              height: 50,
-                              backgroundColor: COLOR.WHITE,
-                              borderRadius: 2,
-                              borderBottomColor: COLOR.GRAY,
-                              borderBottomWidth: 1,
-                              alignItems: 'center',
-                            }}>
-                            <Image
-                              source={
-                                imageUri.length != 0
-                                  ? {uri: imageUri}
-                                  : IMAGE.NO_IMAGE
-                              }
-                              style={{
-                                width: 40,
-                                height: 30,
-                                marginHorizontal: 12,
-                              }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontFamily: STRING.FONT_NORMAL,
-                                  fontSize: 12,
-                                  color: COLOR.TEXTBODY,
-                                }}>
-                                {item.name}
-                              </Text>
-                              <Text
-                                style={{
-                                  fontFamily: STRING.FONT_NORMAL,
-                                  fontSize: 12,
-                                  color: COLOR.PRIMARY,
-                                }}>
-                                {this.format(parseInt(item.base_price))}{' '}
-                                {STRING.CURRENCY}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        );
-                      }}
+                      //   extraData={this.state.refresh}
+                      renderItem={this.renderProduct}
+                      onEndReached={this.loadMore}
+                      onEndReachedThreshold={0.1}
+                      ListFooterComponent={this.handleFooter}
+                      keyExtractor={(item, index) => index.toString()}
                     />
                   </View>
                 )}
