@@ -33,8 +33,13 @@ import { COLOR } from './constants/colors';
 import { fcmService } from './components/firebase/FCMService';
 import LocalNotificationService from './components/firebase/LocalNotificationService';
 import { API } from './constants/api';
+<<<<<<< HEAD
 import { sendToken } from './repository/Authentication/index';
 import DATABASE from './config/database';
+=======
+import DeviceInfo from 'react-native-device-info';
+import {SendToken} from './repository/UserRepository';
+>>>>>>> develop
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -94,6 +99,7 @@ export default class App extends Component {
       LocalNotificationService.unregister();
     };
   };
+<<<<<<< HEAD
 
   onRegister = async (token) => {
     if (__DEV__) {
@@ -111,6 +117,19 @@ export default class App extends Component {
       if (tokenFirebase && tokenFirebase !== token) {
 
         sendToken({ token: token });
+=======
+  
+  onRegister(token) {
+    if (__DEV__) {
+      console.log('[App] onRegister: ', token);
+    }
+    AsyncStorage.getItem('device_token', (er, result) => {
+      if (!result) {
+       SendToken({token: token});
+      }
+      if (result && result !== token) {
+        SendToken({token: result});
+>>>>>>> develop
       }
 
     }
@@ -136,6 +155,10 @@ export default class App extends Component {
     }
     // alert('Open Notification: ' + notify.body)
   }
+<<<<<<< HEAD
+=======
+  
+>>>>>>> develop
   render() {
     return <TabNavigator />;
   }

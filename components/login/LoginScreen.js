@@ -22,6 +22,7 @@ import { CLOSE } from '../../constants/images/close';
 import { EYE_ACTIVE } from '../../constants/images/eye_active';
 import { COLOR } from '../../constants/colors';
 import axios from 'axios';
+import {SendToken} from '../../repository/UserRepository'
 import Dialog, {
   DialogTitle,
   DialogContent,
@@ -29,8 +30,12 @@ import Dialog, {
   DialogButton,
   SlideAnimation,
 } from 'react-native-popup-dialog';
+<<<<<<< HEAD
 import { sendToken } from '../../repository/Authentication/index';
 import DATABASE from '../../config/database';
+=======
+import DeviceInfo from 'react-native-device-info';
+>>>>>>> develop
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -155,6 +160,11 @@ class LoginScreen extends Component {
             AsyncStorage.setItem('phone', this.state.phone);
             AsyncStorage.setItem('password', this.state.password);
             AsyncStorage.setItem('code', this.state.code);
+            AsyncStorage.getItem('device_token', (err, deviceToken) => {
+              if (deviceToken) {
+                SendToken({token: deviceToken});
+              }
+            })
             this.getInfo(response.data.success.token);
             this.props.navigation.replace('App');
             this.setState({ loadingDialog: false });
