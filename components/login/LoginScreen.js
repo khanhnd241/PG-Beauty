@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Button,
@@ -12,15 +12,15 @@ import {
   AsyncStorage,
   ActivityIndicator,
 } from 'react-native';
-import {IMAGE} from '../../constants/images';
+import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import {STRING} from '../../constants/string';
-import {API} from '../../constants/api';
-import {LOGO} from '../../constants/images/logo';
-import {EYE} from '../../constants/images/eye';
-import {CLOSE} from '../../constants/images/close';
-import {EYE_ACTIVE} from '../../constants/images/eye_active';
-import {COLOR} from '../../constants/colors';
+import { STRING } from '../../constants/string';
+import { API } from '../../constants/api';
+import { LOGO } from '../../constants/images/logo';
+import { EYE } from '../../constants/images/eye';
+import { CLOSE } from '../../constants/images/close';
+import { EYE_ACTIVE } from '../../constants/images/eye_active';
+import { COLOR } from '../../constants/colors';
 import axios from 'axios';
 import Dialog, {
   DialogTitle,
@@ -29,6 +29,8 @@ import Dialog, {
   DialogButton,
   SlideAnimation,
 } from 'react-native-popup-dialog';
+import { sendToken } from '../../repository/Authentication/index';
+import DATABASE from '../../config/database';
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +42,7 @@ class LoginScreen extends Component {
       code: '',
     };
   }
-  componentDidMount = () => {};
+  componentDidMount = () => { };
   showPassword = () => {
     this.setState({
       showPassword: !this.state.showPassword,
@@ -51,13 +53,13 @@ class LoginScreen extends Component {
       Alert.alert(STRING.ERROR, STRING.ERR_NULL_PHONE_PASS, [
         {
           text: STRING.ACCEPT,
-          onPress: () => {},
+          onPress: () => { },
         },
       ]);
       return false;
     }
     if (this.state.password.length < 8) {
-      this.setState({loadingDialog: false});
+      this.setState({ loadingDialog: false });
       Alert.alert(STRING.ERROR, STRING.LESS_THAN_8, [
         {
           text: STRING.ACCEPT,
@@ -69,7 +71,7 @@ class LoginScreen extends Component {
     return true;
   };
   connect = () => {
-    this.setState({loadingDialog: true});
+    this.setState({ loadingDialog: true });
     var data = new FormData();
     data.append(API.SCOPES, API.SCOPES_DATA);
     data.append(API.GRANT_TYPE, API.GRANT_TYPE_DATA);
@@ -88,10 +90,10 @@ class LoginScreen extends Component {
           response.data.access_token == ''
         ) {
           Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [
-            {text: STRING.ACCEPT},
+            { text: STRING.ACCEPT },
           ]);
         } else {
-          this.setState({token: response.data.access_token});
+          this.setState({ token: response.data.access_token });
           const config = {
             headers: {
               Authorization: `Bearer ${this.state.token}`,
@@ -101,9 +103,9 @@ class LoginScreen extends Component {
           axios
             .get(
               API.URL_API_KIOT +
-                API.CUSTOMERS +
-                '?contactNumber=' +
-                this.state.phone,
+              API.CUSTOMERS +
+              '?contactNumber=' +
+              this.state.phone,
               config,
             )
             .then((res) => {
@@ -111,7 +113,7 @@ class LoginScreen extends Component {
                 res.data.data[0].code == '' ||
                 res.data.data[0].code == null
               ) {
-                this.setState({loadingDialog: false});
+                this.setState({ loadingDialog: false });
               } else {
                 this.setState({
                   loadingDialog: false,
@@ -122,46 +124,46 @@ class LoginScreen extends Component {
               }
             })
             .catch((err) => {
-              this.setState({loadingDialog: false});
+              this.setState({ loadingDialog: false });
               Alert.alert(STRING.NOTIFICATION, STRING.LOGIN_FAILED, [
-                {text: STRING.ACCEPT},
+                { text: STRING.ACCEPT },
               ]);
             });
         }
       })
       .catch((err) => {
-        this.setState({loadingDialog: false});
+        this.setState({ loadingDialog: false });
         Alert.alert(STRING.NOTIFICATION, STRING.LOGIN_FAILED, [
-          {text: STRING.ACCEPT},
+          { text: STRING.ACCEPT },
         ]);
       });
   };
-  login = () => {
+  login = async () => {
     if (this.validate() == true) {
-      this.setState({loadingDialog: true});
+      this.setState({ loadingDialog: true });
       axios
         .post(API.URL + API.LOGIN, {
           phone: this.state.phone,
           password: this.state.password,
         })
-        .then((response) => {
-          if (
-            response.data.success.token != null ||
-            response.data.success.token != ''
-          ) {
+        .then(async response  => {
+          if (response.data.success.token) {
+            let tokenFirebase = await DATABASE.getTokenFirebase();
+            sendToken({ token: tokenFirebase });
+            
             AsyncStorage.setItem('token', response.data.success.token);
             AsyncStorage.setItem('phone', this.state.phone);
             AsyncStorage.setItem('password', this.state.password);
             AsyncStorage.setItem('code', this.state.code);
             this.getInfo(response.data.success.token);
             this.props.navigation.replace('App');
-            this.setState({loadingDialog: false});
+            this.setState({ loadingDialog: false });
           }
         })
         .catch((error) => {
-          this.setState({loadingDialog: false});
+          this.setState({ loadingDialog: false });
           Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [
-            {text: STRING.ACCEPT},
+            { text: STRING.ACCEPT },
           ]);
         });
     }
@@ -175,7 +177,7 @@ class LoginScreen extends Component {
     };
     axios
       .get(API.URL + API.USER, config)
-      .then((response) => {
+      .then(async (response) => {
         AsyncStorage.setItem(
           JSON.stringify(response.data.success.id),
           JSON.stringify(listOrder),
@@ -188,9 +190,13 @@ class LoginScreen extends Component {
         AsyncStorage.setItem('id', JSON.stringify(response.data.success.id));
         AsyncStorage.setItem('name', response.data.success.name);
         AsyncStorage.setItem('phone', response.data.success.phone);
-        AsyncStorage.removeItem('address');
+        if (response.data.success.address) {
+          await DATABASE.setAddress({ value: response.data.success.address });
+        } else {
+          AsyncStorage.removeItem('address');
+        }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   render() {
@@ -207,23 +213,23 @@ class LoginScreen extends Component {
             <SvgUri svgXmlData={LOGO} />
           </View>
           <Text style={styles.text}>{STRING.ENTER_PHONE}</Text>
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <TextInput
               keyboardType="numeric"
               maxLength={10}
               value={this.state.phone}
               name="phone"
-              onChangeText={(value) => this.setState({phone: value})}
+              onChangeText={(value) => this.setState({ phone: value })}
               style={styles.phone_input}
               placeholder={STRING.PH_ENTER_PHONE}
               placeholderTextColor={COLOR.PLACEHODER}></TextInput>
             <View style={styles.password_input}>
               <TextInput
-                style={{flex: 5, fontFamily: STRING.FONT_NORMAL}}
+                style={{ flex: 5, fontFamily: STRING.FONT_NORMAL }}
                 secureTextEntry={this.state.showPassword}
                 value={this.state.password}
                 name="password"
-                onChangeText={(value) => this.setState({password: value})}
+                onChangeText={(value) => this.setState({ password: value })}
                 placeholder={STRING.PH_PASSWORD}
                 placeholderTextColor={COLOR.PLACEHODER}></TextInput>
               <TouchableOpacity
@@ -232,8 +238,8 @@ class LoginScreen extends Component {
                 {this.state.showPassword ? (
                   <SvgUri svgXmlData={EYE} />
                 ) : (
-                  <SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />
-                )}
+                    <SvgUri svgXmlData={EYE} fill={COLOR.PLACEHODER} />
+                  )}
               </TouchableOpacity>
             </View>
           </View>
@@ -248,7 +254,7 @@ class LoginScreen extends Component {
               {STRING.LOGIN}
             </Text>
           </TouchableOpacity>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <Text style={styles.fogot_pass}>{STRING.FOGOT_PASSWORD}</Text>
             <TouchableOpacity
               onPress={() => {
@@ -257,8 +263,8 @@ class LoginScreen extends Component {
               <Text style={styles.get_pass}>{STRING.GET_PASSWORD}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 20 }}>
+            <View style={{ flexDirection: 'row' }}>
               <Text style={styles.fogot_pass}>{STRING.NOT_HAVE_ACCOUNT}</Text>
               <TouchableOpacity
                 onPress={() => {
@@ -269,15 +275,15 @@ class LoginScreen extends Component {
             </View>
           </View>
           <Dialog
-            dialogStyle={{backgroundColor: 'transparent'}}
+            dialogStyle={{ backgroundColor: 'transparent' }}
             onDismiss={() => {
-              this.setState({loadingDialog: false});
+              this.setState({ loadingDialog: false });
             }}
             height={400}
             width={0.9}
             visible={this.state.loadingDialog}>
             <DialogContent
-              style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               <ActivityIndicator color={COLOR.PRIMARY} size="large" />
             </DialogContent>
           </Dialog>
