@@ -550,6 +550,7 @@ const styles = StyleSheet.create({
     borderColor: COLOR.LINE,
     padding: 10,
     fontFamily: STRING.FONT_NORMAL,
+    color: COLOR.TEXTBODY
   },
   btnBack: {
     width: '100%',

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -15,21 +15,21 @@ import {
   AsyncStorage,
   Image,
 } from 'react-native';
-import { COLOR } from '../../../constants/colors';
-import { IMAGE } from '../../../constants/images';
+import {COLOR} from '../../../constants/colors';
+import {IMAGE} from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import { STRING } from '../../../constants/string';
-import { BACK_BLACK } from '../../../constants/images/back_black';
-import { SCAN } from '../../../constants/images/scan';
-import { BASKET } from '../../../constants/images/basket';
-import { BASKET_RED } from '../../../constants/images/basket_red';
+import {STRING} from '../../../constants/string';
+import {BACK_BLACK} from '../../../constants/images/back_black';
+import {SCAN} from '../../../constants/images/scan';
+import {BASKET} from '../../../constants/images/basket';
+import {BASKET_RED} from '../../../constants/images/basket_red';
 import axios from 'axios';
-import { API } from '../../../constants/api';
-import { SEARCH } from '../../../constants/images/search';
+import {API} from '../../../constants/api';
+import {SEARCH} from '../../../constants/images/search';
 class SearchProductsScreen extends Component {
   constructor(props) {
     super(props);
-    const { amount } = this.props.route.params;
+    const {amount} = this.props.route.params;
     this.state = {
       amount: amount,
       page: 1,
@@ -377,54 +377,6 @@ class SearchProductsScreen extends Component {
               renderItem={this.renderHistory}
               keyExtractor={(item, index) => index.toString()}
             />
-            {/* <View style={{ marginHorizontal: 16 }}>
-              <Text
-                style={{
-                  fontFamily: STRING.FONT_NORMAL,
-                  color: COLOR.DESCRIPTION,
-                  marginTop: 10,
-                }}>
-                {STRING.SUGGEST}
-              </Text>
-              {this.state.listCategory.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('ListProductsScreen', {
-                        order_by: 'same_type',
-                        title: 'Sản phẩm cùng loại',
-                        category_id: item.id,
-                      })
-                    }
-                    style={{
-                      alignSelf: 'flex-start',
-                      padding: 5,
-                      backgroundColor: COLOR.WHITE,
-                      marginVertical: 7,
-                      borderRadius: 2,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: STRING.FONT_NORMAL,
-                        fontSize: 12,
-                        color: COLOR.TEXTBODY,
-                      }}>
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })} */}
-              {/* <FlatList
-                                data={this.state.listCategory.splice(15)}
-                                renderItem={({ item }) => {
-                                    return (
-                                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ListProductsScreen', { order_by: 'same_type', title: 'Sản phẩm cùng loại', category_id: item.id })} style={{ alignSelf: 'flex-start', padding: 5, backgroundColor: COLOR.WHITE, marginVertical: 7, borderRadius: 2 }} >
-                                            <Text style={{ fontFamily: STRING.FONT_NORMAL, fontSize: 12, color: COLOR.TEXTBODY }}>{item.name}</Text>
-                                        </TouchableOpacity>
-                                    )
-                                }
-                                } /> */}
-            {/* </View> */}
           </View>
         )}
       </View>
@@ -448,7 +400,7 @@ class SearchProductsScreen extends Component {
               <TextInput
                 onEndEditing={this.handleSearch}
                 onChangeText={(text) => this.textChange(text)}
-                // autoFocus={this.state.focus}
+                autoFocus={this.state.focus}
                 placeholder={STRING.SEARCH_INPUT}
                 placeholderTextColor={COLOR.PLACEHODER}
                 style={{
@@ -456,6 +408,7 @@ class SearchProductsScreen extends Component {
                   fontSize: 15,
                   fontFamily: STRING.FONT_NORMAL,
                   height: 40,
+                  color:COLOR.TEXTBODY
                 }}
               />
               <View style={{ flex: 1, alignItems: 'center' }} />
