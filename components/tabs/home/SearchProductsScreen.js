@@ -107,9 +107,12 @@ class SearchProductsScreen extends Component {
         },
       })
       .then((response) => {
+        if (response.data.success.last_page === response.data.success.current_page) {
+          this.setState({ end: true });
+        }
         if (response.data.success.data.length === 0) {
           if (this.state.page === 1) {
-            this.setState({noProduct: true});
+            this.setState({ noProduct: true });
           }
           this.setState({
             isLoading: false,
