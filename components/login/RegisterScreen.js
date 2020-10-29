@@ -34,7 +34,8 @@ import Dialog, {
   DialogButton,
   SlideAnimation,
 } from 'react-native-popup-dialog';
-// import DatePicker from 'react-native-datepicker'
+// import DatePicker from 'react-native-datepicker';
+import DATABASE from '../../config/database';
 class RegisterScreen extends Component {
   constructor(props) {
     super(props);
@@ -187,13 +188,11 @@ class RegisterScreen extends Component {
             .catch((err) => {
               this.setState({loadingDialog: false});
               // Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [{ text: STRING.ACCEPT }])
-              console.log('loi' + JSON.stringify(err));
             });
         }
       })
       .catch((err) => {
         this.setState({loadingDialog: false});
-        console.log(JSON.stringify(err));
         Alert.alert(STRING.NOTIFICATION, STRING.REGISTRATION_FAILED, [
           {text: STRING.ACCEPT},
         ]);
@@ -229,17 +228,14 @@ class RegisterScreen extends Component {
         Alert.alert(STRING.ERROR, JSON.stringify(error.response.data.error), [
           {text: STRING.ACCEPT},
         ]);
-        console.log(JSON.stringify(error.response.data));
       });
   };
-  ClickRegister = () => {
+  ClickRegister = async () => {
     let data = {};
     this.validate();
     if (this.validate() == true) {
       this.setState({loadingDialog: true});
-      AsyncStorage.getItem('device_token', (er, result) => {
-        data.device_token = result;
-      });
+      data.device_token = await DATABASE.getTokenFirebase();
       data.name = this.state.name;
       data.phone = this.state.phone;
       data.password = this.state.password;
@@ -284,7 +280,6 @@ class RegisterScreen extends Component {
             }
           })
           .catch((err) => {
-            console.log(JSON.stringify(err.response));
             Alert.alert(
               STRING.NOTIFICATION,
               JSON.stringify(err.response.data.responseStatus.message),
@@ -339,7 +334,7 @@ class RegisterScreen extends Component {
     };
     axios
       .get(API.URL + API.USER, config)
-      .then((response) => {
+      .then(async (response) => {
         AsyncStorage.setItem('id', JSON.stringify(response.data.success.id));
         AsyncStorage.setItem(
           JSON.stringify(response.data.success.id),
@@ -347,7 +342,11 @@ class RegisterScreen extends Component {
         );
         AsyncStorage.setItem('name', response.data.success.name);
         AsyncStorage.setItem('phone', response.data.success.phone);
-        AsyncStorage.removeItem('address');
+        if (response.data.success.address) {
+          await DATABASE.setAddress({ value: response.data.success.address });
+        } else {
+          AsyncStorage.removeItem('address');
+        }
       })
       .catch((error) => {});
   };

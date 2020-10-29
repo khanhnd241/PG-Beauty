@@ -30,7 +30,8 @@ import Dialog, {
   DialogButton,
   SlideAnimation,
 } from 'react-native-popup-dialog';
-import DeviceInfo from 'react-native-device-info';
+import { sendToken } from '../../repository/Authentication/index';
+import DATABASE from '../../config/database';
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -138,7 +139,7 @@ class LoginScreen extends Component {
         ]);
       });
   };
-  login = () => {
+  login = async () => {
     if (this.validate() == true) {
       this.setState({ loadingDialog: true });
       axios
@@ -146,11 +147,11 @@ class LoginScreen extends Component {
           phone: this.state.phone,
           password: this.state.password,
         })
-        .then((response) => {
-          if (
-            response.data.success.token != null ||
-            response.data.success.token != ''
-          ) {
+        .then(async response  => {
+          if (response.data.success.token) {
+            let tokenFirebase = await DATABASE.getTokenFirebase();
+            sendToken({ token: tokenFirebase });
+            
             AsyncStorage.setItem('token', response.data.success.token);
             AsyncStorage.setItem('phone', this.state.phone);
             AsyncStorage.setItem('password', this.state.password);
@@ -182,7 +183,7 @@ class LoginScreen extends Component {
     };
     axios
       .get(API.URL + API.USER, config)
-      .then((response) => {
+      .then(async (response) => {
         AsyncStorage.setItem(
           JSON.stringify(response.data.success.id),
           JSON.stringify(listOrder),
@@ -195,7 +196,11 @@ class LoginScreen extends Component {
         AsyncStorage.setItem('id', JSON.stringify(response.data.success.id));
         AsyncStorage.setItem('name', response.data.success.name);
         AsyncStorage.setItem('phone', response.data.success.phone);
-        AsyncStorage.removeItem('address');
+        if (response.data.success.address) {
+          await DATABASE.setAddress({ value: response.data.success.address });
+        } else {
+          AsyncStorage.removeItem('address');
+        }
       })
       .catch((error) => { });
   };

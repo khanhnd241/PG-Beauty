@@ -16,6 +16,9 @@ import CategoryScreen from './components/tabs/categories/CategoryScreen';
 import Notification from './components/tabs/NotificationScreen';
 import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
+import DeviceInfo from 'react-native-device-info';
+import axios from 'axios';
+
 import { HOME } from './constants/images/home';
 import { HOME_ACTIVE } from './constants/images/home_active';
 import { FEED } from './constants/images/feed';
@@ -29,10 +32,9 @@ import { ACCOUNT_ACTIVE } from './constants/images/account_active';
 import { COLOR } from './constants/colors';
 import { fcmService } from './components/firebase/FCMService';
 import LocalNotificationService from './components/firebase/LocalNotificationService';
-import axios from 'axios';
 import { API } from './constants/api';
-import DeviceInfo from 'react-native-device-info';
-import {SendToken} from './repository/UserRepository';
+import { sendToken } from './repository/Authentication/index';
+import DATABASE from './config/database';
 const Tab = createBottomTabNavigator();
 console.disableYellowBox = true;
 function TabNavigator(props) {
@@ -92,19 +94,26 @@ export default class App extends Component {
       LocalNotificationService.unregister();
     };
   };
-  
-  onRegister(token) {
+
+  onRegister = async (token) => {
     if (__DEV__) {
       console.log('[App] onRegister: ', token);
     }
-    AsyncStorage.getItem('device_token', (er, result) => {
-      if (!result) {
-       SendToken({token: token});
+    await DATABASE.setTokenFirebase({ value: token });
+    let flag = DATABASE.getFlagToken();
+    if (!flag) {
+      sendToken({ token: token });
+    } else {
+      let tokenFirebase = await DATABASE.getTokenFirebase();
+      if (!tokenFirebase) {
+        sendToken({ token: token });
       }
-      if (result && result !== token) {
-        SendToken({token: result});
+      if (tokenFirebase && tokenFirebase !== token) {
+
+        sendToken({ token: token });
       }
-    });
+
+    }
   }
 
   onNotification(notify) {
@@ -127,7 +136,6 @@ export default class App extends Component {
     }
     // alert('Open Notification: ' + notify.body)
   }
-  
   render() {
     return <TabNavigator />;
   }
