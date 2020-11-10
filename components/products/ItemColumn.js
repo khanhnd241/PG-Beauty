@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,12 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import {IMAGE} from '../../constants/images';
+import { IMAGE } from '../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import {STRING} from '../../constants/string';
-import {COLOR} from '../../constants/colors';
-import {RECTANGLE} from '../../constants/images/rectangle';
-import {STAR} from '../../constants/images/star';
+import { STRING } from '../../constants/string';
+import { COLOR } from '../../constants/colors';
+import { RECTANGLE } from '../../constants/images/rectangle';
+import { STAR } from '../../constants/images/star';
 let deviceWidth = Dimensions.get('window').width - 10;
 const height = Dimensions.get('window').height;
 class ItemColumn extends Component {
@@ -20,7 +20,8 @@ class ItemColumn extends Component {
     this.state = {
       point: '',
       newPrice: null,
-      salePercent: null
+      salePercent: null,
+      resize: 'cover'
     };
   }
   format(n) {
@@ -32,27 +33,30 @@ class ItemColumn extends Component {
     return Math.floor(Rand * power) / power;
   }
   componentDidMount = () => {
-    this.setState({point: this.genRand(4.5, 5, 1)});
+    if (this.props.image) {
+      this.setState({ resize: 'contain' })
+    }
+    this.setState({ point: this.genRand(4.5, 5, 1) });
     this.getPrice();
   };
   getPrice = () => {
     if (this.props.sale === 0) {
-      this.setState({newPrice: this.props.price});
+      this.setState({ newPrice: this.props.price });
     } else {
       let newPrice = this.props.price - this.props.sale;
       let salePercent = Math.trunc((this.props.sale / this.props.price) * 100);
-      this.setState({newPrice: newPrice, salePercent: salePercent});
+      this.setState({ newPrice: newPrice, salePercent: salePercent });
     }
   };
   render() {
-    const {image, name, price, point, views, sell, sale} = this.props;
+    const { image, name, price, point, views, sell, sale } = this.props;
     const imageUri = image != null ? image : '';
     return (
       <View style={styles.items_new_product}>
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <ImageBackground
-            resizeMode="contain"
-            source={imageUri.length != 0 ? {uri: imageUri} : IMAGE.NO_IMAGE}
+            resizeMode={this.state.resize}
+            source={imageUri.length != 0 ? { uri: imageUri } : IMAGE.NO_IMAGE}
             style={styles.image}>
             {sale !== 0 && (
               <ImageBackground source={IMAGE.ICON_SALE_BG} style={styles.sale}>
@@ -61,7 +65,7 @@ class ItemColumn extends Component {
               </ImageBackground>
             )}
           </ImageBackground>
-          <View style={{marginHorizontal: 7}}>
+          <View style={{ marginHorizontal: 7 }}>
             <Text numberOfLines={3} style={styles.textName}>{name}</Text>
             <Text style={styles.textCurrency}>
               {this.format(parseInt(this.state.newPrice))} {STRING.CURRENCY}
@@ -90,14 +94,14 @@ const styles = StyleSheet.create({
   sale: {
     justifyContent: 'center',
     alignItems: 'center',
-    width:30,
-    height:33,
+    width: 30,
+    height: 33,
   },
   textSale: {
     color: 'white',
     fontSize: 9,
     fontFamily: STRING.FONT_NORMAL,
-    marginBottom:3
+    marginBottom: 3
   },
   textName: {
     color: COLOR.DESCRIPTION,

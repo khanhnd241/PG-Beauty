@@ -1,10 +1,10 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   StyleSheet,
-  ImageBackground,
+  Keyboard,
   TextInput,
   TouchableOpacity,
   Image,
@@ -14,34 +14,35 @@ import {
   StatusBar,
   AsyncStorage,
   Alert,
+  Platform,
 } from 'react-native';
-import {IMAGE} from '../../../constants/images';
+import { IMAGE } from '../../../constants/images';
 import SvgUri from 'react-native-svg-uri';
-import {STRING} from '../../../constants/string';
-import {LIKE} from '../../../constants/images/like';
-import {COMMENT} from '../../../constants/images/comment';
-import {SHARE} from '../../../constants/images/share';
-import {BACK_BLACK} from '../../../constants/images/back_black';
-import {Rating, AirbnbRating} from 'react-native-ratings';
+import { STRING } from '../../../constants/string';
+import { LIKE } from '../../../constants/images/like';
+import { COMMENT } from '../../../constants/images/comment';
+import { SHARE } from '../../../constants/images/share';
+import { BACK_BLACK } from '../../../constants/images/back_black';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 import PhotoGrid from 'react-native-thumbnail-grid';
-import {COLOR} from '../../../constants/colors';
+import { COLOR } from '../../../constants/colors';
 import ImageView from 'react-native-image-view';
-import {ICON_AVATAR} from '../../../constants/images/icon_avatar';
+import { ICON_AVATAR } from '../../../constants/images/icon_avatar';
 import axios from 'axios';
-import {API} from '../../../constants/api';
+import { API } from '../../../constants/api';
 import moment from 'moment';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import HTMLView from 'react-native-htmlview';
 let deviceWidth = Dimensions.get('window').width;
 let deviceHeight = Dimensions.get('window').height;
-function ItemComment({userName, content}) {
+function ItemComment({ userName, content }) {
   // const [users, setUser] = useState(JSON.stringify(user));
   return (
     <View>
       <View style={styles.item_comment_container}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <View
               style={{
                 width: 30,
@@ -61,8 +62,8 @@ function ItemComment({userName, content}) {
               borderWidth: 0.5,
               padding: 14,
             }}>
-            <Text style={{fontFamily: STRING.FONT_NORMAL}}>
-              <Text style={{fontFamily: STRING.FONT_BOLD}}>{userName} </Text>
+            <Text style={{ fontFamily: STRING.FONT_NORMAL }}>
+              <Text style={{ fontFamily: STRING.FONT_BOLD }}>{userName} </Text>
               {content}
             </Text>
           </View>
@@ -74,7 +75,7 @@ function ItemComment({userName, content}) {
 class FeedDetailScreen extends Component {
   constructor(props) {
     super(props);
-    const {id, likeCount, commentsCount, rate} = this.props.route.params;
+    const { id, likeCount, commentsCount, rate } = this.props.route.params;
     this.state = {
       id: id,
       isLike: false,
@@ -97,6 +98,7 @@ class FeedDetailScreen extends Component {
       isComment: true,
       token: '',
       isLogin: false,
+      bottom: 0,
     };
   }
   likePost = () => {
@@ -106,7 +108,7 @@ class FeedDetailScreen extends Component {
       if (this.state.isLike === false) {
         let data = {};
         this.setState(
-          {isLike: true, likeCount: this.state.likeCount + 1},
+          { isLike: true, likeCount: this.state.likeCount + 1 },
           () => {
             const config = {
               headers: {
@@ -119,14 +121,14 @@ class FeedDetailScreen extends Component {
                 Alert.alert(
                   STRING.NOTIFI,
                   JSON.stringify(response.data.success),
-                  [{text: STRING.ACCEPT}],
+                  [{ text: STRING.ACCEPT }],
                 );
               })
               .catch((error) => {
                 Alert.alert(
                   STRING.ERROR,
                   JSON.stringify(error.response.data.error),
-                  [{text: STRING.ACCEPT}],
+                  [{ text: STRING.ACCEPT }],
                 );
                 if (__DEV__) {
                   console.log(JSON.stringify(error.response));
@@ -135,19 +137,19 @@ class FeedDetailScreen extends Component {
           },
         );
       } else {
-        this.setState({likeCount: this.state.likeCount - 1, isLike: false});
+        this.setState({ likeCount: this.state.likeCount - 1, isLike: false });
       }
     }
   };
   reload = () => {
-    this.setState({refesh: false});
+    this.setState({ refesh: false });
   };
   sendComment = () => {
     let comment = {};
     comment.user_name = this.state.userName;
     (comment.content = this.state.comment),
-      this.setState({comment: ''}, () => {
-        let data = {content: comment.content};
+      this.setState({ comment: '' }, () => {
+        let data = { content: comment.content };
         if (this.state.token == null || this.state.token == '') {
           Alert.alert(STRING.NOTIFI, STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT);
         } else {
@@ -162,7 +164,7 @@ class FeedDetailScreen extends Component {
               Alert.alert(
                 STRING.NOTIFI,
                 JSON.stringify(response.data.success),
-                [{text: STRING.ACCEPT}],
+                [{ text: STRING.ACCEPT }],
               );
               this.state.listComment.push(comment);
               this.setState({
@@ -175,7 +177,7 @@ class FeedDetailScreen extends Component {
               Alert.alert(
                 STRING.ERROR,
                 JSON.stringify(error.response.data.error),
-                [{text: STRING.ACCEPT}],
+                [{ text: STRING.ACCEPT }],
               );
               if (__DEV__) {
                 console.log(JSON.stringify(error.response));
@@ -184,11 +186,23 @@ class FeedDetailScreen extends Component {
         }
       });
   };
-  // scrollToEnd = () => {
-  //     this.scrollView.scrollTo({x: 0, y: 500, animated: true});
-  // }
+  _keyboardDidShow = (e) => {
+    if (Platform.OS === "ios") {
+      this.setState({ bottom: e.endCoordinates.height })
+    }
+  }
+  _keyboardDidHide = () => {
+    if (Platform.OS === "ios") {
+      this.setState({ bottom: 0 });
+    }
+  }
+  componentWillUnmount = () => {
+    Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
+    Keyboard.removeListener("keyboardDidHide", this._keyboardDidHide);
+  }
   componentDidMount = () => {
-    // this.scrollToEnd();
+    Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", this._keyboardDidHide);
     let imageView = [];
     let image = {
       source: {
@@ -200,7 +214,7 @@ class FeedDetailScreen extends Component {
       image.source.uri = this.state.image[i];
       imageView.push(image);
     }
-    this.setState({imageView: imageView});
+    this.setState({ imageView: imageView });
     fetch(API.URL + API.NEWS + '/' + this.state.id)
       .then((response) => response.json())
       .then((json) => {
@@ -223,14 +237,14 @@ class FeedDetailScreen extends Component {
       });
     AsyncStorage.getItem('name', (err, name) => {
       if (name) {
-        this.setState({userName: name});
+        this.setState({ userName: name });
       }
     });
     AsyncStorage.getItem('token', (err, token) => {
       if (token) {
-        this.setState({token: token, isLogin: true});
+        this.setState({ token: token, isLogin: true });
       } else {
-        this.setState({isLogin: false});
+        this.setState({ isLogin: false });
       }
     });
   };
@@ -272,38 +286,42 @@ class FeedDetailScreen extends Component {
       user,
     } = this.state;
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: COLOR.PRIMARY}}>
-        <StatusBar barStyle="light-content" backgroundColor={COLOR.PRIMARY} />
-        <View style={{flex: 1, backgroundColor: COLOR.WHITE}}>
-          <View style={styles.header}>
-            <View
-              style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <TouchableOpacity
-                style={styles.btnBack}
-                onPress={() => {
-                  this.props.navigation.goBack();
-                }}>
-                <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
-              </TouchableOpacity>
+      <View style={{ flex: 1, backgroundColor: COLOR.PRIMARY }}>
+
+        <StatusBar backgroundColor={COLOR.PRIMARY} />
+        <View style={{ flex: 1, backgroundColor: COLOR.PRIMARY }}>
+          <SafeAreaView>
+            <View style={styles.header}>
+              <View
+                style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <TouchableOpacity
+                  style={styles.btnBack}
+                  onPress={() => {
+                    this.props.navigation.goBack();
+                  }}>
+                  <SvgUri svgXmlData={BACK_BLACK} fill={COLOR.WHITE} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.title}>
+                <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
+              </View>
+              <View style={{ flex: 1 }}></View>
             </View>
-            <View style={styles.title}>
-              <Text style={styles.title_text}>{STRING.PG_BEAUTY_FEED}</Text>
-            </View>
-            <View style={{flex: 1}}></View>
-          </View>
+          </SafeAreaView>
+
           <ScrollView
             ref={(ref) => {
               this.scrollView = ref;
             }}
             onContentSizeChange={() =>
-              this.scrollView.scrollToEnd({animated: true})
+              this.scrollView.scrollToEnd({ animated: true })
             }>
             <View style={styles.item_container}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
                   <Image source={IMAGE.ICON_APP} style={styles.avatar} />
                 </View>
-                <View style={{flexDirection: 'column', flex: 4}}>
+                <View style={{ flexDirection: 'column', flex: 4 }}>
                   <Text style={styles.item_title}>{title}</Text>
                   <View
                     style={{
@@ -319,7 +337,7 @@ class FeedDetailScreen extends Component {
                       imageSize={15}
                       tintColor={COLOR.WHITE}
                       ratingColor={COLOR.PRIMARY}
-                      style={{backgroundColor: COLOR.WHITE, marginLeft: 2}}
+                      style={{ backgroundColor: COLOR.WHITE, marginLeft: 2 }}
                     />
                     <Text style={styles.item_timeline}>
                       {this.state.createdAt}
@@ -327,17 +345,17 @@ class FeedDetailScreen extends Component {
                   </View>
                 </View>
               </View>
-              <View style={{marginTop: 10}}>
+              <View style={{ marginTop: 10 }}>
                 <HTMLView value={content} />
                 <PhotoGrid
                   width={deviceWidth - 20}
                   source={image}
                   ratio={0.5}
                   onPressImage={(uri) => {
-                    this.setState({isViewImage: true});
+                    this.setState({ isViewImage: true });
                   }}
                 />
-                <View style={{flexDirection: 'row', marginLeft: 10}}>
+                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
                   <View
                     style={{
                       flex: 1,
@@ -358,7 +376,7 @@ class FeedDetailScreen extends Component {
                   </View>
                 </View>
                 <View
-                  style={{borderTopWidth: 0.5, borderTopColor: COLOR.LINE}}
+                  style={{ borderTopWidth: 0.5, borderTopColor: COLOR.LINE }}
                 />
                 <View
                   style={{
@@ -381,33 +399,33 @@ class FeedDetailScreen extends Component {
                       </Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      onPress={this.likePost}
-                      style={styles.btnLike}>
-                      <SvgUri svgXmlData={LIKE} />
-                      <Text
-                        style={{marginLeft: 7, fontFamily: STRING.FONT_NORMAL}}>
-                        {STRING.LIKE}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                      <TouchableOpacity
+                        onPress={this.likePost}
+                        style={styles.btnLike}>
+                        <SvgUri svgXmlData={LIKE} />
+                        <Text
+                          style={{ marginLeft: 7, fontFamily: STRING.FONT_NORMAL }}>
+                          {STRING.LIKE}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
 
                   <TouchableOpacity
                     onPress={this.focusInputComment}
                     style={styles.btnComment}>
                     <SvgUri svgXmlData={COMMENT} />
                     <Text
-                      style={{marginLeft: 8, fontFamily: STRING.FONT_NORMAL}}>
+                      style={{ marginLeft: 8, fontFamily: STRING.FONT_NORMAL }}>
                       {STRING.COMMENT_1}
                     </Text>
                   </TouchableOpacity>
                 </View>
                 <FlatList
                   // inverted={true}
-                  style={{marginBottom: 60}}
+                  style={{ marginBottom: 60 }}
                   extraData={this.state.refesh}
                   data={this.state.listComment}
-                  renderItem={({item}) => {
+                  renderItem={({ item }) => {
                     return (
                       <ItemComment
                         content={item.content}
@@ -419,10 +437,10 @@ class FeedDetailScreen extends Component {
               </View>
             </View>
           </ScrollView>
-          <View style={styles.footer}>
+          <View style={[styles.footer, { bottom: this.state.bottom }]}>
             {this.state.isLogin ? (
               <View style={styles.inputContain}>
-                <View style={{flex: 1, alignItems: 'center'}}>
+                <View style={{ flex: 1, alignItems: 'center' }}>
                   <View style={styles.avaCmt}>
                     <SvgUri svgXmlData={ICON_AVATAR} />
                   </View>
@@ -434,7 +452,7 @@ class FeedDetailScreen extends Component {
                   ref={(input) => {
                     this.secondTextInput = input;
                   }}
-                  onChangeText={(value) => this.setState({comment: value})}
+                  onChangeText={(value) => this.setState({ comment: value })}
                   style={styles.input}
                   placeholder={STRING.WRITE_COMMENT}
                   autoFocus={this.state.isComment}
@@ -442,20 +460,20 @@ class FeedDetailScreen extends Component {
                 />
                 <TouchableOpacity
                   onPress={this.sendComment}
-                  style={{flex: 1, alignItems: 'center'}}>
-                  <Text style={{fontFamily: STRING.FONT_SEMI_BOLD}}>
+                  style={{ flex: 1, alignItems: 'center' }}>
+                  <Text style={{ fontFamily: STRING.FONT_SEMI_BOLD }}>
                     {STRING.SEND}
                   </Text>
                 </TouchableOpacity>
               </View>
             ) : (
-              <Text style={styles.txtMustLogin}>
-                {STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT}
-              </Text>
-            )}
+                <Text style={styles.txtMustLogin}>
+                  {STRING.MUST_LOGIN_TO_LIKE_AND_COMMENT}
+                </Text>
+              )}
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -511,8 +529,7 @@ const styles = StyleSheet.create({
   },
   item_container: {
     backgroundColor: COLOR.WHITE,
-    marginHorizontal: 10,
-    marginTop: 10,
+    padding:10,
   },
   item_comment_container: {
     backgroundColor: COLOR.WHITE,
@@ -544,7 +561,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 0.5,
     borderRadius: 20,
-    flex: 6,
+    flex: 5,
     height: 40,
     fontSize: 12,
     borderColor: COLOR.LINE,
@@ -589,7 +606,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.WHITE,
     flex: 1,
     position: 'absolute',
-    bottom: 0,
     width: deviceWidth,
   },
   inputContain: {
