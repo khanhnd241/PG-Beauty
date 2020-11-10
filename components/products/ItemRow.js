@@ -21,6 +21,7 @@ class ItemRow extends Component {
       newPrice: null,
       point: null,
       salePercent: null,
+      resize: 'cover'
     };
   }
 
@@ -33,6 +34,9 @@ class ItemRow extends Component {
     return Math.floor(Rand * power) / power;
   }
   componentDidMount = () => {
+    if (this.props.image) {
+      this.setState({ resize: 'contain' })
+    }
     this.setState({point: this.genRand(4.5, 5, 1)});
     this.getPrice();
   };
@@ -52,7 +56,7 @@ class ItemRow extends Component {
       <View style={styles.container_items}>
         <View style={{flex: 1}}>
           <ImageBackground
-            resizeMode="contain"
+            resizeMode={this.state.resize}
             source={imageUri.length != 0 ? {uri: imageUri} : IMAGE.NO_IMAGE}
             style={{height: 111, marginTop: 7}}>
             {sale !== 0 && (
