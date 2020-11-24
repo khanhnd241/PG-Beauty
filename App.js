@@ -95,25 +95,18 @@ export default class App extends Component {
     };
   };
 
-  onRegister = async (token) => {
+  onRegister  (token) {
     if (__DEV__) {
       console.log('[App] onRegister: ', token);
     }
-    await DATABASE.setTokenFirebase({ value: token });
-    let flag = DATABASE.getFlagToken();
-    if (!flag) {
-      sendToken({ token: token });
-    } else {
-      let tokenFirebase = await DATABASE.getTokenFirebase();
-      if (!tokenFirebase) {
-        sendToken({ token: token });
-      }
-      if (tokenFirebase && tokenFirebase !== token) {
-
-        sendToken({ token: token });
-      }
-
-    }
+    sendToken({ token: token });
+      // let tokenFirebase = await DATABASE.getTokenFirebase();
+      // if (!tokenFirebase) {
+      //   sendToken({ token: token });
+      // }
+      // if (tokenFirebase && tokenFirebase !== token) {
+      //   sendToken({ token: token });
+      // }
   }
 
   onNotification(notify) {

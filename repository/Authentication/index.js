@@ -15,7 +15,6 @@ export const sendToken = async ({ token }) => {
             if (__DEV__) {
                 console.log(res.data);
             }
-            DATABASE.setFlagToken();
             DATABASE.setTokenFirebase({value: token});
         })
         .catch((err) => {
