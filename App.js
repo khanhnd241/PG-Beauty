@@ -18,6 +18,7 @@ import AccountScreen from './components/tabs/account/AccountScreen';
 import SvgUri from 'react-native-svg-uri';
 import DeviceInfo from 'react-native-device-info';
 import axios from 'axios';
+import codePush from 'react-native-code-push'
 
 import { HOME } from './constants/images/home';
 import { HOME_ACTIVE } from './constants/images/home_active';
@@ -36,6 +37,11 @@ import { API } from './constants/api';
 import { sendToken } from './repository/Authentication/index';
 import DATABASE from './config/database';
 const Tab = createBottomTabNavigator();
+const codePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+  installMode: codePush.InstallMode.IMMEDIATE,
+};
+
 console.disableYellowBox = true;
 function TabNavigator(props) {
   return (
@@ -74,7 +80,7 @@ function TabNavigator(props) {
     </Tab.Navigator>
   );
 }
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
   }
@@ -133,3 +139,4 @@ export default class App extends Component {
     return <TabNavigator />;
   }
 }
+export default codePush(codePushOptions)(App);
