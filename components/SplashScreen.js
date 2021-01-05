@@ -28,7 +28,7 @@ class SplashScreen extends Component {
       );
     });
     AsyncStorage.getItem('token', (err, token) => {
-      if (token != null && token != '') {
+      if (token) {
         this.getInfo(token);
       }
     });

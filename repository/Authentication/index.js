@@ -9,13 +9,14 @@ export const sendToken = async ({ token }) => {
         device_token: token,
         device_id: DeviceInfo.getUniqueId(),
     };
+    // console.log(JSON.stringify(body));
     axios
         .post(API.URL + API.DEVICE_TOKEN, body)
         .then((res) => {
             if (__DEV__) {
                 console.log(res.data);
             }
-            DATABASE.setTokenFirebase({value: token});
+            DATABASE.setTokenFirebase({ value: token });
         })
         .catch((err) => {
             if (__DEV__) {
