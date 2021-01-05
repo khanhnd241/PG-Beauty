@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Button,
@@ -7,12 +7,12 @@ import {
   StatusBar,
   AsyncStorage,
 } from 'react-native';
-import {IMAGE} from '../constants/images';
-import {LOGO} from '../constants/images/logo';
+import { IMAGE } from '../constants/images';
+import { LOGO } from '../constants/images/logo';
 import SvgUri from 'react-native-svg-uri';
-import {COLOR} from '../constants/colors';
+import { COLOR } from '../constants/colors';
 import DeviceInfo from 'react-native-device-info';
-import {API} from '../constants/api';
+import { API } from '../constants/api';
 import axios from 'axios';
 class SplashScreen extends Component {
   constructor(props) {
@@ -55,7 +55,9 @@ class SplashScreen extends Component {
     axios
       .get(API.URL + API.USER, config)
       .then((response) => {
-        console.log(response.data);
+        if (__DEV__) {
+          console.log(response.data);
+        }
       })
       .catch((error) => {
         AsyncStorage.multiRemove(
@@ -63,7 +65,7 @@ class SplashScreen extends Component {
           (err) => {
             if (__DEV__) {
               console.log(err);
-            } 
+            }
           },
         );
       });

@@ -22,7 +22,6 @@ import { CLOSE } from '../../constants/images/close';
 import { EYE_ACTIVE } from '../../constants/images/eye_active';
 import { COLOR } from '../../constants/colors';
 import axios from 'axios';
-import {SendToken} from '../../repository/UserRepository'
 import Dialog, {
   DialogTitle,
   DialogContent,
@@ -147,20 +146,17 @@ class LoginScreen extends Component {
           phone: this.state.phone,
           password: this.state.password,
         })
-        .then(async response  => {
+        .then(async response => {
           if (response.data.success.token) {
             let tokenFirebase = await DATABASE.getTokenFirebase();
-            sendToken({ token: tokenFirebase });
-            
+            if (tokenFirebase) {
+              sendToken({ token: tokenFirebase });
+            }
+
             AsyncStorage.setItem('token', response.data.success.token);
             AsyncStorage.setItem('phone', this.state.phone);
             AsyncStorage.setItem('password', this.state.password);
             AsyncStorage.setItem('code', this.state.code);
-            AsyncStorage.getItem('device_token', (err, deviceToken) => {
-              if (deviceToken) {
-                SendToken({token: deviceToken});
-              }
-            })
             this.getInfo(response.data.success.token);
             this.props.navigation.replace('App');
             this.setState({ loadingDialog: false });
