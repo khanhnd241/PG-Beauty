@@ -28,7 +28,7 @@
 		C67454ED4AE74CAD994C6B55 /* Nunito-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A8C0CC322AD84FD892F86214 /* Nunito-ExtraLight.ttf */; };
 		EB6F520686C54DA99C893CAD /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E8AA5D899E949FF93D8CFA2 /* Nunito-Black.ttf */; };
 		ED630F19F6CC46888B1F6E21 /* Nunito-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 58372FC3610E487B9E795BEC /* Nunito-BoldItalic.ttf */; };
-		FA02A24C2545AE9B00784BDA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FA02A24B2545AE9B00784BDA /* main.jsbundle */; };
+		FA45422625A551960061FD5D /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FA45422525A551950061FD5D /* main.jsbundle */; };
 		FAB7243B24FC0BD100ED3BD6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAB7243A24FC0BD100ED3BD6 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -90,8 +90,8 @@
 		E47DCD3F5C054FFEBFED5A34 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FA02A24B2545AE9B00784BDA /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		FA3D25CA24C208C4006A9B50 /* PG_BeautyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PG_BeautyRelease.entitlements; path = PG_Beauty/PG_BeautyRelease.entitlements; sourceTree = "<group>"; };
+		FA45422525A551950061FD5D /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		FAB7243724FBB23D00ED3BD6 /* PG Beauty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "PG Beauty.entitlements"; path = "PG_Beauty/PG Beauty.entitlements"; sourceTree = "<group>"; };
 		FAB7243A24FC0BD100ED3BD6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAC3AED324D0748D002E4519 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Nunito-Bold.ttf"; path = "../Nunito-Bold.ttf"; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				FA02A24B2545AE9B00784BDA /* main.jsbundle */,
+				FA45422525A551950061FD5D /* main.jsbundle */,
 			);
 			name = PG_Beauty;
 			sourceTree = "<group>";
@@ -352,7 +352,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				EB6F520686C54DA99C893CAD /* Nunito-Black.ttf in Resources */,
-				FA02A24C2545AE9B00784BDA /* main.jsbundle in Resources */,
+				FA45422625A551960061FD5D /* main.jsbundle in Resources */,
 				BBE052A68B1E46C4803BD120 /* Nunito-BlackItalic.ttf in Resources */,
 				7FB11C1CD86C490397CFA4C6 /* Nunito-Bold.ttf in Resources */,
 				ED630F19F6CC46888B1F6E21 /* Nunito-BoldItalic.ttf in Resources */,
@@ -660,7 +660,7 @@
 				);
 				INFOPLIST_FILE = PG_Beauty/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.10;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -689,7 +689,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = PG_Beauty/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.10;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

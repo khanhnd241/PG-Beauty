@@ -10,7 +10,7 @@ class InfoScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            version: '1.0',
+            version: '3.0',
             appGuide: '- Khi tải về quý khách cài đặt và mở ứng dụng lên \n- Quý khách không cần đăng ký tài khoản vẫn có thể xem và đặt hàng online từ app \n- Để được tích điểm khi mua hàng hay review sản phẩm, tham gia bình luận newfeed quý khách phải đăng ký tài khoản tại mục Tôi -> chọn mục đăng ký tài khoản. Với những khách hàng đã đăng ký tài khoản thì chọn mục đăng nhập và nhập thông tin để đăng nhập vào ứng dụng.',
             policyDelivery:'Chính sách giao hàng :\n - Free ship đối với đơn hàng 2 sp bất kì ( không áp dụng đối với sp đã giảm giá). Đối với khu vực nội thành phí ship là 20-30k/đơn hàng. Khu vực ngoại thành và ship tỉnh phí ship là 30-35k ',
             returnPolicy: 'Chính sách đổi hàng \n- Với đơn hàng khách mua tại shop : hàng đã mua thì không đổi  hàng. Việc bảo quản hàng hóa cửa hàng không thể đảm bảo sau khi khách hàng đã mang ra khỏi cửa hàng, khách hàng kiểm tra đúng sản phẩm trước khi thanh toán để bảo đảm quyền lợi của khách hàng \n- Với khách hàng mua online: Khách hàng có thể đổi sản phẩm tương đương hoặc cao hơn giá sản phẩm đổi, và phải đảm bảo 100% sản phẩm đổi không bị mở niêm phong và thử. khách hàng đổi sảm phẩm vui lòng mang hóa đơn qua cửa hàng để được đổi.',
