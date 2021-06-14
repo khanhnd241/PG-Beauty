@@ -83,7 +83,7 @@ class GuaranteeForeoScreen extends Component {
               <Text style={styles.txtBody}>
                 Các bạn nhập thông tin tài khoản FOREO của các bạn: Email và
                 Password, ấn vào LOG IN để đăng nhập tài khoản. Màn hình sẽ hiện
-                ra như sau: Facebook, goolge, twist
+                ra như sau:
               </Text>
               <Text style={styles.txtBody}>
                 (<Text style={styles.txtTitle}>NOTE</Text>: NHƯNG BẠN KHÔNG TẠO
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   image: {
-    width: deviceWidth,
+    width: deviceWidth - 20,
     alignSelf: 'center',
   },
   txtBody: {
