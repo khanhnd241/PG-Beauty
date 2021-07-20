@@ -21,7 +21,7 @@
     "axios": "^0.19.2",
     "moment": "^2.27.0",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-code-push": "^6.4.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^5.6.3",
